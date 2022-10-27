@@ -18,6 +18,41 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.ctrip.hotel.settlement</groupId>
+            <artifactId>assembly-common</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>qconfig-client</artifactId>
+                    <groupId>qunar.tc.qconfig</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>vi</artifactId>
+                    <groupId>com.ctrip.framework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>common-core</artifactId>
+                    <groupId>qunar.common</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>qunar.tc.qschedule</groupId>
+                    <artifactId>qschedule-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>ctrip-datasource</artifactId>
+                    <groupId>com.ctrip.platform</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jsr305</artifactId>
+                    <groupId>com.google.code.findbugs</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spotbugs-annotations</artifactId>
+                    <groupId>com.github.spotbugs</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
         </dependency>

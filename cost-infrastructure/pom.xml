@@ -30,6 +30,51 @@
             <groupId>com.ctrip.platform</groupId>
             <artifactId>ctrip-datasource</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.ctrip.soa.hotel.order.checkin.audit.v2</groupId>
+            <artifactId>hotelordercheckinauditv2</artifactId>
+            <version>${hotel.order.checkin.audit.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>qconfig-client</artifactId>
+                    <groupId>qunar.tc.qconfig</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>vi</artifactId>
+                    <groupId>com.ctrip.framework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>common-core</artifactId>
+                    <groupId>qunar.common</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jsr305</artifactId>
+                    <groupId>com.google.code.findbugs</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spotbugs-annotations</artifactId>
+                    <groupId>com.github.spotbugs</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.ctrip.hotel.settlement</groupId>
+            <artifactId>assembly-dao</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>qconfig-client</artifactId>
+                    <groupId>qunar.tc.qconfig</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>vi</artifactId>
+                    <groupId>com.ctrip.framework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>common-core</artifactId>
+                    <groupId>qunar.common</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
 
 </project>
