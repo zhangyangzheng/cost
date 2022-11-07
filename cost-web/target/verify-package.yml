@@ -1,0 +1,7 @@
+--- 
+appid: 100040756(cost-web/cost-web-0.0.1.jar)
+snapshot: !java.util.HashMap
+  jars: 
+    - assembly-common-0.7.65-SNAPSHOT
+    - assembly-dao-0.7.65-SNAPSHOT
+  status: false
