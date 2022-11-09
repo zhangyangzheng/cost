@@ -36,13 +36,15 @@ public class OrderAuditFgMqRepositoryImpl extends OrderAuditFgMqTiDBGenDao
     String sql = String.format("SELECT * FROM ORDER_AUDIT_FG_MQ WHERE id IN" +
     "(SELECT id FROM ORDER_AUDIT_FG_MQ WHERE jobStatus = 'W' ORDER BY datachange_createtime)" +
     "AND sliceIndex IN (%s) LIMIT %d", sliceIndexStr, count);
-    return this.query(sql, new DalHints());
+    // 需要读到最新的
+    return this.query(sql, new DalHints().masterOnly());
   }
 
   // 获取指定dataId 执行成功或者待执行的job
   @Override
   public List<OrderAuditFgMqTiDBGen> getJobsByDataId(Long dataId) throws SQLException {
     String sql = String.format("SELECT * FROM ORDER_AUDIT_FG_MQ WHERE dataId = %d", dataId);
-    return this.query(sql, new DalHints());
+    // 需要读到最新的
+    return this.query(sql, new DalHints().masterOnly());
   }
 }

@@ -9,14 +9,10 @@ public abstract class BaseNotifySettlementJob<T> {
     protected enum ProcessPendingJobMethod{
         ThrowSettle,
         DoneAll,
-        WaitForOther,
-        SetFail;
+        DoNothing;
     }
 
     protected abstract List<T> getPending(List<Integer> sliceIndexList) throws Exception;
-
-
-    protected abstract void processFailJobList(List<T> failJobList) throws Exception;
 
     public abstract void execute(List<Integer> sliceIndexList) throws Exception;
 }
