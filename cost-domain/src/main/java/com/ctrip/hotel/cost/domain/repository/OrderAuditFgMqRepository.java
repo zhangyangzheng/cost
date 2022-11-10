@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface OrderAuditFgMqRepository {
     List<OrderAuditFgMqTiDBGen> getPendingJobs(List<Integer> sliceIndexList, Integer count) throws SQLException;
-    List<OrderAuditFgMqTiDBGen> getJobsByDataId(Long dataId) throws SQLException;
+    List<OrderAuditFgMqTiDBGen> getJobsByOrderIdAndFgId(Long orderId, Integer fgId) throws SQLException;
 }

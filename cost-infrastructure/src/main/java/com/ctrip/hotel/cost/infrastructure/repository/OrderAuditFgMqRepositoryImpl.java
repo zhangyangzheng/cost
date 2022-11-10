@@ -42,8 +42,8 @@ public class OrderAuditFgMqRepositoryImpl extends OrderAuditFgMqTiDBGenDao
 
   // 获取指定dataId 执行成功或者待执行的job
   @Override
-  public List<OrderAuditFgMqTiDBGen> getJobsByDataId(Long dataId) throws SQLException {
-    String sql = String.format("SELECT * FROM ORDER_AUDIT_FG_MQ WHERE dataId = %d", dataId);
+  public List<OrderAuditFgMqTiDBGen> getJobsByOrderIdAndFgId(Long orderId, Integer fgId) throws SQLException {
+    String sql = String.format("SELECT * FROM ORDER_AUDIT_FG_MQ WHERE orderId = %d AND fgId = %d", orderId, fgId);
     // 需要读到最新的
     return this.query(sql, new DalHints().masterOnly());
   }

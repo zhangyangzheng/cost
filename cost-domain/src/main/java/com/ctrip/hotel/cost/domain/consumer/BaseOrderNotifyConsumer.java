@@ -3,6 +3,8 @@ package com.ctrip.hotel.cost.domain.consumer;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
 import qunar.tc.qmq.Message;
 
+import java.util.Objects;
+
 public abstract class BaseOrderNotifyConsumer<T> {
 
   final protected <A> boolean isInLegalArr(A item, A[] legalArr) {
@@ -16,7 +18,7 @@ public abstract class BaseOrderNotifyConsumer<T> {
     return false;
   }
 
-  protected abstract Integer getSliceIndex(Long data);
+  protected abstract Integer getSliceIndex(Object... values);
 
   protected abstract T convertTo(Message message) throws Exception;
 

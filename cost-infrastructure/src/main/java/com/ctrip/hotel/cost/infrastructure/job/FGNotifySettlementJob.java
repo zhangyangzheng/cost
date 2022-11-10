@@ -4,6 +4,7 @@ import com.ctrip.hotel.cost.domain.job.BaseNotifySettlementJob;
 import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepositoryImpl;
 import com.ctrip.platform.dal.dao.DalHints;
 import hotel.settlement.common.ListHelper;
+import hotel.settlement.common.beans.BeanHelper;
 import hotel.settlement.common.tuples.Tuple;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgMqTiDBGen> {
 
-  class DataStatus {
+  class JobStatusStatistics {
     int wCreateCount = 0;
     int wUpdateCount = 0;
     int wDeleteCount = 0;
@@ -35,11 +36,12 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
   }
 
 
-  // 合并后的Job对象 处理后同生共死
+
+  // 合并后的Job对象 同生共死
   class WJobMergeItem {
-    // 合并结果job
+    // 主单
     OrderAuditFgMqTiDBGen leader;
-    // 被合并job集合
+    // 副单
     List<OrderAuditFgMqTiDBGen> followers;
 
     public WJobMergeItem(OrderAuditFgMqTiDBGen leader, List<OrderAuditFgMqTiDBGen> followers) {
@@ -48,38 +50,65 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     }
   }
 
+
+
+  class Identify {
+    Long orderId;
+    Integer fgId;
+
+    public Identify(Long orderId, Integer fgId) {
+      this.orderId = orderId;
+      this.fgId = fgId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      Identify identify = (Identify) o;
+      return Objects.equals(orderId, identify.orderId) && Objects.equals(fgId, identify.fgId);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(orderId, fgId);
+    }
+  }
+
+
+
   final int maxExeCount = 8;
 
   @Autowired OrderAuditFgMqRepositoryImpl orderAuditFgMqRepository;
 
   // 1：当前job为同一个订单的所有Job  2：最新的当前job 3：当前job为同一个订单的所有Job的执行状态
-  protected Tuple<List<OrderAuditFgMqTiDBGen>, DataStatus> getDataAndStatus(
-      Long dataId) throws Exception {
+  protected Tuple<JobStatusStatistics, List<OrderAuditFgMqTiDBGen>> getStatusAndJobList(
+      Identify identify) throws Exception {
     List<OrderAuditFgMqTiDBGen> orderAuditFgMqTiDBGenList =
-        orderAuditFgMqRepository.getJobsByDataId(dataId);
-    DataStatus dataStatus = new DataStatus();
+        orderAuditFgMqRepository.getJobsByOrderIdAndFgId(identify.orderId, identify.fgId);
+    JobStatusStatistics jobStatusStatistics = new JobStatusStatistics();
     if (!ListHelper.isEmpty(orderAuditFgMqTiDBGenList)) {
       for (OrderAuditFgMqTiDBGen orderAuditFgMqTiDBGen : orderAuditFgMqTiDBGenList) {
         String jobStatus = orderAuditFgMqTiDBGen.getJobStatus();
         String opType = orderAuditFgMqTiDBGen.getOpType();
         if ("W".equals(jobStatus) && "C".equals(opType)) {
-          dataStatus.wCreateCount++;
+          jobStatusStatistics.wCreateCount++;
         } else if ("W".equals(jobStatus) && "U".equals(opType)) {
-          dataStatus.wUpdateCount++;
+          jobStatusStatistics.wUpdateCount++;
         } else if ("W".equals(jobStatus) && "D".equals(opType)) {
-          dataStatus.wDeleteCount++;
+          jobStatusStatistics.wDeleteCount++;
         } else if ("T".equals(jobStatus) && "C".equals(opType)) {
-          dataStatus.tCreateCount++;
+          jobStatusStatistics.tCreateCount++;
         } else if ("T".equals(jobStatus) && "U".equals(opType)) {
-          dataStatus.tUpdateCount++;
+          jobStatusStatistics.tUpdateCount++;
         } else if ("T".equals(jobStatus) && "D".equals(opType)) {
-          dataStatus.tDeleteCount++;
+          jobStatusStatistics.tDeleteCount++;
         } else if ("F".equals(jobStatus) && "C".equals(opType)) {
-          dataStatus.fCreateCount++;
+          jobStatusStatistics.fCreateCount++;
         } else if ("F".equals(jobStatus) && "U".equals(opType)) {
-          dataStatus.fUpdateCount++;
+          jobStatusStatistics.fUpdateCount++;
         } else if ("F".equals(jobStatus) && "D".equals(opType)) {
-          dataStatus.fDeleteCount++;
+          jobStatusStatistics.fDeleteCount++;
         } else {
           throw new Exception("Unexpected jobStatus or opType");
         }
@@ -87,24 +116,24 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     } else {
       throw new Exception("PendingJob Not exist");
     }
-    return new Tuple<>(orderAuditFgMqTiDBGenList, dataStatus);
+    return new Tuple<>(jobStatusStatistics, orderAuditFgMqTiDBGenList);
   }
 
-  // 传进来的job是最新的
-  protected ProcessPendingJobMethod getProcessMethodByDataStatus(
-      DataStatus dataStatus, OrderAuditFgMqTiDBGen tmpJob) {
+
+  protected ProcessPendingJobMethod getProcessMethodByJobStatusStatistics(
+      JobStatusStatistics jobStatusStatistics, OrderAuditFgMqTiDBGen tmpJob) {
     // 已经有成功执行的删除单 不管啥单子 都设置全部完成
-    if (dataStatus.tDeleteCount > 0) {
+    if (jobStatusStatistics.tDeleteCount > 0) {
       return ProcessPendingJobMethod.DoneAll;
     }
     // 为删除单
     if ("D".equals(tmpJob.getOpType())) {
       // 已经成功抛出创建修改单
-      if (dataStatus.getTCreateAndUpdateCount() > 0) {
+      if (jobStatusStatistics.getTCreateAndUpdateCount() > 0) {
         return ProcessPendingJobMethod.ThrowSettle;
       }
       // 没有成功抛出的创建修改单 并且有等待执行失败执行的单子 那就设置全部完成
-      if (dataStatus.getWFCreateAndUpdateCount() > 0) {
+      if (jobStatusStatistics.getWFCreateAndUpdateCount() > 0) {
         return ProcessPendingJobMethod.DoneAll;
       }
       // 没有任何创建修改单子 就不处理（等待其他单子）
@@ -121,65 +150,86 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
   }
 
   // 获取合并后的job 被合并的job 拼为一个对象返回
-  protected WJobMergeItem getWJobMergeItem(
-      List<OrderAuditFgMqTiDBGen> dataJobList) {
-    dataJobList = dataJobList.stream().filter(p -> "W".equals(p.getJobStatus())).collect(Collectors.toList());
+  protected WJobMergeItem getWJobMergeItem(List<OrderAuditFgMqTiDBGen> jobList) {
+    List<OrderAuditFgMqTiDBGen> wJobList =
+        jobList.stream()
+            .filter(p -> "W".equals(p.getJobStatus()))
+            .map(p -> BeanHelper.convert(p, OrderAuditFgMqTiDBGen.class))
+            .collect(Collectors.toList());
     // 如果说没有删除单 取最后一单 如果说有删除单 取最后一个删除单 （优先后面的是因为删除移动少）
-    int selectedJobInd = dataJobList.size() - 1;
-    for (int i = 0; i < dataJobList.size(); i++) {
-      if ("D".equals(dataJobList.get(i).getOpType())) {
+    int selectedJobInd = wJobList.size() - 1;
+    for (int i = 0; i < wJobList.size(); i++) {
+      if ("D".equals(wJobList.get(i).getOpType())) {
         selectedJobInd = i;
       }
     }
-    OrderAuditFgMqTiDBGen mergedJob = dataJobList.remove(selectedJobInd);
-    return new WJobMergeItem(mergedJob, dataJobList);
+    OrderAuditFgMqTiDBGen mergedJob = wJobList.remove(selectedJobInd);
+    return new WJobMergeItem(mergedJob, wJobList);
   }
 
-  protected Set<Long> getDataIdSet(List<OrderAuditFgMqTiDBGen> jobList){
-    Set<Long> dataIdSet = new HashSet<>();
+  protected Set<Identify> getIdentifySet(List<OrderAuditFgMqTiDBGen> jobList) {
+    Set<Identify> identifySet = new HashSet<>();
     for (OrderAuditFgMqTiDBGen job : jobList) {
-        dataIdSet.add(job.getDataId());
+      identifySet.add(new Identify(job.getOrderId(), job.getFgId()));
     }
-    return dataIdSet;
+    return identifySet;
   }
 
-  protected List<OrderAuditFgMqTiDBGen> getAllFollowerJob(List<OrderAuditFgMqTiDBGen> leaderJobList, Map<Long, WJobMergeItem> dataIdWJobMergeItemMap){
-    List<OrderAuditFgMqTiDBGen> allFollowerJobList = new ArrayList<>();
-    for (OrderAuditFgMqTiDBGen leaderJob : leaderJobList) {
-      allFollowerJobList.addAll(dataIdWJobMergeItemMap.get(leaderJob.getDataId()).followers);
-    }
-    return allFollowerJobList;
-  }
-
-  protected void processSuccessJobList(List<OrderAuditFgMqTiDBGen> successJobList, Map<Long, WJobMergeItem> dataIdWJobMergeItemMap)
+  protected void processSuccessJobList(
+      List<OrderAuditFgMqTiDBGen> successJobList,
+      Map<Identify, WJobMergeItem> identifyWJobMergeItemMap,
+      Map<Identify, List<OrderAuditFgMqTiDBGen>> identifyJobListMap)
       throws Exception {
-    successJobList.addAll(getAllFollowerJob(successJobList, dataIdWJobMergeItemMap));
-    for (OrderAuditFgMqTiDBGen tmpJob : successJobList) {
-      tmpJob.setExecCount(tmpJob.getExecCount() + 1);
-      tmpJob.setJobStatus("T");
-    }
-    orderAuditFgMqRepository.batchUpdate(new DalHints(), successJobList);
-  }
-
-
-  protected void processFailJobList(List<OrderAuditFgMqTiDBGen> failJobList, Map<Long, WJobMergeItem> dataIdWJobMergeItemMap)
-          throws Exception {
-    failJobList.addAll(getAllFollowerJob(failJobList, dataIdWJobMergeItemMap));
-    for (OrderAuditFgMqTiDBGen tmpJob : failJobList) {
-      tmpJob.setExecCount(tmpJob.getExecCount() + 1);
-      if (tmpJob.getExecCount() > maxExeCount) {
-        tmpJob.setJobStatus("F");
+    List<OrderAuditFgMqTiDBGen> allSuccessJobList = new ArrayList<>();
+    for (OrderAuditFgMqTiDBGen job : successJobList) {
+      Identify identity = new Identify(job.getOrderId(), job.getFgId());
+      if ("D".equals(job.getOpType())) {
+        // 不会发生取不到的情况
+        List<OrderAuditFgMqTiDBGen> identityJobList = identifyJobListMap.get(identity);
+        allSuccessJobList.addAll(identityJobList);
+      } else {
+        // 不会发生取不到的情况
+        WJobMergeItem wJobMergeItem = identifyWJobMergeItemMap.get(identity);
+        // 主单和副单同生共死
+        allSuccessJobList.add(wJobMergeItem.leader);
+        allSuccessJobList.addAll(wJobMergeItem.followers);
       }
     }
-    orderAuditFgMqRepository.batchUpdate(new DalHints(), failJobList);
+    for (OrderAuditFgMqTiDBGen job : allSuccessJobList) {
+      job.setExecCount(job.getExecCount() + 1);
+      job.setJobStatus("T");
+    }
+    orderAuditFgMqRepository.batchUpdate(new DalHints(), allSuccessJobList);
+  }
+
+  protected void processFailJobList(
+      List<OrderAuditFgMqTiDBGen> failJobList,
+      Map<Identify, WJobMergeItem> identifyWJobMergeItemMap)
+      throws Exception {
+    List<OrderAuditFgMqTiDBGen> allFailJobList = new ArrayList<>();
+    for (OrderAuditFgMqTiDBGen job : failJobList) {
+      Identify identity = new Identify(job.getOrderId(), job.getFgId());
+      // 不会发生取不到的情况
+      WJobMergeItem wJobMergeItem = identifyWJobMergeItemMap.get(identity);
+      // 主单和副单同生共死
+      allFailJobList.add(wJobMergeItem.leader);
+      allFailJobList.addAll(wJobMergeItem.followers);
+    }
+    for (OrderAuditFgMqTiDBGen job : allFailJobList) {
+      job.setExecCount(job.getExecCount() + 1);
+      if(job.getExecCount() > maxExeCount){
+        job.setJobStatus("T");
+      }
+    }
+    orderAuditFgMqRepository.batchUpdate(new DalHints(), allFailJobList);
   }
 
   @Override
   protected List<OrderAuditFgMqTiDBGen> getPending(List<Integer> sliceIndexList)
-          throws SQLException {
+      throws SQLException {
     Integer count = 100; // 后续从qconfig拿
     List<OrderAuditFgMqTiDBGen> orderAuditFgMqTiDBGenList =
-            orderAuditFgMqRepository.getPendingJobs(sliceIndexList, count);
+        orderAuditFgMqRepository.getPendingJobs(sliceIndexList, count);
     return orderAuditFgMqTiDBGenList;
   }
 
@@ -192,23 +242,28 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     // 获取待执行的job列表
     List<OrderAuditFgMqTiDBGen> pendingJobList = getPending(sliceIndexList);
 
-    Set<Long> dataIdSet = getDataIdSet(pendingJobList);
+    Set<Identify> identifySet = getIdentifySet(pendingJobList);
 
-    Map<Long, WJobMergeItem> dataIdWJobMergeItemMap = new HashMap<>();
+    Map<Identify, WJobMergeItem> identifyWJobMergeItemMap = new HashMap<>();
 
-    for (Long dataId : dataIdSet) {
-      Tuple<List<OrderAuditFgMqTiDBGen>, DataStatus> dataAndStatus = getDataAndStatus(dataId);
-      List<OrderAuditFgMqTiDBGen> tmpDataAllJobList = dataAndStatus.getFirst();
-      DataStatus dataStatus = dataAndStatus.getSecond();
-      WJobMergeItem wJobMergeItem = getWJobMergeItem(tmpDataAllJobList);
-      dataIdWJobMergeItemMap.put(dataId, wJobMergeItem);
+    Map<Identify, List<OrderAuditFgMqTiDBGen>> identifyJobListMap = new HashMap<>();
+
+    for (Identify identify : identifySet) {
+      Tuple<JobStatusStatistics, List<OrderAuditFgMqTiDBGen>> jobStatusStatisticsAndJobList =
+          getStatusAndJobList(identify);
+      JobStatusStatistics jobStatusStatistics = jobStatusStatisticsAndJobList.getFirst();
+      List<OrderAuditFgMqTiDBGen> identityJobList = jobStatusStatisticsAndJobList.getSecond();
+      WJobMergeItem wJobMergeItem = getWJobMergeItem(identityJobList);
+      identifyWJobMergeItemMap.put(identify, wJobMergeItem);
+      identifyJobListMap.put(identify, identityJobList);
       OrderAuditFgMqTiDBGen leaderJob = wJobMergeItem.leader;
       // 获取处理方式
-      ProcessPendingJobMethod processMethod = getProcessMethodByDataStatus(dataStatus, leaderJob);
+      ProcessPendingJobMethod processMethod =
+          getProcessMethodByJobStatusStatistics(jobStatusStatistics, leaderJob);
       if (processMethod.equals(ProcessPendingJobMethod.ThrowSettle)) {
         throwSettleList.add(leaderJob);
       } else if (processMethod.equals(ProcessPendingJobMethod.DoneAll)) {
-        setSuccessStatusList.addAll(tmpDataAllJobList);
+        setSuccessStatusList.addAll(identityJobList);
       }
     }
 
@@ -219,10 +274,13 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     List<OrderAuditFgMqTiDBGen> successJobList = new ArrayList<>();
     // 不在失败列表里的为成功的
     List<OrderAuditFgMqTiDBGen> failJobList =
-        throwSettleList.stream().filter(p -> !successJobList.contains(p)).collect(Collectors.toList());
+        throwSettleList.stream()
+            .filter(p -> !successJobList.contains(p))
+            .map(p -> BeanHelper.convert(p, OrderAuditFgMqTiDBGen.class))
+            .collect(Collectors.toList());
     // 处理成功列表
-    processSuccessJobList(successJobList, dataIdWJobMergeItemMap);
+    processSuccessJobList(successJobList, identifyWJobMergeItemMap, identifyJobListMap);
     // 处理失败列表
-    processFailJobList(failJobList, dataIdWJobMergeItemMap);
+    processFailJobList(failJobList, identifyWJobMergeItemMap);
   }
 }

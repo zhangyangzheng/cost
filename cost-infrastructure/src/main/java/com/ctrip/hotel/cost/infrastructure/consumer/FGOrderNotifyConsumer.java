@@ -8,13 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import qunar.tc.qmq.Message;
 
+import java.util.Objects;
+
 @Service
 public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgMqTiDBGen> {
     // 不可变 同一订单号需要在同一分片中
     final int sliceCount = 32;
-
-    // 数据类型 房间id：0 订单id：1
-    final Integer[] dataTypeArr = new Integer[]{0, 1};
 
     // 业务类型 抛结算：0 noshow自动付：1 noshow返佣：2
     final Integer[] businessTypeArr = new Integer[]{0, 1, 2};
@@ -27,17 +26,20 @@ public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgM
     OrderAuditFgMqRepositoryImpl orderAuditFgMqRepository;
 
     @Override
-    protected Integer getSliceIndex(Long data){
-        return (int) (data % sliceCount);
+    protected Integer getSliceIndex(Object... values) {
+        return Objects.hash(values) % sliceCount;
     }
+
     @Override
     protected OrderAuditFgMqTiDBGen convertTo(Message message) throws Exception {
-        Long dataId = Long.parseLong(message.getStringProperty("dataId"));
+        Long orderId = Long.parseLong(message.getStringProperty("orderId"));
+        Integer fgId = Integer.parseInt(message.getStringProperty("fgId"));
         Integer dataType = Integer.parseInt(message.getStringProperty("dataType"));
         Integer businessType = Integer.parseInt(message.getStringProperty("businessType"));
         String opType = message.getStringProperty("opType");
         String referenceId = message.getStringProperty("referenceId");
-        if (dataId == null
+        if (orderId == null
+                || fgId == null
                 || dataType == null
                 || businessType == null
                 || opType == null
@@ -45,18 +47,17 @@ public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgM
             throw new Exception("field can not be null");
         }
         OrderAuditFgMqTiDBGen orderAuditFgMqTiDBGen = new OrderAuditFgMqTiDBGen();
-        orderAuditFgMqTiDBGen.setDataId(dataId);
-        orderAuditFgMqTiDBGen.setDataType(dataType);
+        orderAuditFgMqTiDBGen.setOrderId(orderId);
+        orderAuditFgMqTiDBGen.setFgId(fgId);
         orderAuditFgMqTiDBGen.setBusinessType(businessType);
         orderAuditFgMqTiDBGen.setOpType(opType);
         orderAuditFgMqTiDBGen.setReferenceId(referenceId);
-        orderAuditFgMqTiDBGen.setSliceIndex(getSliceIndex(dataId));
+        orderAuditFgMqTiDBGen.setSliceIndex(getSliceIndex(orderId, fgId));
         return orderAuditFgMqTiDBGen;
     }
     @Override
     protected void legalCheck(OrderAuditFgMqTiDBGen item) throws Exception {
-        if(!(isInLegalArr(item.getDataType(), dataTypeArr) &&
-                isInLegalArr(item.getBusinessType(), businessTypeArr) &&
+        if(!(isInLegalArr(item.getBusinessType(), businessTypeArr) &&
                 isInLegalArr(item.getOpType(), opTypeArr))){
             throw new Exception("params not legal");
         }
