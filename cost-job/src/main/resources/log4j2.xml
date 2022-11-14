@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO" packages="com.ctrip.framework.triplog.shaded.client.appender">
+    <Properties>
+        <!-- 格式化输出：%d表示日期，%thread表示线程名，%m：日志消息，%n是换行符-->
+        <!-- %c{36} 表示 Logger 名字最长36个字符，多出的字符会以省略形式显示，比如：a.b.c.LoggerDemo -->
+        <property name="LOG_PATTERN"
+                  value="[%d{yyyy-MM-dd HH:mm:ss.SSS} %X{QTRACER} %thread %-5p %c{36}: %X{corp}:%X{rtxId} %X{ip}] %m%n"/>
+        <!-- 定义日志存储的路径 -->
+    </Properties>
+    <Appenders>
+        <TripLog4j2Appender name="TripLog"/>
+    </Appenders>
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="TripLog"/>
+        </Root>
+    </Loggers>
+</Configuration>
+
+
