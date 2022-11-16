@@ -5,10 +5,12 @@ import com.dianping.cat.Cat;
 import com.dianping.cat.message.Transaction;
 import com.google.common.base.Stopwatch;
 import hotel.settlement.common.LogHelper;
+import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+@Component
 public class SoaHelper {
   final public <TReq, TRes> TRes callSoa(
       TReq request, Class clientClass, String requestType, Class<TRes> responseClass) {

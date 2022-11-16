@@ -11,6 +11,7 @@ import com.ctrip.soa.hotel.vendor.settlement.v2.SettlementCommonSOAV2Client;
 import com.ctriposs.baiji.rpc.common.types.AckCodeType;
 import hotel.settlement.common.*;
 import hotel.settlement.common.helpers.DefaultValueHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import soa.ctrip.com.hotel.vendor.settlement.v1.SettlementWsClient;
 import soa.ctrip.com.hotel.vendor.settlement.v1.cancelorder.CancelorderRequesttype;
@@ -35,8 +36,7 @@ public class ThrowOrderSoaHelper extends SoaHelper {
       datalist.add(prepaidData);
       prepayRequest.setSettlementPayDataList(datalist);
 
-      SettlementPayDataReceiveResponseType response =
-          callSoa(
+      SettlementPayDataReceiveResponseType response = callSoa(
               prepayRequest,
               SettlementWsClient.class,
               "settlementPayDataReceive",

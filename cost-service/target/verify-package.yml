@@ -1,7 +1,0 @@
---- 
-appid: 100040758(cost-service/cost-service-0.0.1.jar)
-snapshot: !java.util.HashMap
-  jars: 
-    - assembly-common-0.7.65-SNAPSHOT
-    - assembly-dao-0.7.65-SNAPSHOT
-  status: false

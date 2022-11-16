@@ -8,11 +8,13 @@ import hotel.settlement.common.beans.BeanHelper;
 import hotel.settlement.common.tuples.Tuple;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Component
 public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgMqTiDBGen> {
 
   class JobStatusStatistics {
@@ -35,8 +37,6 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     }
   }
 
-
-
   // 合并后的Job对象 同生共死
   class WJobMergeItem {
     // 主单
@@ -49,8 +49,6 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
       this.followers = followers;
     }
   }
-
-
 
   class Identify {
     Long orderId;
@@ -75,13 +73,10 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     }
   }
 
-
-
   final int maxExeCount = 8;
 
   @Autowired OrderAuditFgMqRepositoryImpl orderAuditFgMqRepository;
 
-  // 1：当前job为同一个订单的所有Job  2：最新的当前job 3：当前job为同一个订单的所有Job的执行状态
   protected Tuple<JobStatusStatistics, List<OrderAuditFgMqTiDBGen>> getStatusAndJobList(
       Identify identify) throws Exception {
     List<OrderAuditFgMqTiDBGen> orderAuditFgMqTiDBGenList =
@@ -118,7 +113,6 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     }
     return new Tuple<>(jobStatusStatistics, orderAuditFgMqTiDBGenList);
   }
-
 
   protected ProcessPendingJobMethod getProcessMethodByJobStatusStatistics(
       JobStatusStatistics jobStatusStatistics, OrderAuditFgMqTiDBGen tmpJob) {
@@ -167,14 +161,6 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     return new WJobMergeItem(mergedJob, wJobList);
   }
 
-  protected Set<Identify> getIdentifySet(List<OrderAuditFgMqTiDBGen> jobList) {
-    Set<Identify> identifySet = new HashSet<>();
-    for (OrderAuditFgMqTiDBGen job : jobList) {
-      identifySet.add(new Identify(job.getOrderId(), job.getFgId()));
-    }
-    return identifySet;
-  }
-
   protected void processSuccessJobList(
       List<OrderAuditFgMqTiDBGen> successJobList,
       Map<Identify, WJobMergeItem> identifyWJobMergeItemMap,
@@ -217,20 +203,28 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     }
     for (OrderAuditFgMqTiDBGen job : allFailJobList) {
       job.setExecCount(job.getExecCount() + 1);
-      if(job.getExecCount() > maxExeCount){
-        job.setJobStatus("T");
+      if (job.getExecCount() > maxExeCount) {
+        job.setJobStatus("F");
       }
     }
     orderAuditFgMqRepository.batchUpdate(new DalHints(), allFailJobList);
   }
 
+  protected Set<Identify> getPendingIdentify(List<Integer> sliceIndexList) throws Exception {
+    List<OrderAuditFgMqTiDBGen> pendingJobs = getPending(sliceIndexList);
+    Set<Identify> identifySet =
+        pendingJobs.stream()
+            .map(p -> new Identify(p.getOrderId(), p.getFgId()))
+            .collect(Collectors.toSet());
+    return identifySet;
+  }
+
   @Override
-  protected List<OrderAuditFgMqTiDBGen> getPending(List<Integer> sliceIndexList)
-      throws SQLException {
+  protected List<OrderAuditFgMqTiDBGen> getPending(List<Integer> sliceIndexList) throws Exception {
     Integer count = 100; // 后续从qconfig拿
-    List<OrderAuditFgMqTiDBGen> orderAuditFgMqTiDBGenList =
+    List<OrderAuditFgMqTiDBGen> pendingJobs =
         orderAuditFgMqRepository.getPendingJobs(sliceIndexList, count);
-    return orderAuditFgMqTiDBGenList;
+    return pendingJobs;
   }
 
   @Override
@@ -239,10 +233,8 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     List<OrderAuditFgMqTiDBGen> throwSettleList = new ArrayList<>();
     // 批量设置成功执行状态列表
     List<OrderAuditFgMqTiDBGen> setSuccessStatusList = new ArrayList<>();
-    // 获取待执行的job列表
-    List<OrderAuditFgMqTiDBGen> pendingJobList = getPending(sliceIndexList);
-
-    Set<Identify> identifySet = getIdentifySet(pendingJobList);
+    // 获取待执行的单子标识
+    Set<Identify> identifySet = getPendingIdentify(sliceIndexList);
 
     Map<Identify, WJobMergeItem> identifyWJobMergeItemMap = new HashMap<>();
 

@@ -1,9 +1,6 @@
 package com.ctrip.hotel.cost.domain.consumer;
 
-import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
 import qunar.tc.qmq.Message;
-
-import java.util.Objects;
 
 public abstract class BaseOrderNotifyConsumer<T> {
 

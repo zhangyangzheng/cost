@@ -1,8 +1,7 @@
 package com.ctrip.hotel.cost.infrastructure.repository;
 
-import com.ctrip.hotel.cost.domain.repository.OrderAuditFgMqRepository;
 import com.ctrip.platform.dal.dao.DalHints;
-import hotel.settlement.dao.dal.htlcalculatefeetidb.dao.OrderAuditFgMqTiDBGenDao;
+import hotel.settlement.dao.dal.AbstractDao;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
 import hotel.settlement.dao.util.WhereClauseBuilder;
 import org.springframework.stereotype.Repository;
@@ -12,9 +11,15 @@ import java.sql.Types;
 import java.util.List;
 
 @Repository
-public class OrderAuditFgMqRepositoryImpl extends OrderAuditFgMqTiDBGenDao
-    implements OrderAuditFgMqRepository {
-  OrderAuditFgMqRepositoryImpl() {}
+public class OrderAuditFgMqRepositoryImpl extends AbstractDao<OrderAuditFgMqTiDBGen> {
+
+  public OrderAuditFgMqRepositoryImpl() throws SQLException {
+  }
+
+  @Override
+  public Class<OrderAuditFgMqTiDBGen> getDaoClass() {
+    return OrderAuditFgMqTiDBGen.class;
+  }
 
   private String getSliceIndexStr(List<Integer> sliceIndexList){
     StringBuilder sliceIndexSb = new StringBuilder();
@@ -27,7 +32,6 @@ public class OrderAuditFgMqRepositoryImpl extends OrderAuditFgMqTiDBGenDao
   }
 
   // 获取待执行且在指定分片中的job并依据时间排序
-  @Override
   public List<OrderAuditFgMqTiDBGen> getPendingJobs(List<Integer> sliceIndexList, Integer count) throws SQLException {
     String sliceIndexStr = getSliceIndexStr(sliceIndexList);
     // 实测比直球查询:
@@ -37,14 +41,15 @@ public class OrderAuditFgMqRepositoryImpl extends OrderAuditFgMqTiDBGenDao
     "(SELECT id FROM ORDER_AUDIT_FG_MQ WHERE jobStatus = 'W' ORDER BY datachange_createtime)" +
     "AND sliceIndex IN (%s) LIMIT %d", sliceIndexStr, count);
     // 需要读到最新的
-    return this.query(sql, new DalHints().masterOnly());
+    return client.query(sql, new DalHints().masterOnly());
   }
 
   // 获取指定dataId 执行成功或者待执行的job
-  @Override
   public List<OrderAuditFgMqTiDBGen> getJobsByOrderIdAndFgId(Long orderId, Integer fgId) throws SQLException {
-    String sql = String.format("SELECT * FROM ORDER_AUDIT_FG_MQ WHERE orderId = %d AND fgId = %d", orderId, fgId);
+    WhereClauseBuilder whereClauseBuilder = new WhereClauseBuilder();
+    whereClauseBuilder.equal("orderId", orderId, Types.BIGINT);
+    whereClauseBuilder.equal("fgId", fgId, Types.INTEGER);
     // 需要读到最新的
-    return this.query(sql, new DalHints().masterOnly());
+    return query(whereClauseBuilder, true);
   }
 }

@@ -1,6 +1,9 @@
 package com.ctrip.hotel.cost;
 
+import com.ctrip.hotel.cost.infrastructure.consumer.FGOrderNotifyConsumer;
+import com.ctrip.hotel.cost.infrastructure.helper.GetDetailDataSoaHelper;
 import com.ctrip.hotel.cost.infrastructure.helper.ThrowOrderSoaHelper;
+import com.ctrip.hotel.cost.infrastructure.job.FGNotifySettlementJob;
 import com.ctrip.hotel.cost.infrastructure.model.bo.CancelOrderUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementApplyListUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementCancelListUsedBo;
@@ -15,10 +18,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import soa.ctrip.com.hotel.order.checkin.audit.v2.getOrderAuditRoomData.OrderAuditRoomData;
 import soa.ctrip.com.hotel.vendor.settlement.v1.Hotelorderchannel;
 import soa.ctrip.com.hotel.vendor.settlement.v1.cancelorder.CancelorderRequesttype;
 import soa.ctrip.com.hotel.vendor.settlement.v1.settlementdata.SettlementPayData;
 
+import javax.annotation.Resource;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -30,13 +35,26 @@ public class SpringTest {
 
   @Autowired OrderAuditFgMqRepositoryImpl orderAuditFgMqRepository;
 
-  @Autowired ThrowOrderSoaHelper throwOrderSoaHelper;
+  @Autowired
+  ThrowOrderSoaHelper throwOrderSoaHelper;
+
+  @Autowired
+  GetDetailDataSoaHelper getDetailDataSoaHelper;
+
+  @Autowired
+  FGNotifySettlementJob fgNotifySettlementJob;
 
   @Test
-  public void test() throws SQLException {
+  public void dalTest() throws SQLException {
     List<OrderAuditFgMqTiDBGen> orderAuditFgMqList =
         orderAuditFgMqRepository.getPendingJobs(Arrays.asList(1, 2), 1);
     System.out.println(orderAuditFgMqList);
+  }
+
+  @Test
+  public void getDetailDataTest(){
+    List<OrderAuditRoomData> fgIdRes = getDetailDataSoaHelper.getOrderAuditRoomDataByFgId(Arrays.asList(560039249l));
+    System.out.println(fgIdRes);
   }
 
   @Test
@@ -100,5 +118,15 @@ public class SpringTest {
     SettlementPayData settlementPayData = settlementPayDataUsedBo.convertTo();
     throwOrderSoaHelper.batchCallSettlementPayDataReceive(Arrays.asList(settlementPayDataUsedBo));
     System.out.println(settlementPayData);
+  }
+
+
+  @Test
+  public void jobTest(){
+    try {
+      fgNotifySettlementJob.execute(Arrays.asList(19));
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
   }
 }

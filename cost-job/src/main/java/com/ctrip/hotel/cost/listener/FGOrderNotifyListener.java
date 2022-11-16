@@ -23,10 +23,10 @@ public class FGOrderNotifyListener {
     try {
       fgOrderNotifyConsumer.insertInto(message);
     } catch (Exception e) {
-      LogHelper.logError(
+      LogHelper.logWarn(
           "FGOrderNotifyListener",
           String.format(
-              "insert into order_audit_fg_mq error messageId : %s reason : %s", message.getMessageId(), e.getMessage()));
+              "insert into order_audit_fg_mq fail messageId : %s reason : %s", message.getMessageId(), e.getMessage()));
     }
   }
 }

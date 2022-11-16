@@ -68,6 +68,12 @@
             <groupId>com.ctrip.hotel.settlement</groupId>
             <artifactId>assembly-dao</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.ctrip.soa.hotel.order.checkin.audit.v2</groupId>
+            <artifactId>hotelordercheckinauditv2</artifactId>
+            <version>0.3.5</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 </project>

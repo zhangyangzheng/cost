@@ -1,7 +1,0 @@
-com\ctrip\hotel\cost\web\config\SwaggerConfig.class
-com\ctrip\hotel\cost\web\model\DemoResponse.class
-com\ctrip\hotel\cost\web\model\DemoRequest$DemoRequestBuilder.class
-com\ctrip\hotel\cost\web\CostWebApplication.class
-com\ctrip\hotel\cost\web\model\DemoResponse$DemoResponseBuilder.class
-com\ctrip\hotel\cost\web\model\DemoRequest.class
-com\ctrip\hotel\cost\web\controller\TestDemoController.class
