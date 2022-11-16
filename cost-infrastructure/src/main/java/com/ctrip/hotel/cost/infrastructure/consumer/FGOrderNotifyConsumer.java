@@ -1,7 +1,7 @@
 package com.ctrip.hotel.cost.infrastructure.consumer;
 
 import com.ctrip.hotel.cost.domain.consumer.BaseOrderNotifyConsumer;
-import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepositoryImpl;
+import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepository;
 import com.ctrip.platform.dal.dao.DalHints;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,8 @@ public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgM
   // 操作类型 创建：C 修改：U 删除：D
   final String[] opTypeArr = new String[] {"C", "U", "D"};
 
-  @Autowired OrderAuditFgMqRepositoryImpl orderAuditFgMqRepository;
+  @Autowired
+  OrderAuditFgMqRepository orderAuditFgMqRepository;
 
   @Override
   protected Integer getSliceIndex(Object... values) {

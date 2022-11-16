@@ -1,7 +1,7 @@
 package com.ctrip.hotel.cost.infrastructure.job;
 
 import com.ctrip.hotel.cost.domain.job.BaseNotifySettlementJob;
-import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepositoryImpl;
+import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepository;
 import com.ctrip.platform.dal.dao.DalHints;
 import hotel.settlement.common.ListHelper;
 import hotel.settlement.common.beans.BeanHelper;
@@ -75,7 +75,8 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
 
   final int maxExeCount = 8;
 
-  @Autowired OrderAuditFgMqRepositoryImpl orderAuditFgMqRepository;
+  @Autowired
+  OrderAuditFgMqRepository orderAuditFgMqRepository;
 
   protected Tuple<JobStatusStatistics, List<OrderAuditFgMqTiDBGen>> getStatusAndJobList(
       Identify identify) throws Exception {

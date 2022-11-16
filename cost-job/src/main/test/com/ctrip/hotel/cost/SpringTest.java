@@ -1,6 +1,5 @@
 package com.ctrip.hotel.cost;
 
-import com.ctrip.hotel.cost.infrastructure.consumer.FGOrderNotifyConsumer;
 import com.ctrip.hotel.cost.infrastructure.helper.GetDetailDataSoaHelper;
 import com.ctrip.hotel.cost.infrastructure.helper.ThrowOrderSoaHelper;
 import com.ctrip.hotel.cost.infrastructure.job.FGNotifySettlementJob;
@@ -8,7 +7,7 @@ import com.ctrip.hotel.cost.infrastructure.model.bo.CancelOrderUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementApplyListUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementCancelListUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementPayDataUsedBo;
-import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepositoryImpl;
+import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepository;
 import com.ctrip.hotel.cost.worker.CostJobApplication;
 import com.ctrip.soa.hotel.settlement.api.CancelSettleData;
 import com.ctrip.soa.hotel.settlement.api.SettleDataRequest;
@@ -23,7 +22,6 @@ import soa.ctrip.com.hotel.vendor.settlement.v1.Hotelorderchannel;
 import soa.ctrip.com.hotel.vendor.settlement.v1.cancelorder.CancelorderRequesttype;
 import soa.ctrip.com.hotel.vendor.settlement.v1.settlementdata.SettlementPayData;
 
-import javax.annotation.Resource;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -33,7 +31,8 @@ import java.util.List;
 @SpringBootTest(classes = CostJobApplication.class) // 使用junit4进行测试
 public class SpringTest {
 
-  @Autowired OrderAuditFgMqRepositoryImpl orderAuditFgMqRepository;
+  @Autowired
+  OrderAuditFgMqRepository orderAuditFgMqRepository;
 
   @Autowired
   ThrowOrderSoaHelper throwOrderSoaHelper;

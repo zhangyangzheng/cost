@@ -1,11 +1,8 @@
 package com.ctrip.hotel.cost.listener;
 
 import com.ctrip.hotel.cost.infrastructure.consumer.FGOrderNotifyConsumer;
-import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepositoryImpl;
-import com.ctrip.platform.dal.dao.DalHints;
 import hotel.settlement.common.LogHelper;
 import hotel.settlement.common.json.JsonUtils;
-import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import qunar.tc.qmq.Message;

@@ -11,9 +11,9 @@ import java.sql.Types;
 import java.util.List;
 
 @Repository
-public class OrderAuditFgMqRepositoryImpl extends AbstractDao<OrderAuditFgMqTiDBGen> {
+public class OrderAuditFgMqRepository extends AbstractDao<OrderAuditFgMqTiDBGen> {
 
-  public OrderAuditFgMqRepositoryImpl() throws SQLException {
+  public OrderAuditFgMqRepository() throws SQLException {
   }
 
   @Override
