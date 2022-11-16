@@ -10,7 +10,14 @@ import java.util.List;
  */
 public enum EnumScene {
     AUDIT_ORDER_FG(100,
-            Arrays.asList(CostItemType.BID_PRICE, CostItemType.COST)),
+            Arrays.asList(CostItemType.BID_PRICE_FG,
+                    CostItemType.PROMOTION_SELLING_PRICE_FG,
+                    CostItemType.PROMOTION_COST_PRICE_FG,
+                    CostItemType.ROOM_SELLING_PRICE_FG,
+                    CostItemType.ROOM_COST_PRICE_FG,
+                    CostItemType.AMOUNT_FG,
+                    CostItemType.COST_FG,
+                    CostItemType.ADJUST_COMMISSION_FG)),
     ;
 
     private int code;
