@@ -1,7 +1,5 @@
 package com.ctrip.hotel.cost.infrastructure.model.bo;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import hotel.settlement.common.ListHelper;
 import hotel.settlement.common.beans.BeanHelper;
 import soa.ctrip.com.hotel.vendor.settlement.v1.Hotelorderchannel;
 import soa.ctrip.com.hotel.vendor.settlement.v1.cancelorder.CancelorderRequesttype;
@@ -12,10 +10,8 @@ import java.util.List;
 public class CancelOrderUsedBo {
 
   public static class ToCancelDataUsed {
-    @JsonProperty("outsettlementno")
     public String outsettlementno;
 
-    @JsonProperty("settlementid")
     public Long settlementid;
 
     public String getOutsettlementno() {
@@ -39,16 +35,12 @@ public class CancelOrderUsedBo {
     }
   }
 
-  @JsonProperty("orderchannel")
   public Hotelorderchannel orderchannel;
 
-  @JsonProperty("orderid")
   public String orderid;
 
-  @JsonProperty("fGID")
   public Long fGID;
 
-  @JsonProperty("toCancelDataList")
   public List<ToCancelDataUsed> cancelDataList;
 
   //  @JsonProperty("version")

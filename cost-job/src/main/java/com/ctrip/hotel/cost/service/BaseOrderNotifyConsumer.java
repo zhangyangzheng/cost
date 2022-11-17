@@ -1,4 +1,4 @@
-package com.ctrip.hotel.cost.domain.consumer;
+package com.ctrip.hotel.cost.service;
 
 import qunar.tc.qmq.Message;
 

@@ -1,8 +1,6 @@
-package com.ctrip.hotel.cost.infrastructure.job;
+package com.ctrip.hotel.cost.service;
 
-import com.ctrip.hotel.cost.domain.job.BaseNotifySettlementJob;
 import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepository;
-import com.ctrip.platform.dal.dao.DalHints;
 import hotel.settlement.common.ListHelper;
 import hotel.settlement.common.beans.BeanHelper;
 import hotel.settlement.common.tuples.Tuple;
@@ -141,7 +139,7 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
   protected void updateJobListStatus(List<OrderAuditFgMqTiDBGen> jobList, String jobStatus)
       throws SQLException {
     jobList.stream().forEach(job -> job.setJobStatus(jobStatus));
-    orderAuditFgMqRepository.batchUpdate(new DalHints(), jobList);
+    orderAuditFgMqRepository.batchUpdate(jobList);
   }
 
   // 获取合并后的job 被合并的job 拼为一个对象返回
@@ -186,7 +184,7 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
       job.setExecCount(job.getExecCount() + 1);
       job.setJobStatus("T");
     }
-    orderAuditFgMqRepository.batchUpdate(new DalHints(), allSuccessJobList);
+    orderAuditFgMqRepository.batchUpdate(allSuccessJobList);
   }
 
   protected void processFailJobList(
@@ -208,7 +206,7 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
         job.setJobStatus("F");
       }
     }
-    orderAuditFgMqRepository.batchUpdate(new DalHints(), allFailJobList);
+    orderAuditFgMqRepository.batchUpdate(allFailJobList);
   }
 
   protected Set<Identify> getPendingIdentify(List<Integer> sliceIndexList) throws Exception {

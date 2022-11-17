@@ -1,6 +1,6 @@
 package com.ctrip.hotel.cost.listener;
 
-import com.ctrip.hotel.cost.infrastructure.consumer.FGOrderNotifyConsumer;
+import com.ctrip.hotel.cost.service.FGOrderNotifyConsumer;
 import hotel.settlement.common.LogHelper;
 import hotel.settlement.common.json.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;

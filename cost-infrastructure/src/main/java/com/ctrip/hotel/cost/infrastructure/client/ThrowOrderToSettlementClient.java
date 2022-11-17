@@ -1,7 +1,7 @@
-package com.ctrip.hotel.cost.infrastructure.helper;
+package com.ctrip.hotel.cost.infrastructure.client;
 
 import com.ctrip.framework.foundation.Foundation;
-import com.ctrip.hotel.cost.domain.helper.SoaHelper;
+import com.ctrip.hotel.cost.infrastructure.client.SoaHelper;
 import com.ctrip.hotel.cost.infrastructure.model.bo.CancelOrderUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementApplyListUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementCancelListUsedBo;
@@ -11,7 +11,6 @@ import com.ctrip.soa.hotel.vendor.settlement.v2.SettlementCommonSOAV2Client;
 import com.ctriposs.baiji.rpc.common.types.AckCodeType;
 import hotel.settlement.common.*;
 import hotel.settlement.common.helpers.DefaultValueHelper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import soa.ctrip.com.hotel.vendor.settlement.v1.SettlementWsClient;
 import soa.ctrip.com.hotel.vendor.settlement.v1.cancelorder.CancelorderRequesttype;
@@ -24,7 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class ThrowOrderSoaHelper extends SoaHelper {
+public class ThrowOrderToSettlementClient extends SoaHelper {
 
   // 现付订单抛到前置模块
   protected boolean callSettlementPayDataReceive(SettlementPayDataUsedBo settlementPayDataUsedBo) {

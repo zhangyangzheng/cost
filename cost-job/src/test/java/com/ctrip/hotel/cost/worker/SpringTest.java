@@ -1,14 +1,15 @@
-package com.ctrip.hotel.cost;
+package com.ctrip.hotel.cost.worker;
 
-import com.ctrip.hotel.cost.infrastructure.helper.GetDetailDataSoaHelper;
-import com.ctrip.hotel.cost.infrastructure.helper.ThrowOrderSoaHelper;
-import com.ctrip.hotel.cost.infrastructure.job.FGNotifySettlementJob;
+import com.alibaba.fastjson.JSON;
+import com.ctrip.hotel.cost.CostJobApplication;
+import com.ctrip.hotel.cost.infrastructure.client.OrderInfoDataClient;
+import com.ctrip.hotel.cost.infrastructure.client.ThrowOrderToSettlementClient;
 import com.ctrip.hotel.cost.infrastructure.model.bo.CancelOrderUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementApplyListUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementCancelListUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementPayDataUsedBo;
 import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepository;
-import com.ctrip.hotel.cost.worker.CostJobApplication;
+import com.ctrip.hotel.cost.service.FGNotifySettlementJob;
 import com.ctrip.soa.hotel.settlement.api.CancelSettleData;
 import com.ctrip.soa.hotel.settlement.api.SettleDataRequest;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
@@ -35,10 +36,10 @@ public class SpringTest {
   OrderAuditFgMqRepository orderAuditFgMqRepository;
 
   @Autowired
-  ThrowOrderSoaHelper throwOrderSoaHelper;
+  ThrowOrderToSettlementClient throwOrderToSettlementClient;
 
   @Autowired
-  GetDetailDataSoaHelper getDetailDataSoaHelper;
+  OrderInfoDataClient orderInfoDataClient;
 
   @Autowired
   FGNotifySettlementJob fgNotifySettlementJob;
@@ -47,12 +48,12 @@ public class SpringTest {
   public void dalTest() throws SQLException {
     List<OrderAuditFgMqTiDBGen> orderAuditFgMqList =
         orderAuditFgMqRepository.getPendingJobs(Arrays.asList(1, 2), 1);
-    System.out.println(orderAuditFgMqList);
+    System.out.println(JSON.toJSONString(orderAuditFgMqList));
   }
 
   @Test
   public void getDetailDataTest(){
-    List<OrderAuditRoomData> fgIdRes = getDetailDataSoaHelper.getOrderAuditRoomDataByFgId(Arrays.asList(560039249l));
+    List<OrderAuditRoomData> fgIdRes = orderInfoDataClient.getOrderAuditRoomDataByFgId(Arrays.asList(560039249l));
     System.out.println(fgIdRes);
   }
 
@@ -68,7 +69,7 @@ public class SpringTest {
     cancelOrderUsedBo.setCancelDataList(Arrays.asList(toCancelDataUsed));
     CancelorderRequesttype cancelorderRequesttype = cancelOrderUsedBo.convertTo();
     System.out.println(cancelorderRequesttype);
-    throwOrderSoaHelper.batchCallCancelOrder(Arrays.asList(cancelOrderUsedBo));
+    throwOrderToSettlementClient.batchCallCancelOrder(Arrays.asList(cancelOrderUsedBo));
 
 
 
@@ -92,7 +93,7 @@ public class SpringTest {
 
     SettleDataRequest settleDataRequest = settlementApplyListUsedBo.convertTo();
     System.out.println(settleDataRequest);
-    throwOrderSoaHelper.batchCallSettlementApplyList(Arrays.asList(settlementApplyListUsedBo));
+    throwOrderToSettlementClient.batchCallSettlementApplyList(Arrays.asList(settlementApplyListUsedBo));
 
 
 
@@ -105,7 +106,7 @@ public class SpringTest {
     settlementCancelListUsedBo.setCancelItems(Arrays.asList(cancelDataItemUsed));
     CancelSettleData cancelSettleData = settlementCancelListUsedBo.convertTo();
     System.out.println(cancelSettleData);
-    throwOrderSoaHelper.batchCallSettlementCancelList(Arrays.asList(settlementCancelListUsedBo));
+    throwOrderToSettlementClient.batchCallSettlementCancelList(Arrays.asList(settlementCancelListUsedBo));
 
 
 
@@ -115,7 +116,7 @@ public class SpringTest {
     orderPromotionUsed.setBeginDate(Calendar.getInstance());
     settlementPayDataUsedBo.setOrderPromotionList(Arrays.asList(orderPromotionUsed));
     SettlementPayData settlementPayData = settlementPayDataUsedBo.convertTo();
-    throwOrderSoaHelper.batchCallSettlementPayDataReceive(Arrays.asList(settlementPayDataUsedBo));
+    throwOrderToSettlementClient.batchCallSettlementPayDataReceive(Arrays.asList(settlementPayDataUsedBo));
     System.out.println(settlementPayData);
   }
 

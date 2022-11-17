@@ -1,10 +1,11 @@
 package com.ctrip.hotel.cost.infrastructure.model.bo;
 
-import com.ctrip.soa.hotel.settlement.api.*;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ctrip.soa.hotel.settlement.api.DataItem;
+import com.ctrip.soa.hotel.settlement.api.SettleDataRequest;
+import com.ctrip.soa.hotel.settlement.api.SettlementOptional;
+import com.ctrip.soa.hotel.settlement.api.SettlementPromotionDetail;
 import hotel.settlement.common.beans.BeanHelper;
 
-import javax.xml.bind.annotation.XmlElement;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.List;
@@ -13,13 +14,10 @@ import java.util.List;
 public class SettlementApplyListUsedBo {
 
   public static class DataItemUsed {
-    @JsonProperty("dataKey")
     private String dataKey;
 
-    @JsonProperty("dataValue")
     private String dataValue;
 
-    @JsonProperty("dataDesc")
     private String dataDesc;
 
     public String getDataKey() {
@@ -52,25 +50,18 @@ public class SettlementApplyListUsedBo {
   }
 
   public static class SettlementOptionalUsed {
-    @JsonProperty("OptionalNumber")
     private int optionalNumber;
 
-    @JsonProperty("OptionalName")
     private String optionalName;
 
-    @JsonProperty("PriceAmount")
     private BigDecimal priceAmount;
 
-    @JsonProperty("CostAmount")
     private BigDecimal costAmount;
 
-    @JsonProperty("Quantity")
     private BigDecimal quantity;
 
-    @JsonProperty("PriceType")
     private String priceType;
 
-    @JsonProperty("OptionalType")
     private String optionalType;
 
     public int getOptionalNumber() {
@@ -135,31 +126,22 @@ public class SettlementApplyListUsedBo {
   }
 
   public static class SettlementPromotionDetailUsed {
-    @JsonProperty("BeginDate")
     private Calendar beginDate;
 
-    @JsonProperty("EndDate")
     private Calendar endDate;
 
-    @JsonProperty("PromotionNumber")
     private String promotionNumber;
 
-    @JsonProperty("PromotionName")
     private String promotionName;
 
-    @JsonProperty("PriceAmount")
     private BigDecimal priceAmount;
 
-    @JsonProperty("CostAmount")
     private BigDecimal costAmount;
 
-    @JsonProperty("PromotionVersionID")
     private long promotionVersionID;
 
-    @JsonProperty("Style")
     private int style;
 
-    @JsonProperty("RuleId")
     private long ruleId;
 
     public Calendar getBeginDate() {
@@ -240,73 +222,53 @@ public class SettlementApplyListUsedBo {
   }
 
   // 这个字段原契约对象没有 但是抛的时候需要
-  @JsonProperty("referenceId")
   private String referenceId;
 
-  @JsonProperty("Id")
   private int id;
 
-  @JsonProperty("SettlementId")
   private long settlementId;
 
-  @JsonProperty("OutSettlementNo")
   private String outSettlementNo;
 
-  @JsonProperty("MerchantId")
   private int merchantId;
 
-  @JsonProperty("OrderId")
   private String orderId;
 
-  @JsonProperty("OrderDate")
   private Calendar orderDate;
 
-  @JsonProperty("OrderDesc")
   private String orderDesc;
 
-  @JsonProperty("CollectionType")
   private String collectionType;
 
-  @JsonProperty("SettlementItemName")
   private String settlementItemName;
 
   //    @JsonProperty("SettlementItemDesc")
   //    private String settlementItemDesc;
 
-  @JsonProperty("CompanyID")
   private String companyID;
 
-  @JsonProperty("ProductCode")
   private String productCode;
 
-  @JsonProperty("Currency")
   private String currency;
 
-  @JsonProperty("Quantity")
   private BigDecimal quantity;
 
-  @JsonProperty("SettlementPriceType")
   private String settlementPriceType;
 
-  @JsonProperty("SourceId")
   private String sourceId;
 
-  @JsonProperty("ChannelType")
   private String channelType;
 
-  @JsonProperty("DataItems")
   private List<DataItemUsed> dataItems;
 
   //    @JsonProperty("SourceExtraDatas")
   //    private List<DataItem> sourceExtraDatas;
 
-  @JsonProperty("SettlementOptionalList")
   private List<SettlementOptionalUsed> settlementOptionalList;
 
   //  @JsonProperty("SettlementRoomResourceLists")
   //  private List<SettlementRoomResource> settlementRoomResourceLists;
 
-  @JsonProperty("SettlementPromotionDetailList")
   private List<SettlementPromotionDetailUsed> settlementPromotionDetailList;
 
   public String getReferenceId() {
@@ -471,7 +433,7 @@ public class SettlementApplyListUsedBo {
   }
 
   public SettleDataRequest convertTo() {
-    SettleDataRequest request = BeanHelper.convert(this, SettleDataRequest.class);
+    SettleDataRequest request = BeanHelper.convert(this, SettleDataRequest.class);// todo 反射copy改成值拷贝
     request.setDataItems(BeanHelper.convertToList(dataItems, DataItem.class));
     request.setSettlementOptionalLists(
         BeanHelper.convertToList(settlementOptionalList, SettlementOptional.class));

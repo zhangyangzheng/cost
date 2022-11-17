@@ -2,23 +2,17 @@ package com.ctrip.hotel.cost.infrastructure.model.bo;
 
 import com.ctrip.soa.hotel.settlement.api.CancelDataItem;
 import com.ctrip.soa.hotel.settlement.api.CancelSettleData;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import hotel.settlement.common.ListHelper;
 import hotel.settlement.common.beans.BeanHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SettlementCancelListUsedBo {
 
   public static class CancelDataItemUsed {
-    @JsonProperty("dataKey")
     private String dataKey;
 
-    @JsonProperty("dataValue")
     private String dataValue;
 
-    @JsonProperty("dataDesc")
     private String dataDesc;
 
     public String getDataKey() {
@@ -50,19 +44,14 @@ public class SettlementCancelListUsedBo {
     }
   }
 
-  @JsonProperty("id")
   private Integer id;
 
-  @JsonProperty("settlementId")
   private Long settlementId;
 
-  @JsonProperty("outSettlementNo")
   private String outSettlementNo;
 
-  @JsonProperty("merchantId")
   private Integer merchantId;
 
-  @JsonProperty("cancelItem")
   private List<CancelDataItemUsed> cancelItems;
 
   //  @JsonProperty("RetCode")

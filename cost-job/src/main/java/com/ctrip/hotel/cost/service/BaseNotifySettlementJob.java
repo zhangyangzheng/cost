@@ -1,6 +1,5 @@
-package com.ctrip.hotel.cost.domain.job;
+package com.ctrip.hotel.cost.service;
 
-import java.sql.SQLException;
 import java.util.List;
 
 // 现付预付的job都继承这个抽象类

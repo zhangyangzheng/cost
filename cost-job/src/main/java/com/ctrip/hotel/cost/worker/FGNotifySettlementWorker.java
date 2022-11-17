@@ -1,6 +1,6 @@
 package com.ctrip.hotel.cost.worker;
 
-import com.ctrip.hotel.cost.infrastructure.job.FGNotifySettlementJob;
+import com.ctrip.hotel.cost.service.FGNotifySettlementJob;
 import hotel.settlement.common.LogHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

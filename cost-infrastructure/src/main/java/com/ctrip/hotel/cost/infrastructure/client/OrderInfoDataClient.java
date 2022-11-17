@@ -1,9 +1,8 @@
-package com.ctrip.hotel.cost.infrastructure.helper;
+package com.ctrip.hotel.cost.infrastructure.client;
 
 import com.ctrip.framework.foundation.Foundation;
-import com.ctrip.hotel.cost.domain.helper.SoaHelper;
+import com.ctrip.hotel.cost.infrastructure.client.SoaHelper;
 import com.ctriposs.baiji.rpc.common.types.AckCodeType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import soa.ctrip.com.hotel.order.checkin.audit.v2.OrderAuditV2RegisterClient;
 import soa.ctrip.com.hotel.order.checkin.audit.v2.RequestHeadType;
@@ -16,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class GetDetailDataSoaHelper extends SoaHelper {
+public class OrderInfoDataClient extends SoaHelper {
 
   private RequestHeadType getRequestHead() {
     RequestHeadType requestHead = new RequestHeadType();

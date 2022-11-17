@@ -1,6 +1,5 @@
 package com.ctrip.hotel.cost.infrastructure.model.bo;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import hotel.settlement.common.beans.BeanHelper;
 import soa.ctrip.com.hotel.vendor.settlement.v1.Hotelorderchannel;
 import soa.ctrip.com.hotel.vendor.settlement.v1.Orderpromotion;
@@ -14,22 +13,16 @@ import java.util.List;
 public class SettlementPayDataUsedBo {
 
   public static class OrderPromotionUsed {
-    @JsonProperty("promotionNumber")
     public Integer promotionNumber;
 
-    @JsonProperty("promotionName")
     public String promotionName;
 
-    @JsonProperty("priceAmount")
     public BigDecimal priceAmount;
 
-    @JsonProperty("costAmount")
     public BigDecimal costAmount;
 
-    @JsonProperty("beginDate")
     public Calendar beginDate;
 
-    @JsonProperty("promotionVersionID")
     public Long promotionVersionID;
 
     //    @JsonProperty("style")
@@ -91,97 +84,68 @@ public class SettlementPayDataUsedBo {
     }
   }
 
-  @JsonProperty("outSettlementNo")
   public String outSettlementNo;
 
   //    @JsonProperty("serialNo")
   //    public String serialNo;
 
-  @JsonProperty("orderId")
   public String orderId;
 
-  @JsonProperty("orderchannel")
   public Hotelorderchannel orderchannel;
 
-  @JsonProperty("orderDate")
   public Calendar orderDate;
 
-  @JsonProperty("currency")
   public String currency;
 
-  @JsonProperty("quantity")
   public BigDecimal quantity;
 
-  @JsonProperty("sourceId")
   public String sourceId;
 
-  @JsonProperty("companyId")
   public String companyId;
 
-  @JsonProperty("room")
   public String room;
 
-  @JsonProperty("roomNo")
   public String roomNo;
 
-  @JsonProperty("checkInType")
   public String checkInType;
 
-  @JsonProperty("eta")
   public Calendar eta;
 
-  @JsonProperty("etd")
   public Calendar etd;
 
-  @JsonProperty("commissionType")
   public Integer commissionType;
 
-  @JsonProperty("priceAmount")
   public BigDecimal priceAmount;
 
-  @JsonProperty("costAmount")
   public BigDecimal costAmount;
 
-  @JsonProperty("clientName")
   public String clientName;
 
-  @JsonProperty("remarks")
   public String remarks;
 
-  @JsonProperty("htlConfirmNo")
   public String htlConfirmNo;
 
-  @JsonProperty("roomName")
   public String roomName;
 
-  @JsonProperty("realETD")
   public Calendar realETD;
 
-  @JsonProperty("hotelInfo")
   public String hotelInfo;
 
-  @JsonProperty("guarantee")
   public String guarantee;
 
-  @JsonProperty("guaranteeWay")
   public String guaranteeWay;
 
-  @JsonProperty("newFgId")
   public String newFgId;
 
-  @JsonProperty("isRoomDelay")
   public String isRoomDelay;
 
-  @JsonProperty("recheck")
   public String recheck;
 
-  @JsonProperty("allNeedGuarantee")
   public String allNeedGuarantee;
 
   //    @JsonProperty("pmsStatus")
   //    public String pmsStatus;
 
-  @JsonProperty("vendorChannelId")
   public String vendorChannelId;
 
   //    @JsonProperty("commissionAmount")
@@ -190,28 +154,21 @@ public class SettlementPayDataUsedBo {
   //    @JsonProperty("transBatchDateTime")
   //    public Calendar transBatchDateTime;
 
-  @JsonProperty("modifyOperateType")
   public String modifyOperateType;
 
-  @JsonProperty("modifyOperateSubType")
   public String modifyOperateSubType;
 
   //    @JsonProperty("modifyQuantity")
   //    public BigDecimal modifyQuantity;
 
-  @JsonProperty("modifyOperateEid")
   public String modifyOperateEid;
 
-  @JsonProperty("modifyOperateDateTime")
   public Calendar modifyOperateDateTime;
 
-  @JsonProperty("groupOrderClass")
   public String groupOrderClass;
 
-  @JsonProperty("walletPay")
   public Boolean walletPay;
 
-  @JsonProperty("isLadderDeduct")
   public String isLadderDeduct;
 
   //    @JsonProperty("isCompensationOrder")
@@ -223,28 +180,21 @@ public class SettlementPayDataUsedBo {
   //    @JsonProperty("compensationConfirmed")
   //    public String compensationConfirmed;
 
-  @JsonProperty("bidFlag")
   public String bidFlag;
 
-  @JsonProperty("bidPrice")
   public BigDecimal bidPrice;
 
   //    @JsonProperty("isOverseaVendor")
   //    public String isOverseaVendor;
 
-  @JsonProperty("roomNameEn")
   public String roomNameEn;
 
-  @JsonProperty("isRapidSettlement")
   public String isRapidSettlement;
 
-  @JsonProperty("adjustAmount")
   public BigDecimal adjustAmount;
 
-  @JsonProperty("fgId")
   public Integer fgId;
 
-  @JsonProperty("orderConfirmType")
   public String orderConfirmType;
 
   //    @JsonProperty("adjustAmountType")
@@ -256,13 +206,10 @@ public class SettlementPayDataUsedBo {
   //    @JsonProperty("guaranteeType")
   //    public Integer guaranteeType;
 
-  @JsonProperty("hotelConfirmStatus")
   public Integer hotelConfirmStatus;
 
-  @JsonProperty("hotelID")
   public Integer hotelID;
 
-  @JsonProperty("adjustBatchId")
   public Integer adjustBatchId;
 
   //    @JsonProperty("isPlatformBuyout")
@@ -271,10 +218,8 @@ public class SettlementPayDataUsedBo {
   //    @JsonProperty("isSettlementBuyout")
   //    public Integer isSettlementBuyout;
 
-  @JsonProperty("roomAmount")
   public BigDecimal roomAmount;
 
-  @JsonProperty("roomCost")
   public BigDecimal roomCost;
 
   //    @JsonProperty("roomCurrency")
@@ -304,16 +249,13 @@ public class SettlementPayDataUsedBo {
   //    @JsonProperty("makeInvoiceType")
   //    public Integer makeInvoiceType;
 
-  @JsonProperty("settlementPriceType")
   public String settlementPriceType;
 
   //    @JsonProperty("latestCancelTime")
   //    public Calendar latestCancelTime;
 
-  @JsonProperty("splitOrder")
   public String splitOrder;
 
-  @JsonProperty("settlementid")
   public Long settlementid;
 
   //    @JsonProperty("orgcostAmount")
@@ -325,13 +267,10 @@ public class SettlementPayDataUsedBo {
   //    @JsonProperty("roomresourcelist")
   //    public List<Roomresource> roomresourcelist;
 
-  @JsonProperty("orderPromotionList")
   public List<OrderPromotionUsed> orderPromotionList;
 
-  @JsonProperty("insuranceFlag")
   public Integer insuranceFlag;
 
-  @JsonProperty("uid")
   public String uid;
 
   //    @JsonProperty("allianceID")
@@ -355,7 +294,6 @@ public class SettlementPayDataUsedBo {
   //    @JsonProperty("childrenCost")
   //    public BigDecimal childrenCost;
 
-  @JsonProperty("rmbExchangeRate")
   public BigDecimal rmbExchangeRate;
 
   //    @JsonProperty("orderInvoiceType")
@@ -364,34 +302,24 @@ public class SettlementPayDataUsedBo {
   //    @JsonProperty("orderSource")
   //    public String orderSource;
 
-  @JsonProperty("zeroCommissionAmount")
   public BigDecimal zeroCommissionAmount;
 
-  @JsonProperty("zeroCommissionDeductRate")
   public BigDecimal zeroCommissionDeductRate;
 
-  @JsonProperty("uinonMemberFlag")
   public String uinonMemberFlag;
 
-  @JsonProperty("serviceFeeProportion")
   public BigDecimal serviceFeeProportion;
 
-  @JsonProperty("buyoutDiscountAmount")
   public BigDecimal buyoutDiscountAmount;
 
-  @JsonProperty("rakebackFlag")
   public String rakebackFlag;
 
-  @JsonProperty("rakebackHotelId")
   public String rakebackHotelId;
 
-  @JsonProperty("rakebackRate")
   public BigDecimal rakebackRate;
 
-  @JsonProperty("clientOrderId")
   public String clientOrderId;
 
-  @JsonProperty("tripPromotionAmount")
   public BigDecimal tripPromotionAmount;
 
   //    @JsonProperty("empQrcodeFlag")
@@ -403,10 +331,8 @@ public class SettlementPayDataUsedBo {
   //    @JsonProperty("merchantExtraSubsidyAmount")
   //    public BigDecimal merchantExtraSubsidyAmount;
 
-  @JsonProperty("outTimeDeductType")
   public String outTimeDeductType;
 
-  @JsonProperty("outTimeDeductValue")
   public String outTimeDeductValue;
 
   //    @JsonProperty("recuperationLimitAmount")

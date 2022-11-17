@@ -1,4 +1,4 @@
-package com.ctrip.hotel.cost.domain.helper;
+package com.ctrip.hotel.cost.infrastructure.client;
 
 import com.ctriposs.baiji.rpc.client.ServiceClientBase;
 import com.dianping.cat.Cat;

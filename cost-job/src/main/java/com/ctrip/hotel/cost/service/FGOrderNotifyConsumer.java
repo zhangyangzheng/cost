@@ -1,8 +1,6 @@
-package com.ctrip.hotel.cost.infrastructure.consumer;
+package com.ctrip.hotel.cost.service;
 
-import com.ctrip.hotel.cost.domain.consumer.BaseOrderNotifyConsumer;
 import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepository;
-import com.ctrip.platform.dal.dao.DalHints;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -67,6 +65,6 @@ public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgM
   public void insertInto(Message message) throws Exception {
     OrderAuditFgMqTiDBGen orderAuditFgMqTiDBGen = convertTo(message);
     legalCheck(orderAuditFgMqTiDBGen);
-    orderAuditFgMqRepository.insert(new DalHints(), orderAuditFgMqTiDBGen);
+    orderAuditFgMqRepository.insert(orderAuditFgMqTiDBGen);
   }
 }
