@@ -1,0 +1,17 @@
+### IntelliJ IDEA ###
+.idea
+*.iml
+target/
+
+**/.idea
+**/mvnw
+**/mvnw.cmd
+**/.mvn
+**/target/
+**/.gitignore
+
+### Maven ###
+.mvn/wrapper/maven-wrapper.jar
+
+### Java ###
+*.class
