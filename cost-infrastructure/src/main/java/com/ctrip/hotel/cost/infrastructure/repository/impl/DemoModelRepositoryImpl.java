@@ -1,4 +1,4 @@
-package com.ctrip.hotel.cost.infrastructure.repository;
+package com.ctrip.hotel.cost.infrastructure.repository.impl;
 
 import com.ctrip.hotel.cost.domain.demo.DemoModel;
 import com.ctrip.hotel.cost.domain.demo.DemoModelRepository;

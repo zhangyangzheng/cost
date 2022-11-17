@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>com.ctrip.hotel.settlement</groupId>
 		<artifactId>assembly-super-pom</artifactId>
-		<version>0.7.65-SNAPSHOT</version>
+		<version>0.8.69-SNAPSHOT</version>
 	</parent>
 
 	<modules>
@@ -40,6 +40,21 @@
 				<groupId>org.projectlombok</groupId>
 				<artifactId>lombok</artifactId>
 				<version>${lombok.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.ctrip.soa.hotel.vendor.settlement.v1</groupId>
+				<artifactId>settlementws</artifactId>
+				<version>1.3.92</version>
+			</dependency>
+			<dependency>
+				<groupId>com.ctrip.soa.hotel.settlement.api</groupId>
+				<artifactId>hotel-settlement-api-client</artifactId>
+				<version>1.2.42</version>
+			</dependency>
+			<dependency>
+				<groupId>com.ctrip.soa.hotel.settlement.api</groupId>
+				<artifactId>hotel-settlement-api-client-v2</artifactId>
+				<version>1.2.22</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
