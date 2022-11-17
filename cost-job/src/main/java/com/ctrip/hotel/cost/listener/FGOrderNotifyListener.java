@@ -1,6 +1,6 @@
 package com.ctrip.hotel.cost.listener;
 
-import com.ctrip.hotel.cost.service.FGOrderNotifyConsumer;
+import com.ctrip.hotel.cost.consumer.FGOrderNotifyConsumer;
 import hotel.settlement.common.LogHelper;
 import hotel.settlement.common.json.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class FGOrderNotifyListener {
     try {
       fgOrderNotifyConsumer.insertInto(message);
     } catch (Exception e) {
-      LogHelper.logWarn(
+      LogHelper.logError(
           "FGOrderNotifyListener",
           String.format(
               "insert into order_audit_fg_mq fail messageId : %s reason : %s", message.getMessageId(), e.getMessage()));

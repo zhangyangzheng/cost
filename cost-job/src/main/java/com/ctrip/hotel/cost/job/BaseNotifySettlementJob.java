@@ -1,4 +1,4 @@
-package com.ctrip.hotel.cost.service;
+package com.ctrip.hotel.cost.job;
 
 import java.util.List;
 

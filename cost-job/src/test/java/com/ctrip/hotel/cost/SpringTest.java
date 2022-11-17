@@ -1,7 +1,6 @@
-package com.ctrip.hotel.cost.worker;
+package com.ctrip.hotel.cost;
 
 import com.alibaba.fastjson.JSON;
-import com.ctrip.hotel.cost.CostJobApplication;
 import com.ctrip.hotel.cost.infrastructure.client.OrderInfoDataClient;
 import com.ctrip.hotel.cost.infrastructure.client.ThrowOrderToSettlementClient;
 import com.ctrip.hotel.cost.infrastructure.model.bo.CancelOrderUsedBo;
@@ -9,7 +8,7 @@ import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementApplyListUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementCancelListUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementPayDataUsedBo;
 import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepository;
-import com.ctrip.hotel.cost.service.FGNotifySettlementJob;
+import com.ctrip.hotel.cost.job.FGNotifySettlementJob;
 import com.ctrip.soa.hotel.settlement.api.CancelSettleData;
 import com.ctrip.soa.hotel.settlement.api.SettleDataRequest;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
@@ -29,7 +28,7 @@ import java.util.Calendar;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = CostJobApplication.class) // 使用junit4进行测试
+@SpringBootTest(classes = CostJobApplication.class)
 public class SpringTest {
 
   @Autowired

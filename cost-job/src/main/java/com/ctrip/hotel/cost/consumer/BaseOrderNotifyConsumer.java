@@ -1,4 +1,4 @@
-package com.ctrip.hotel.cost.service;
+package com.ctrip.hotel.cost.consumer;
 
 import qunar.tc.qmq.Message;
 
@@ -19,7 +19,7 @@ public abstract class BaseOrderNotifyConsumer<T> {
 
   protected abstract T convertTo(Message message) throws Exception;
 
-  protected abstract void legalCheck(T item) throws Exception;
+  protected abstract boolean legalCheck(T item) throws Exception;
 
   public abstract void insertInto(Message message) throws Exception;
 }

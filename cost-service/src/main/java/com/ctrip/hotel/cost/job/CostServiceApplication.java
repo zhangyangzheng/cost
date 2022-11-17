@@ -1,4 +1,4 @@
-package com.ctrip.hotel.cost.service;
+package com.ctrip.hotel.cost.job;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

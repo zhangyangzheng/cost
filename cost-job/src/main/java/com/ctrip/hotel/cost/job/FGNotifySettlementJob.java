@@ -1,4 +1,4 @@
-package com.ctrip.hotel.cost.service;
+package com.ctrip.hotel.cost.job;
 
 import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepository;
 import hotel.settlement.common.ListHelper;
