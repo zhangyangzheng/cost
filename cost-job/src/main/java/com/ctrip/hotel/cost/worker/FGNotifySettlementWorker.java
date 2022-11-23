@@ -16,27 +16,30 @@ import java.util.stream.Collectors;
 @Component
 public class FGNotifySettlementWorker {
 
-    static final String SLICE_INDEXES = "sliceIndexes";
-    static final String COMMA = ",";
+  static final String SLICE_INDEXES = "sliceIndexes";
+  static final String COMMA = ",";
 
+  @Autowired FGNotifySettlementJob fgNotifySettlementJob;
 
-    @Autowired
-    FGNotifySettlementJob fgNotifySettlementJob;
-
-    @QSchedule("hotel.settlement.cost.fg.notifySettlement.job")
-    public void doMyWork(Parameter parameter) {
-        int shards = parameter.shards();
-        String sliceIndexes = parameter.getProperty(SLICE_INDEXES, String.class);
-        LogHelper.logInfo("FgNotifySettlementJob", String.format("shards: %d, execute sliceIndexes: %s", shards, sliceIndexes));
-        if (StringUtils.isBlank(sliceIndexes)) {
-            LogHelper.logError(this.getClass().getSimpleName(), "sliceIndexes is blank");
-            return;
-        }
-        List<Integer> shardIdList = Arrays.stream(sliceIndexes.split(COMMA)).map(item -> Integer.valueOf(item)).collect(Collectors.toList());
-        try {
-            fgNotifySettlementJob.execute(shardIdList);
-        } catch (Exception e) {
-            LogHelper.logWarn("FgNotifySettlementJob", e);
-        }
+  @QSchedule("hotel.settlement.cost.fg.notifySettlement.job")
+  public void doMyWork(Parameter parameter) {
+    int shards = parameter.shards();
+    String sliceIndexes = parameter.getProperty(SLICE_INDEXES, String.class);
+    LogHelper.logInfo(
+        "FgNotifySettlementJob",
+        String.format("shards: %d, execute sliceIndexes: %s", shards, sliceIndexes));
+    if (StringUtils.isBlank(sliceIndexes)) {
+      LogHelper.logError(this.getClass().getSimpleName(), "sliceIndexes is blank");
+      return;
     }
+    List<Integer> shardIdList =
+        Arrays.stream(sliceIndexes.split(COMMA))
+            .map(item -> Integer.valueOf(item))
+            .collect(Collectors.toList());
+    try {
+      fgNotifySettlementJob.execute(shardIdList);
+    } catch (Exception e) {
+      LogHelper.logWarn("FgNotifySettlementJob", e);
+    }
+  }
 }

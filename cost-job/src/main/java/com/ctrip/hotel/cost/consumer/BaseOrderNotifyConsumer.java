@@ -2,6 +2,7 @@ package com.ctrip.hotel.cost.consumer;
 
 import qunar.tc.qmq.Message;
 
+// 消费通知消息的消费者的父类（预付现付）
 public abstract class BaseOrderNotifyConsumer<T> {
 
   final protected <A> boolean isInLegalArr(A item, A[] legalArr) {

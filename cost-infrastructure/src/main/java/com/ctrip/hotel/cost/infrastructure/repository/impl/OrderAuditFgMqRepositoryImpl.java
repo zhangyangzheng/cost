@@ -22,12 +22,12 @@ public class OrderAuditFgMqRepositoryImpl implements OrderAuditFgMqRepository {
     OrderAuditFgMqDao orderAuditFgMqDao;
 
     @Override
-    public List<OrderAuditFgMqTiDBGen> getPendingJobs(List<Integer> sliceIndexList, Integer count) throws SQLException {
-        return orderAuditFgMqDao.getPendingJobs(sliceIndexList, count);
+    public List<OrderAuditFgMqTiDBGen> getPendingJobs(List<Integer> sliceIndexList, Integer minBetween, Integer count) throws Exception {
+        return orderAuditFgMqDao.getPendingJobs(sliceIndexList, minBetween, count);
     }
 
     @Override
-    public List<OrderAuditFgMqTiDBGen> getJobsByOrderIdAndFgId(Long orderId, Integer fgId) throws SQLException {
+    public List<OrderAuditFgMqTiDBGen> getJobsByOrderIdAndFgId(Long orderId, Long fgId) throws Exception {
         return orderAuditFgMqDao.getJobsByOrderIdAndFgId(orderId, fgId);
     }
 

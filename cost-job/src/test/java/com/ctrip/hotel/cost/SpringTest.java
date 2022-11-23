@@ -22,7 +22,6 @@ import soa.ctrip.com.hotel.vendor.settlement.v1.Hotelorderchannel;
 import soa.ctrip.com.hotel.vendor.settlement.v1.cancelorder.CancelorderRequesttype;
 import soa.ctrip.com.hotel.vendor.settlement.v1.settlementdata.SettlementPayData;
 
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -44,9 +43,9 @@ public class SpringTest {
   FGNotifySettlementJob fgNotifySettlementJob;
 
   @Test
-  public void dalTest() throws SQLException {
+  public void dalTest() throws Exception {
     List<OrderAuditFgMqTiDBGen> orderAuditFgMqList =
-        orderAuditFgMqRepository.getPendingJobs(Arrays.asList(1, 2), 1);
+        orderAuditFgMqRepository.getPendingJobs(Arrays.asList(1, 2), 30, 1);
     System.out.println(JSON.toJSONString(orderAuditFgMqList));
   }
 

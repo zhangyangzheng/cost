@@ -22,6 +22,9 @@ public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgM
   // 操作类型 创建：C 修改：U 删除：D
   final String[] opTypeArr = new String[] {"C", "U", "D"};
 
+  // 是否抛单 T:抛单 F:不抛
+  final String[] isThrowArr = new String[] {"T", "F"};
+
   @Autowired OrderAuditFgMqRepository orderAuditFgMqRepository;
 
   @Override
@@ -33,16 +36,18 @@ public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgM
   protected OrderAuditFgMqTiDBGen convertTo(Message message) throws Exception {
     try {
       Long orderId = Long.parseLong(message.getStringProperty("orderId"));
-      Integer fgId =
-          Integer.parseInt(Optional.ofNullable(message.getStringProperty("fgId")).orElse("-1"));
+      Long fgId =
+          Long.parseLong(Optional.ofNullable(message.getStringProperty("fgId")).orElse("-1"));
       Integer businessType = Integer.parseInt(message.getStringProperty("businessType"));
       String opType = message.getStringProperty("opType");
+      String isThrow = message.getStringProperty("isThrow");
       String referenceId = message.getStringProperty("referenceId");
       OrderAuditFgMqTiDBGen orderAuditFgMqTiDBGen = new OrderAuditFgMqTiDBGen();
       orderAuditFgMqTiDBGen.setOrderId(orderId);
       orderAuditFgMqTiDBGen.setFgId(fgId);
       orderAuditFgMqTiDBGen.setBusinessType(businessType);
       orderAuditFgMqTiDBGen.setOpType(opType);
+      orderAuditFgMqTiDBGen.setIsThrow(isThrow);
       orderAuditFgMqTiDBGen.setReferenceId(referenceId);
       orderAuditFgMqTiDBGen.setSliceIndex(getSliceIndex(orderId, fgId));
       return orderAuditFgMqTiDBGen;
@@ -57,10 +62,12 @@ public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgM
         && item.getFgId() != null
         && item.getBusinessType() != null
         && item.getOpType() != null
+        && item.getIsThrow() != null
         && item.getReferenceId() != null) {
       // 业务类型 操作类型 OrderId检查
       if (isInLegalArr(item.getBusinessType(), businessTypeArr)
           && isInLegalArr(item.getOpType(), opTypeArr)
+          && isInLegalArr(item.getIsThrow(), isThrowArr)
           && item.getOrderId() > 0) {
         // 如果业务类型不为ns 需要校验fgId是否有效
         if (item.getBusinessType() == 0) {
