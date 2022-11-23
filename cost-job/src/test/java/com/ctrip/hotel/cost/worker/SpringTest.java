@@ -10,7 +10,7 @@ import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementApplyListUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementCancelListUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementPayDataUsedBo;
 import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepository;
-import com.ctrip.hotel.cost.service.FGNotifySettlementJob;
+import com.ctrip.hotel.cost.job.FGNotifySettlementJob;
 import com.ctrip.soa.hotel.settlement.api.CancelSettleData;
 import com.ctrip.soa.hotel.settlement.api.SettleDataRequest;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
@@ -20,8 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import soa.ctrip.com.hotel.order.checkin.audit.v2.getOrderAuditRoomData.OrderAuditRoomData;
-import soa.ctrip.com.hotel.vendor.settlement.v1.Hotelorderchannel;
-import soa.ctrip.com.hotel.vendor.settlement.v1.cancelorder.CancelorderRequesttype;
 import soa.ctrip.com.hotel.vendor.settlement.v1.settlementdata.SettlementPayData;
 
 import java.sql.SQLException;
@@ -46,9 +44,9 @@ public class SpringTest {
   FGNotifySettlementJob fgNotifySettlementJob;
 
   @Test
-  public void dalTest() throws SQLException {
+  public void dalTest() throws Exception {
     List<OrderAuditFgMqTiDBGen> orderAuditFgMqList =
-        orderAuditFgMqRepository.getPendingJobs(Arrays.asList(1, 2), 1);
+            orderAuditFgMqRepository.getPendingJobs(Arrays.asList(1, 2), 30, 1);
     System.out.println(JSON.toJSONString(orderAuditFgMqList));
   }
 

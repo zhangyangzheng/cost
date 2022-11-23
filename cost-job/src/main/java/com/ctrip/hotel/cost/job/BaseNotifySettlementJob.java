@@ -1,8 +1,8 @@
-package com.ctrip.hotel.cost.service;
+package com.ctrip.hotel.cost.job;
 
 import java.util.List;
 
-// 现付预付的job都继承这个抽象类
+// 现付预付的拉取计算并抛结算的job都继承这个抽象类
 public abstract class BaseNotifySettlementJob<T> {
 
     protected enum ProcessPendingJobMethod{
