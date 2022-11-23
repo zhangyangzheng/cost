@@ -13,14 +13,15 @@ import java.util.List;
 @Repository
 public class OrderAuditFgMqDao extends AbstractDao<OrderAuditFgMqTiDBGen> {
 
-  public OrderAuditFgMqDao() throws SQLException {}
+  public OrderAuditFgMqDao() throws SQLException {
+  }
 
   @Override
   public Class<OrderAuditFgMqTiDBGen> getDaoClass() {
     return OrderAuditFgMqTiDBGen.class;
   }
 
-  private String getSliceIndexStr(List<Integer> sliceIndexList) throws Exception {
+  private String getSliceIndexStr(List<Integer> sliceIndexList){
     StringBuilder sliceIndexSb = new StringBuilder();
     String split = "";
     for (Integer sliceIndex : sliceIndexList) {
@@ -31,26 +32,20 @@ public class OrderAuditFgMqDao extends AbstractDao<OrderAuditFgMqTiDBGen> {
   }
 
   // 获取待执行且在指定分片中的job并依据时间排序
-  public List<OrderAuditFgMqTiDBGen> getPendingJobs(List<Integer> sliceIndexList, Integer minBetween, Integer count)
-      throws Exception {
+  public List<OrderAuditFgMqTiDBGen> getPendingJobs(List<Integer> sliceIndexList, Integer count) throws SQLException {
     String sliceIndexStr = getSliceIndexStr(sliceIndexList);
     // 实测比直球查询:
-    // SELECT * FROM ORDER_AUDIT_FG_MQ WHERE jobStatus = 'W' AND sliceIndex IN (1,2,3) ORDER BY
-    // datachange_createtime
+    // SELECT * FROM ORDER_AUDIT_FG_MQ WHERE jobStatus = 'W' AND sliceIndex IN (1,2,3) ORDER BY datachange_createtime
     // 快4～5倍
-    String sql =
-        String.format(
-            "SELECT * FROM ORDER_AUDIT_FG_MQ WHERE id IN"
-                + "(SELECT id FROM ORDER_AUDIT_FG_MQ WHERE jobStatus = 'W' ORDER BY datachange_createtime)"
-                + "AND sliceIndex IN (%s) AND timestampdiff(MINUTE, datachange_lasttime, CURRENT_TIMESTAMP(3)) > %d LIMIT %d",
-            sliceIndexStr, minBetween, count);
+    String sql = String.format("SELECT * FROM ORDER_AUDIT_FG_MQ WHERE id IN" +
+    "(SELECT id FROM ORDER_AUDIT_FG_MQ WHERE jobStatus = 'W' ORDER BY datachange_createtime)" +
+    "AND sliceIndex IN (%s) LIMIT %d", sliceIndexStr, count);
     // 需要读到最新的
     return client.query(sql, new DalHints().masterOnly());
   }
 
   // 获取指定dataId 执行成功或者待执行的job
-  public List<OrderAuditFgMqTiDBGen> getJobsByOrderIdAndFgId(Long orderId, Long fgId)
-      throws Exception {
+  public List<OrderAuditFgMqTiDBGen> getJobsByOrderIdAndFgId(Long orderId, Integer fgId) throws SQLException {
     WhereClauseBuilder whereClauseBuilder = new WhereClauseBuilder();
     whereClauseBuilder.equal("orderId", orderId, Types.BIGINT);
     whereClauseBuilder.equal("fgId", fgId, Types.INTEGER);

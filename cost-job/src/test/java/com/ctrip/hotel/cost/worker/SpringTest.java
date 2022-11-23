@@ -1,14 +1,16 @@
-package com.ctrip.hotel.cost;
+package com.ctrip.hotel.cost.worker;
 
 import com.alibaba.fastjson.JSON;
+import com.ctrip.hotel.cost.CostJobApplication;
+import com.ctrip.hotel.cost.domain.settlement.EnumHotelorderchannel;
 import com.ctrip.hotel.cost.infrastructure.client.OrderInfoDataClient;
-import com.ctrip.hotel.cost.infrastructure.client.ThrowOrderToSettlementClient;
-import com.ctrip.hotel.cost.infrastructure.model.bo.CancelOrderUsedBo;
+import com.ctrip.hotel.cost.infrastructure.client.SettlementClient;
+import com.ctrip.hotel.cost.domain.settlement.CancelOrderUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementApplyListUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementCancelListUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementPayDataUsedBo;
 import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepository;
-import com.ctrip.hotel.cost.job.FGNotifySettlementJob;
+import com.ctrip.hotel.cost.service.FGNotifySettlementJob;
 import com.ctrip.soa.hotel.settlement.api.CancelSettleData;
 import com.ctrip.soa.hotel.settlement.api.SettleDataRequest;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
@@ -22,19 +24,20 @@ import soa.ctrip.com.hotel.vendor.settlement.v1.Hotelorderchannel;
 import soa.ctrip.com.hotel.vendor.settlement.v1.cancelorder.CancelorderRequesttype;
 import soa.ctrip.com.hotel.vendor.settlement.v1.settlementdata.SettlementPayData;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = CostJobApplication.class)
+@SpringBootTest(classes = CostJobApplication.class) // 使用junit4进行测试
 public class SpringTest {
 
   @Autowired
   OrderAuditFgMqRepository orderAuditFgMqRepository;
 
   @Autowired
-  ThrowOrderToSettlementClient throwOrderToSettlementClient;
+  SettlementClient settlementClient;
 
   @Autowired
   OrderInfoDataClient orderInfoDataClient;
@@ -43,9 +46,9 @@ public class SpringTest {
   FGNotifySettlementJob fgNotifySettlementJob;
 
   @Test
-  public void dalTest() throws Exception {
+  public void dalTest() throws SQLException {
     List<OrderAuditFgMqTiDBGen> orderAuditFgMqList =
-        orderAuditFgMqRepository.getPendingJobs(Arrays.asList(1, 2), 30, 1);
+        orderAuditFgMqRepository.getPendingJobs(Arrays.asList(1, 2), 1);
     System.out.println(JSON.toJSONString(orderAuditFgMqList));
   }
 
@@ -59,15 +62,15 @@ public class SpringTest {
   public void throwOrderTest() {
     CancelOrderUsedBo cancelOrderUsedBo = new CancelOrderUsedBo();
     cancelOrderUsedBo.setOrderid("1l");
-    cancelOrderUsedBo.setOrderchannel(Hotelorderchannel.hpp);
+    cancelOrderUsedBo.setOrderchannel(EnumHotelorderchannel.hpp);
     cancelOrderUsedBo.setFGID(1l);
     CancelOrderUsedBo.ToCancelDataUsed toCancelDataUsed = new CancelOrderUsedBo.ToCancelDataUsed();
     toCancelDataUsed.setSettlementid(1l);
     toCancelDataUsed.setOutsettlementno("1111111");
     cancelOrderUsedBo.setCancelDataList(Arrays.asList(toCancelDataUsed));
-    CancelorderRequesttype cancelorderRequesttype = cancelOrderUsedBo.convertTo();
-    System.out.println(cancelorderRequesttype);
-    throwOrderToSettlementClient.batchCallCancelOrder(Arrays.asList(cancelOrderUsedBo));
+//    CancelorderRequesttype cancelorderRequesttype = cancelOrderUsedBo.convertTo();
+//    System.out.println(cancelorderRequesttype);
+//    settlementClient.batchCallCancelOrder(Arrays.asList(cancelOrderUsedBo));
 
 
 
@@ -91,7 +94,7 @@ public class SpringTest {
 
     SettleDataRequest settleDataRequest = settlementApplyListUsedBo.convertTo();
     System.out.println(settleDataRequest);
-    throwOrderToSettlementClient.batchCallSettlementApplyList(Arrays.asList(settlementApplyListUsedBo));
+    settlementClient.batchCallSettlementApplyList(Arrays.asList(settlementApplyListUsedBo));
 
 
 
@@ -104,7 +107,7 @@ public class SpringTest {
     settlementCancelListUsedBo.setCancelItems(Arrays.asList(cancelDataItemUsed));
     CancelSettleData cancelSettleData = settlementCancelListUsedBo.convertTo();
     System.out.println(cancelSettleData);
-    throwOrderToSettlementClient.batchCallSettlementCancelList(Arrays.asList(settlementCancelListUsedBo));
+    settlementClient.batchCallSettlementCancelList(Arrays.asList(settlementCancelListUsedBo));
 
 
 
@@ -114,7 +117,7 @@ public class SpringTest {
     orderPromotionUsed.setBeginDate(Calendar.getInstance());
     settlementPayDataUsedBo.setOrderPromotionList(Arrays.asList(orderPromotionUsed));
     SettlementPayData settlementPayData = settlementPayDataUsedBo.convertTo();
-    throwOrderToSettlementClient.batchCallSettlementPayDataReceive(Arrays.asList(settlementPayDataUsedBo));
+    settlementClient.batchCallSettlementPayDataReceive(Arrays.asList(settlementPayDataUsedBo));
     System.out.println(settlementPayData);
   }
 

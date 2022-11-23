@@ -16,8 +16,8 @@ import soa.ctrip.com.hotel.order.checkin.audit.v2.getOrderAuditRoomData.*;
  * @date 2022-11-02 15:47
  */
 @Mapper(componentModel = "spring")
-public interface OrderAuditRoomDataPoMapper {
-    OrderAuditRoomDataPoMapper INSTANCE = Mappers.getMapper(OrderAuditRoomDataPoMapper.class);
+public interface OrderAuditRoomDataPOMapper {
+    OrderAuditRoomDataPOMapper INSTANCE = Mappers.getMapper(OrderAuditRoomDataPOMapper.class);
 
     BidPriceFgOrderInfo auditOrderToBid(BidOrderInfo bidOrderInfo, AuditRoomBasicInfo roomBasicInfo);
 

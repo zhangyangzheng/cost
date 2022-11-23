@@ -49,6 +49,10 @@
                     <artifactId>spotbugs-annotations</artifactId>
                     <groupId>com.github.spotbugs</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>tomcat-embed-core</artifactId>
+                    <groupId>org.apache.tomcat.embed</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 

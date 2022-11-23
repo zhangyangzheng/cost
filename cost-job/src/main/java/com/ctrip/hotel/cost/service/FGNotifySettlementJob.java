@@ -1,4 +1,4 @@
-package com.ctrip.hotel.cost.job;
+package com.ctrip.hotel.cost.service;
 
 import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepository;
 import hotel.settlement.common.ListHelper;
@@ -8,6 +8,7 @@ import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,9 +50,9 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
 
   class Identify {
     Long orderId;
-    Long fgId;
+    Integer fgId;
 
-    public Identify(Long orderId, Long fgId) {
+    public Identify(Long orderId, Integer fgId) {
       this.orderId = orderId;
       this.fgId = fgId;
     }
@@ -136,7 +137,7 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
   }
 
   protected void updateJobListStatus(List<OrderAuditFgMqTiDBGen> jobList, String jobStatus)
-      throws Exception {
+      throws SQLException {
     jobList.stream().forEach(job -> job.setJobStatus(jobStatus));
     orderAuditFgMqRepository.batchUpdate(jobList);
   }
@@ -219,10 +220,9 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
 
   @Override
   protected List<OrderAuditFgMqTiDBGen> getPending(List<Integer> sliceIndexList) throws Exception {
-    Integer minBetween = 60; // 后续从qconfig拿
     Integer count = 100; // 后续从qconfig拿
     List<OrderAuditFgMqTiDBGen> pendingJobs =
-        orderAuditFgMqRepository.getPendingJobs(sliceIndexList, minBetween, count);
+        orderAuditFgMqRepository.getPendingJobs(sliceIndexList, count);
     return pendingJobs;
   }
 

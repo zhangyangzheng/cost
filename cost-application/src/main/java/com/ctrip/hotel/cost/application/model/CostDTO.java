@@ -1,4 +1,4 @@
-package com.ctrip.hotel.cost.application.fg.request;
+package com.ctrip.hotel.cost.application.model;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.ctrip.hotel.cost.infrastructure.repository;
+package com.ctrip.hotel.cost.infrastructure.repository.impl;
 
 import com.ctrip.hotel.cost.domain.data.DataCenter;
 import com.ctrip.hotel.cost.domain.data.OrderInfoFGRepository;
@@ -10,9 +10,11 @@ import com.ctrip.hotel.cost.domain.element.promotion.PromotionCostPriceFgOrderIn
 import com.ctrip.hotel.cost.domain.element.promotion.PromotionSellingPriceFgOrderInfo;
 import com.ctrip.hotel.cost.domain.element.room.fg.RoomCostPriceFgOrderInfo;
 import com.ctrip.hotel.cost.domain.element.room.fg.RoomSellingPriceFgOrderInfo;
-import com.ctrip.hotel.cost.infrastructure.mapper.OrderAuditRoomDataPoMapper;
+import com.ctrip.hotel.cost.infrastructure.client.OrderInfoDataClient;
+import com.ctrip.hotel.cost.infrastructure.mapper.OrderAuditRoomDataPOMapper;
 import hotel.settlement.common.LogHelper;
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import soa.ctrip.com.hotel.order.checkin.audit.v2.getOrderAuditRoomData.*;
 
@@ -29,7 +31,11 @@ import java.util.stream.Collectors;
 @Repository
 public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
 
+    @Autowired
+    private OrderInfoDataClient orderInfoDataClient;
+
     private List<OrderAuditRoomData> getOrders(List<Long> dataIds) {
+        List<OrderAuditRoomData> auditRoomOrders = orderInfoDataClient.getOrderAuditRoomDataByFgId(dataIds);
         // todo insert table ORDER_INFO_FG, 写入失败捕获异常，不要影响计费主流程，如果失败，可以通过接口日志查询
         return Collections.emptyList();
     }
@@ -94,7 +100,7 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
         return bidOrderInfoList
                 .stream()
                 .filter(bid -> Objects.nonNull(bid) && bid.getBidPayType() != 1) // BidPayType must not null
-                .map(bid -> OrderAuditRoomDataPoMapper.INSTANCE.auditOrderToBid(bid, auditRoomInfo))
+                .map(bid -> OrderAuditRoomDataPOMapper.INSTANCE.auditOrderToBid(bid, auditRoomInfo))
                 .collect(Collectors.toList());
     }
 
@@ -105,7 +111,7 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
         return orderPriceInfoList
                 .stream()
                 .filter(Objects::nonNull)
-                .map(orderPrice -> OrderAuditRoomDataPoMapper.INSTANCE.auditOrderToRoomPrice(orderPrice, auditRoomInfo))
+                .map(orderPrice -> OrderAuditRoomDataPOMapper.INSTANCE.auditOrderToRoomPrice(orderPrice, auditRoomInfo))
                 .collect(Collectors.toList());
     }
 
@@ -116,7 +122,7 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
         return orderPriceInfoList
                 .stream()
                 .filter(Objects::nonNull)
-                .map(orderPrice -> OrderAuditRoomDataPoMapper.INSTANCE.auditOrderToRoomCost(orderPrice, auditRoomInfo))
+                .map(orderPrice -> OrderAuditRoomDataPOMapper.INSTANCE.auditOrderToRoomCost(orderPrice, auditRoomInfo))
                 .collect(Collectors.toList());
     }
 
@@ -127,7 +133,7 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
         return promotionDailyInfoList
                 .stream()
                 .filter(Objects::nonNull)
-                .map(promotion -> OrderAuditRoomDataPoMapper.INSTANCE.auditOrderToPromotion(promotion, auditRoomInfo))
+                .map(promotion -> OrderAuditRoomDataPOMapper.INSTANCE.auditOrderToPromotion(promotion, auditRoomInfo))
                 .collect(Collectors.toList());
     }
 
@@ -138,7 +144,7 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
         return promotionDailyInfoList
                 .stream()
                 .filter(Objects::nonNull)
-                .map(promotion -> OrderAuditRoomDataPoMapper.INSTANCE.auditOrderToPromotionCost(promotion, auditRoomInfo))
+                .map(promotion -> OrderAuditRoomDataPOMapper.INSTANCE.auditOrderToPromotionCost(promotion, auditRoomInfo))
                 .collect(Collectors.toList());
     }
 
@@ -149,7 +155,7 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
                 && auditRoomOtherInfo != null
                 && auditRoomOtherInfo.getAdjustCommission() != null
         ) {
-            return OrderAuditRoomDataPoMapper.INSTANCE.auditOrderToAdjustCommission(auditRoomOtherInfo, hotelBasicInfo);
+            return OrderAuditRoomDataPOMapper.INSTANCE.auditOrderToAdjustCommission(auditRoomOtherInfo, hotelBasicInfo);
         }
         return null;
     }
@@ -161,6 +167,8 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
 
     private Boolean orderCheckFail(OrderAuditRoomData order) {
         return order == null
+                || order.getOrderId() == null
+                || order.getCusOrderId() == null
                 || order.getOrderBasicInfo() == null
                 || order.getOrderBasicInfo().getEta() == null
                 || order.getOrderBasicInfo().getHourRoom() == null

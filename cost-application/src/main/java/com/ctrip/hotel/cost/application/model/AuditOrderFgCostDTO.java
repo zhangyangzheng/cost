@@ -1,5 +1,6 @@
-package com.ctrip.hotel.cost.application.fg.request;
+package com.ctrip.hotel.cost.application.model;
 
+import com.ctrip.hotel.cost.application.model.CostDTO;
 import lombok.Data;
 import org.springframework.util.CollectionUtils;
 
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
  * @date 2022-11-03 0:47
  */
 @Data
-public class AuditOrderFgReqModel implements CostDTO {
+public class AuditOrderFgCostDTO implements CostDTO {
 
     private Integer appSceneCode;
 

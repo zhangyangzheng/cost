@@ -1,6 +1,7 @@
-package com.ctrip.hotel.cost;
+package com.ctrip.hotel.cost.job;
 
 import org.springframework.stereotype.Component;
+import qunar.tc.qschedule.config.QSchedule;
 import qunar.tc.qschedule.config.QScheduleByClass;
 
 /**

@@ -12,9 +12,9 @@ import java.util.List;
  */
 public interface OrderAuditFgMqRepository {
 
-    List<OrderAuditFgMqTiDBGen> getPendingJobs(List<Integer> sliceIndexList, Integer minBetween, Integer count) throws Exception;
+    List<OrderAuditFgMqTiDBGen> getPendingJobs(List<Integer> sliceIndexList, Integer count) throws SQLException;
 
-    List<OrderAuditFgMqTiDBGen> getJobsByOrderIdAndFgId(Long orderId, Long fgId) throws Exception;
+    List<OrderAuditFgMqTiDBGen> getJobsByOrderIdAndFgId(Long orderId, Integer fgId) throws SQLException;
 
     void insert(OrderAuditFgMqTiDBGen orderAuditFgMqTiDBGen) throws SQLException;
 

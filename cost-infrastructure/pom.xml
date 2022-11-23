@@ -73,6 +73,10 @@
                     <artifactId>common-core</artifactId>
                     <groupId>qunar.common</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>tomcat-embed-core</artifactId>
+                    <groupId>org.apache.tomcat.embed</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>

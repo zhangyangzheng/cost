@@ -1,15 +1,15 @@
 package com.ctrip.hotel.cost.infrastructure.client;
 
 import com.ctrip.framework.foundation.Foundation;
-import com.ctrip.hotel.cost.infrastructure.client.SoaHelper;
-import com.ctrip.hotel.cost.infrastructure.model.bo.CancelOrderUsedBo;
+import com.ctrip.hotel.cost.domain.settlement.CancelOrderUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementApplyListUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementCancelListUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementPayDataUsedBo;
 import com.ctrip.soa.hotel.settlement.api.*;
 import com.ctrip.soa.hotel.vendor.settlement.v2.SettlementCommonSOAV2Client;
 import com.ctriposs.baiji.rpc.common.types.AckCodeType;
-import hotel.settlement.common.*;
+import hotel.settlement.common.ListHelper;
+import hotel.settlement.common.LogHelper;
 import hotel.settlement.common.helpers.DefaultValueHelper;
 import org.springframework.stereotype.Component;
 import soa.ctrip.com.hotel.vendor.settlement.v1.SettlementWsClient;
@@ -18,15 +18,16 @@ import soa.ctrip.com.hotel.vendor.settlement.v1.cancelorder.CancelorderResponseT
 import soa.ctrip.com.hotel.vendor.settlement.v1.settlementdata.SettlementPayData;
 import soa.ctrip.com.hotel.vendor.settlement.v1.settlementdata.SettlementPayDataReceiveRequestType;
 import soa.ctrip.com.hotel.vendor.settlement.v1.settlementdata.SettlementPayDataReceiveResponseType;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class ThrowOrderToSettlementClient extends SoaHelper {
+public class SettlementClient extends SoaHelper {
 
   // 现付订单抛到前置模块
-  protected boolean callSettlementPayDataReceive(SettlementPayDataUsedBo settlementPayDataUsedBo) {
+  public boolean callSettlementPayDataReceive(SettlementPayDataUsedBo settlementPayDataUsedBo) {
     boolean result = true;
     try {
       SettlementPayData prepaidData = settlementPayDataUsedBo.convertTo();
@@ -74,7 +75,7 @@ public class ThrowOrderToSettlementClient extends SoaHelper {
 
 
   // 抛结算新增修改流程
-  protected boolean callSettlementApplyList(SettlementApplyListUsedBo settlementApplyListUsedBo){
+  public boolean callSettlementApplyList(SettlementApplyListUsedBo settlementApplyListUsedBo){
     boolean result = true;
     try {
       SettleDataRequest settleDataRequest = settlementApplyListUsedBo.convertTo();
@@ -124,10 +125,9 @@ public class ThrowOrderToSettlementClient extends SoaHelper {
 
 
 
-  protected boolean callCancelOrder(CancelOrderUsedBo cancelOrderUsedBo) {
+  public boolean callCancelOrder(CancelorderRequesttype request) {
     boolean result = true;
     try {
-      CancelorderRequesttype request = cancelOrderUsedBo.convertTo();
 
       CancelorderResponseType response = callSoa(
                       request, SettlementWsClient.class, "cancelorder", CancelorderResponseType.class);
@@ -155,14 +155,14 @@ public class ThrowOrderToSettlementClient extends SoaHelper {
 
 
   // 为了数据比对方便 现在都是假批量 一个一个调的（与原来一致） 后续比对完成会改成真批量
-  public List<Boolean> batchCallCancelOrder(List<CancelOrderUsedBo> cancelOrderUsedBoList){
-    List<Boolean> resList = cancelOrderUsedBoList.stream().map(p -> callCancelOrder(p)).collect(Collectors.toList());
-    return resList;
-  }
+//  public List<Boolean> batchCallCancelOrder(List<CancelOrderUsedBo> cancelOrderUsedBoList){
+//    List<Boolean> resList = cancelOrderUsedBoList.stream().map(p -> callCancelOrder(p)).collect(Collectors.toList());
+//    return resList;
+//  }
 
 
 
-  protected boolean callSettlementCancelList(SettlementCancelListUsedBo settlementCancelListUsedBo) {
+  public boolean callSettlementCancelList(SettlementCancelListUsedBo settlementCancelListUsedBo) {
     boolean result = true;
     try {
       SettlementCancelListRequest requestBody = new SettlementCancelListRequest();
