@@ -1,10 +1,8 @@
 package com.ctrip.hotel.cost.infrastructure.client;
 
 import com.ctrip.framework.foundation.Foundation;
-import com.ctrip.hotel.cost.domain.settlement.CancelOrderUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementApplyListUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementCancelListUsedBo;
-import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementPayDataUsedBo;
 import com.ctrip.soa.hotel.settlement.api.*;
 import com.ctrip.soa.hotel.vendor.settlement.v2.SettlementCommonSOAV2Client;
 import com.ctriposs.baiji.rpc.common.types.AckCodeType;
@@ -27,13 +25,12 @@ import java.util.stream.Collectors;
 public class SettlementClient extends SoaHelper {
 
   // 现付订单抛到前置模块
-  public boolean callSettlementPayDataReceive(SettlementPayDataUsedBo settlementPayDataUsedBo) {
+  public boolean callSettlementPayDataReceive(SettlementPayData settlementPayData) {
     boolean result = true;
     try {
-      SettlementPayData prepaidData = settlementPayDataUsedBo.convertTo();
       SettlementPayDataReceiveRequestType prepayRequest = new SettlementPayDataReceiveRequestType();
       List<SettlementPayData> datalist = new ArrayList<>();
-      datalist.add(prepaidData);
+      datalist.add(settlementPayData);
       prepayRequest.setSettlementPayDataList(datalist);
 
       SettlementPayDataReceiveResponseType response = callSoa(
@@ -65,14 +62,6 @@ public class SettlementClient extends SoaHelper {
     }
     return result;
   }
-
-  // 为了数据比对方便 现在都是假批量 一个一个调的（与原来一致） 后续比对完成会改成真批量
-  public List<Boolean> batchCallSettlementPayDataReceive(List<SettlementPayDataUsedBo> settlementPayDataUsedBoList) {
-    List<Boolean> resList = settlementPayDataUsedBoList.stream().map(p -> callSettlementPayDataReceive(p)).collect(Collectors.toList());
-    return resList;
-  }
-
-
 
   // 抛结算新增修改流程
   public boolean callSettlementApplyList(SettlementApplyListUsedBo settlementApplyListUsedBo){

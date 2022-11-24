@@ -1,100 +1,153 @@
 package com.ctrip.hotel.cost.infrastructure.mapper;
 
 import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
+import com.ctrip.hotel.cost.domain.data.model.PromotionDailyInfo;
 import com.ctrip.hotel.cost.domain.settlement.CancelOrderUsedBo;
-import com.ctrip.hotel.cost.domain.settlement.EnumHotelorderchannel;
+import hotel.settlement.common.helpers.DefaultValueHelper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
-import soa.ctrip.com.hotel.vendor.settlement.v1.Hotelorderchannel;
+import soa.ctrip.com.hotel.vendor.settlement.v1.Orderpromotion;
 import soa.ctrip.com.hotel.vendor.settlement.v1.cancelorder.CancelorderRequesttype;
 import soa.ctrip.com.hotel.vendor.settlement.v1.settlementdata.SettlementPayData;
+
+import java.util.List;
 
 /**
  * @author yangzhengzhang
  * @description
  * @date 2022-11-18 14:56
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", imports = {DefaultValueHelper.class})
 public interface SettlementDataPOMapper {
     SettlementDataPOMapper INSTANCE = Mappers.getMapper(SettlementDataPOMapper.class);
 
     /**
      * 订单取消-->结算
+     *
      * @param cancelOrderUsedBo
      * @return
      */
     CancelorderRequesttype cancelOrderUsedBoToCancelOrderRequestType(CancelOrderUsedBo cancelOrderUsedBo);
 
 
-    Hotelorderchannel enumHotelorderchannelToHotelorderchannel(EnumHotelorderchannel enumHotelorderchannel);
+//    Hotelorderchannel enumHotelorderchannelToHotelorderchannel(EnumHotelorderchannel enumHotelorderchannel);
+
 
     /**
      * 新订单-->前置
-     *
+     * <p>
      * copy from : hotel-settlement-api-service： src/main/java/hotel/settlement/domain/managers/HotelFGSettlementDataApplyManagement.java-->method：convertDataToPrepaidData
-     *
+     * <p>
      * NullValuePropertyMappingStrategy.SET_TO_DEFAULT：
      * 源属性为null，目标属性会被赋予特定的默认值。
      * List被赋予ArrayList，Map被赋予HashMap，数组就是空数组，String是“”，基本类型或包装类是0或false，对象是空的构造方法。
      */
+//    @Mapping(target = "quantity", expression = "java( DefaultValueHelper.getValue(auditOrderInfoBO.getQuantity()) )")// todo 需要计算
+    @Mapping(target = "quantity", defaultValue = "0")// todo 需要计算
+    @Mapping(target = "bidFlag", expression = "java( auditOrderInfoBO.getBidPrice() != null ? new String(\"T\") : null )")
     @Mapping(target = "settlementid", source = "auditOrderInfoBO.settlementCallBackInfo.settlementId")
-    @Mapping(target = "quantity", source = "quantity")// todo 需要计算
-
-//    @Mapping(target = "rmbExchangeRate", source = "exchange")
-
-    @Mapping(target = "clientOrderId", source = "cusOrderId", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-    @Mapping(target = "companyId", source = "auditOrderInfoBO.hotelBasicInfo.hotel", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-    @Mapping(target = "currency", source = "auditOrderInfoBO.orderBasicInfo.currency", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-    @Mapping(target = "orderDate", source = "auditOrderInfoBO.orderBasicInfo.orderDate", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "room", source = "auditOrderInfoBO.orderBasicInfo.room", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "roomNo", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "checkInType", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "clientName", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "htlConfirmNo", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "roomName", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "hotelID", source = "hotel", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "hotelInfo", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "guarantee", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "guaranteeWay", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "newFgId", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "isRoomDelay", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "recheck", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "allNeedGuarantee", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "vendorChannelID", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "modifyOperateType", source = "operateType", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "modifyOperateSubType", source = "subOperateType", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "modifyOperateEid", source = "operator", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "groupOrderClass", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "walletPay", source = "isFlashOrder", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "hotelConfirmStatus", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "orderConfirmType", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "isLadderDeduct", source = "isLadderDeductPolicy", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "adjustAmount", source = "adjustCommission", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "adjustBatchId", source = "settlementBatchID", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "roomAmount", source = "roomAmount", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)// todo
-//    @Mapping(target = "roomCost", source = "roomCost", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)// todo
-//    @Mapping(target = "uid", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "insuranceFlag", source = "insuranceSupportType", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "outTimeDeductType", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "outTimeDeductValue", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "fgId", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-//    @Mapping(target = "remarks", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-    @Mapping(target = "outSettlementNo", expression = "java( new java.lang.String(\"FG-\").concat(auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString()) )")
+    @Mapping(target = "clientOrderId", source = "cusOrderId", defaultValue = "")
+    @Mapping(target = "currency", source = "auditOrderInfoBO.orderBasicInfo.currency", defaultValue = "")
+    @Mapping(target = "orderDate", source = "auditOrderInfoBO.orderBasicInfo.orderDate")
+    @Mapping(target = "vendorChannelId", source = "auditOrderInfoBO.orderBasicInfo.vendorChannelID", defaultValue = "")
+    @Mapping(target = "groupOrderClass", source = "auditOrderInfoBO.orderBasicInfo.groupOrderClass", defaultValue = "")
+    @Mapping(target = "orderConfirmType", source = "auditOrderInfoBO.orderBasicInfo.orderConfirmType", defaultValue = "")
+    @Mapping(target = "isLadderDeduct", source = "auditOrderInfoBO.orderBasicInfo.isLadderDeductPolicy", defaultValue = "")
+    @Mapping(target = "insuranceFlag", expression = "java( DefaultValueHelper.getValue(auditOrderInfoBO.getOrderBasicInfo().getInsuranceSupportType()) )")
+    @Mapping(target = "rmbExchangeRate", expression = "java( DefaultValueHelper.getValue(auditOrderInfoBO.getOrderBasicInfo().getExchange()) )")
+    @Mapping(target = "uid", source = "auditOrderInfoBO.orderBasicInfo.uid", defaultValue = "")
+    // @Mapping(target = "remarks", defaultValue = "")
+    @Mapping(target = "fgId", expression = "java( " +
+            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid() " +
+            ")")
+    @Mapping(target = "outSettlementNo", expression = "java( " +
+            "new String(\"FG-\").concat(auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString()) " +
+            ")")
+    @Mapping(target = "room", expression = "java( " +
+            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getRoom() == null ? new String(\"\") : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getRoom().toString() " +
+            ")")
+    @Mapping(target = "roomNo", expression = "java( " +
+            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getRoomNo() == null ? new String(\"\") : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getRoomNo() " +
+            ")")
+    @Mapping(target = "checkInType", expression = "java( " +
+            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getCheckInType() == null ? new String(\"\") : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getCheckInType() " +
+            ")")
+    @Mapping(target = "clientName", expression = "java( " +
+            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getClientName() == null ? new String(\"\") : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getClientName() " +
+            ")")
+    @Mapping(target = "htlConfirmNo", expression = "java( " +
+            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getHtlConfirmNo() == null ? new String(\"\") : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getHtlConfirmNo() " +
+            ")")
+    @Mapping(target = "roomName", expression = "java( " +
+            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getRoomName() == null ? new String(\"\") : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getRoomName() " +
+            ")")
+    @Mapping(target = "roomNameEn", expression = "java( " +
+            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getRoom() == null ? new String(\"\") : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getRoomNameEN() " +
+            ")")
+    @Mapping(target = "hotelInfo", expression = "java( " +
+            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getHotelInfo() == null ? new String(\"\") : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getRoomName() " +
+            ")")
+    @Mapping(target = "newFgId", expression = "java( " +
+            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getNewFGID() == null ? new String(\"\") : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getNewFGID().toString() " +
+            ")")
+    @Mapping(target = "isRoomDelay", expression = "java( " +
+            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getIsRoomDelay() == null ? new String(\"\") : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getIsRoomDelay() " +
+            ")")
+    @Mapping(target = "recheck", expression = "java( " +
+            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getRecheck() == null ? new String(\"\") : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getRecheck() " +
+            ")")
+    @Mapping(target = "modifyOperateType", expression = "java( " +
+            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getOperateType() == null ? new String(\"\") : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getOperateType() " +
+            ")")
+    @Mapping(target = "modifyOperateSubType", expression = "java( " +
+            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getSubOperateType() == null ? new String(\"\") : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getSubOperateType() " +
+            ")")
+    @Mapping(target = "modifyOperateEid", expression = "java( " +
+            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getOperator() == null ? new String(\"\") : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getOperator() " +
+            ")")
     @Mapping(target = "commissionType", expression = "java( " +
             "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo() != null " +
             "&& auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getAdjustCommissionType() != null " +
             "? auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getAdjustCommissionType() : 0" +
             ")")
-    @Mapping(target = "orderchannel", expression = "java( Hotelorderchannel.hfg )") // todo 写到SettlementPayDataUsedBo init?
-//    @Mapping(target = "sourceId", expression = "java( new java.lang.String(\"6\") )") // todo 写到SettlementPayDataUsedBo init?
-//    @Mapping(target = "modifyOperateDateTime", expression = "java( settlementPayDataUsedBo.getOperateTime() == null ? DateHelper.getCSharpMinDate() : settlementPayDataUsedBo.getOperateTime() )")
-//    @Mapping(target = "bidFlag", expression = "java( settlementPayDataUsedBo.getBidPrice() != null ? new String(\"T\") : null )")
-//    @Mapping(target = "isRapidSettlement", expression = "java( settlementPayDataUsedBo.getOperatMode() == null || !settlementPayDataUsedBo.getOperatMode().equals(\"S\") ? new String(\"F\") : new String(\"T\") )")
-//    @Mapping(target = "roomNameEn", expression = "java( settlementPayDataUsedBo.getRoom() == null ? new String(\"\") : settlementPayDataUsedBo.getRoomNameEn() )")
-//    @Mapping(target = "splitOrder", expression = "java( new String(\"T\") )")
+    @Mapping(target = "hotelConfirmStatus", expression = "java( " +
+            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo() != null " +
+            "&& auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getHotelConfirmStatus() != null " +
+            "? auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getHotelConfirmStatus() : 0" +
+            ")")
+    @Mapping(target = "adjustBatchId", expression = "java( " +
+            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo() != null " +
+            "&& auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getSettlementBatchID() != null " +
+            "? auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getSettlementBatchID().intValue() : 0" +
+            ")")
+    @Mapping(target = "hotelID", source = "auditOrderInfoBO.hotelBasicInfo.hotel", defaultValue = "0")
+    @Mapping(target = "companyId", source = "auditOrderInfoBO.hotelBasicInfo.hotel", defaultValue = "")
+    @Mapping(target = "isRapidSettlement", expression = "java( auditOrderInfoBO.getHotelBasicInfo().getOperatMode() == null || !auditOrderInfoBO.getHotelBasicInfo().getOperatMode().equals(\"S\") ? new String(\"F\") : new String(\"T\") )")
+    @Mapping(target = "guarantee", expression = "java( DefaultValueHelper.getValue(auditOrderInfoBO.getGuaranteeInfo().getGuarantee()) )")
+    @Mapping(target = "guaranteeWay", expression = "java( DefaultValueHelper.getValue(auditOrderInfoBO.getGuaranteeInfo().getGuaranteeWay()) )")
+    @Mapping(target = "allNeedGuarantee", expression = "java( DefaultValueHelper.getValue(auditOrderInfoBO.getGuaranteeInfo().getAllNeedGuarantee()) )")
+    @Mapping(target = "walletPay", expression = "java( DefaultValueHelper.getValue(auditOrderInfoBO.getFlashOrderInfo().getIsFlashOrder()) )")
+    @Mapping(target = "outTimeDeductType", expression = "java( DefaultValueHelper.getValue(auditOrderInfoBO.getOutTimeDeductInfo().getOutTimeDeductType().toString()) )")
+    @Mapping(target = "outTimeDeductValue", expression = "java( auditOrderInfoBO.getOutTimeDeductInfo().getOutTimeDeductValue() == null ? \"\" : auditOrderInfoBO.getOutTimeDeductInfo().getOutTimeDeductValue().toString() )")
+    @Mapping(target = "zeroCommissionDeductRate", expression = "java( DefaultValueHelper.getValue(auditOrderInfoBO.getTechFeeInfo().getZeroCommissionFeeRatio()) )")
+    @Mapping(target = "orderchannel", expression = "java( Hotelorderchannel.hfg )")
+    @Mapping(target = "sourceId", expression = "java( new java.lang.String(\"6\") )")
+    @Mapping(target = "splitOrder", expression = "java( new String(\"T\") )")
     @Mapping(target = "settlementPriceType", expression = "java( new String(\"C\") )")
+    @Mapping(target = "orderpromotionlist", source = "promotionDailyInfoList")
     SettlementPayData newOrderToSettlementPayDataReceive(AuditOrderInfoBO auditOrderInfoBO);
 
+    List<Orderpromotion> promotionConvert(List<PromotionDailyInfo> promotion);
+
+    @Mappings({
+            @Mapping(target = "beginDate", source = "promotionDailyInfo.effectDate"),
+            @Mapping(target = "priceAmount", source = "promotionDailyInfo.amount"),
+            @Mapping(target = "costAmount", source = "promotionDailyInfo.costDiscountAmount"),
+            @Mapping(target = "promotionName", source = "promotionDailyInfo.prepayCampaignName"),
+            @Mapping(target = "promotionNumber", source = "promotionDailyInfo.prepayCampaignID"),
+            @Mapping(target = "promotionVersionID", source = "promotionDailyInfo.prepayCampaignVersionID")
+    })
+    Orderpromotion createPromotion(PromotionDailyInfo promotionDailyInfo);// ruleGroup == 1
 }

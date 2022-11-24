@@ -1,5 +1,6 @@
 package repository;
 
+import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
 import com.ctrip.hotel.cost.domain.settlement.CancelOrderUsedBo;
 
 /**
@@ -9,4 +10,7 @@ import com.ctrip.hotel.cost.domain.settlement.CancelOrderUsedBo;
  */
 public interface SettlementRepository {
     boolean callCancelOrder(CancelOrderUsedBo cancelOrderUsedBo);
+
+    boolean callSettlementPayDataReceive(AuditOrderInfoBO auditOrderInfoBO);
+
 }

@@ -1,8 +1,10 @@
 package com.ctrip.hotel.cost.domain.data.model;
 
 import lombok.Data;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -31,4 +33,20 @@ public class AuditOrderInfoBO {
     private SettlementCallBackInfo settlementCallBackInfo;
 
     private BigDecimal quantity;// 间夜数
+    private BigDecimal adjustAmount;//0
+    private BigDecimal zeroCommissionAmount;//null
+    private BigDecimal priceAmount;//0
+    private BigDecimal costAmount;//0
+    private BigDecimal bidPrice;//null
+    private BigDecimal roomAmount;;//0
+    private BigDecimal roomCost;;//0
+    private BigDecimal tripPromotionAmount;//携程承担促销 0                   ruleGroup != 1  叠加amount
+    private BigDecimal buyoutDiscountAmount;//(促销)买断折扣金额 > 0 ? ~ : null     ruleGroup == 1 && discountDtype == 8 叠加costDiscountAmount
+
+    public List<PromotionDailyInfo> getPromotionDailyInfoList() {
+        if (CollectionUtils.isEmpty(promotionDailyInfoList)) {
+            return Collections.emptyList();
+        }
+        return promotionDailyInfoList;
+    }
 }

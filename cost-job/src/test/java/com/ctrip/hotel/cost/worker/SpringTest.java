@@ -2,13 +2,12 @@ package com.ctrip.hotel.cost.worker;
 
 import com.alibaba.fastjson.JSON;
 import com.ctrip.hotel.cost.CostJobApplication;
+import com.ctrip.hotel.cost.domain.settlement.CancelOrderUsedBo;
 import com.ctrip.hotel.cost.domain.settlement.EnumHotelorderchannel;
 import com.ctrip.hotel.cost.infrastructure.client.OrderInfoDataClient;
 import com.ctrip.hotel.cost.infrastructure.client.SettlementClient;
-import com.ctrip.hotel.cost.domain.settlement.CancelOrderUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementApplyListUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementCancelListUsedBo;
-import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementPayDataUsedBo;
 import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepository;
 import com.ctrip.hotel.cost.job.FGNotifySettlementJob;
 import com.ctrip.soa.hotel.settlement.api.CancelSettleData;
@@ -20,9 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import soa.ctrip.com.hotel.order.checkin.audit.v2.getOrderAuditRoomData.OrderAuditRoomData;
-import soa.ctrip.com.hotel.vendor.settlement.v1.settlementdata.SettlementPayData;
 
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -109,14 +106,14 @@ public class SpringTest {
 
 
 
-    SettlementPayDataUsedBo settlementPayDataUsedBo = new SettlementPayDataUsedBo();
-    settlementPayDataUsedBo.setBidFlag("aaasssddd");
-    SettlementPayDataUsedBo.OrderPromotionUsed orderPromotionUsed = new SettlementPayDataUsedBo.OrderPromotionUsed();
-    orderPromotionUsed.setBeginDate(Calendar.getInstance());
-    settlementPayDataUsedBo.setOrderPromotionList(Arrays.asList(orderPromotionUsed));
-    SettlementPayData settlementPayData = settlementPayDataUsedBo.convertTo();
-    settlementClient.batchCallSettlementPayDataReceive(Arrays.asList(settlementPayDataUsedBo));
-    System.out.println(settlementPayData);
+//    SettlementPayData settlementPayDataUsedBo = new SettlementPayData();
+//    settlementPayDataUsedBo.setBidFlag("aaasssddd");
+//    SettlementPayDataUsedBo.OrderPromotionUsed orderPromotionUsed = new SettlementPayDataUsedBo.OrderPromotionUsed();
+//    orderPromotionUsed.setBeginDate(Calendar.getInstance());
+//    settlementPayDataUsedBo.setOrderPromotionList(Arrays.asList(orderPromotionUsed));
+//    SettlementPayData settlementPayData = settlementPayDataUsedBo.convertTo();
+//    settlementClient.batchCallSettlementPayDataReceive(Arrays.asList(settlementPayDataUsedBo));
+//    System.out.println(settlementPayData);
   }
 
 
