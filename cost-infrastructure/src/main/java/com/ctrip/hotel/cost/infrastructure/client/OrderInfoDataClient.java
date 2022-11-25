@@ -3,6 +3,7 @@ package com.ctrip.hotel.cost.infrastructure.client;
 import com.ctrip.framework.foundation.Foundation;
 import com.ctrip.hotel.cost.infrastructure.client.SoaHelper;
 import com.ctriposs.baiji.rpc.common.types.AckCodeType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import soa.ctrip.com.hotel.order.checkin.audit.v2.OrderAuditV2RegisterClient;
 import soa.ctrip.com.hotel.order.checkin.audit.v2.RequestHeadType;
@@ -15,7 +16,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class OrderInfoDataClient extends SoaHelper {
+public class OrderInfoDataClient {
+
+  @Autowired SoaHelper soaHelper;
 
   private RequestHeadType getRequestHead() {
     RequestHeadType requestHead = new RequestHeadType();
@@ -29,7 +32,8 @@ public class OrderInfoDataClient extends SoaHelper {
     request.setRequestHead(getRequestHead());
     request.setOrderIDList(orderIdList);
     request.setFgidList(fgIdList);
-    GetOrderAuditRoomDataResponseType response = callSoa(
+    GetOrderAuditRoomDataResponseType response =
+        soaHelper.callSoa(
             request,
             OrderAuditV2RegisterClient.class,
             "getOrderAuditRoomData",
@@ -44,7 +48,8 @@ public class OrderInfoDataClient extends SoaHelper {
   }
 
   public List<OrderAuditRoomData> getOrderAuditRoomDataByFgId(List<Long> fgIdList) {
-    List<Integer> IntegerFgIdList = fgIdList.stream().map(p -> (p.intValue())).collect(Collectors.toList());
+    List<Integer> IntegerFgIdList =
+        fgIdList.stream().map(p -> (p.intValue())).collect(Collectors.toList());
     return getOrderAuditRoomData(null, IntegerFgIdList);
   }
 
