@@ -4,6 +4,9 @@ import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
 import com.ctrip.hotel.cost.domain.settlement.CancelOrderUsedBo;
 import com.ctrip.hotel.cost.infrastructure.client.SettlementClient;
 import com.ctrip.hotel.cost.infrastructure.mapper.SettlementDataPOMapper;
+import com.ctrip.hotel.cost.infrastructure.model.dto.CancelOrderDto;
+import com.ctrip.hotel.cost.infrastructure.model.dto.SettlementApplyListDto;
+import com.ctrip.hotel.cost.infrastructure.model.dto.SettlementPayDataReceiveDto;
 import com.ctrip.soa.hotel.settlement.api.DataItem;
 import com.ctrip.soa.hotel.settlement.api.SettleDataRequest;
 import hotel.settlement.common.BigDecimalHelper;
@@ -31,7 +34,9 @@ public class SettlementRepositoryImpl implements SettlementRepository {
     @Override
     public boolean callCancelOrder(CancelOrderUsedBo cancelOrderUsedBo) {
         return settlementClient.callCancelOrder(
-                SettlementDataPOMapper.INSTANCE.cancelOrderUsedBoToCancelOrderRequestType(cancelOrderUsedBo)
+                new CancelOrderDto(SettlementDataPOMapper.INSTANCE.cancelOrderUsedBoToCancelOrderRequestType(cancelOrderUsedBo),
+                        ""// todo set referenceId
+                )
         );
     }
 
@@ -86,7 +91,11 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                 settlementPayData.setTripPromotionAmount(auditOrderInfoBO.getTripPromotionAmount());
             }
         }
-        return settlementClient.callSettlementPayDataReceive(settlementPayData);
+        return settlementClient.callSettlementPayDataReceive(
+                new SettlementPayDataReceiveDto(settlementPayData,
+                        ""// todo set referenceId
+                )
+        );
     }
 
     @Override
@@ -139,6 +148,10 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                 settleDataRequest.getDataItems().add(new DataItem("TripPromotionAmount", auditOrderInfoBO.getTripPromotionAmount().toString(), "TripPromotionAmount"));
             }
         }
-        return settlementClient.callSettlementApplyList(settleDataRequest);
+        return settlementClient.callSettlementApplyList(
+                new SettlementApplyListDto(settleDataRequest,
+                        ""// todo set referenceId
+                )
+        );
     }
 }
