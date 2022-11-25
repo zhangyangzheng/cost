@@ -49,7 +49,7 @@ public class SettlementClient {
       boolean isCall = BooleanUtils.toBoolean(QConfigHelper.getSwitchConfigByKey("FGCostNotifySettle", "F"));
 
       if(!isCall){
-        clientCompareHelper.addComparing(settlementPayDataReceiveDto.getReferenceId(), "settlementPayDataReceive", settlementPayDataReceiveDto.getSettlementPayData(), true);
+        clientCompareHelper.addComparing(settlementPayDataReceiveDto.getReferenceId(), "settlementPayDataReceive", settlementPayDataReceiveDto.getSettlementPayData(), false);
         return true;
       }
 
@@ -106,7 +106,7 @@ public class SettlementClient {
       boolean isCall = BooleanUtils.toBoolean(QConfigHelper.getSwitchConfigByKey("FGCostNotifySettle", "F"));
 
       if(!isCall){
-        clientCompareHelper.addComparing(settlementApplyListDto.getReferenceId(), "settlementApplyList", settlementApplyListDto.getSettleDataRequest(), true);
+        clientCompareHelper.addComparing(settlementApplyListDto.getReferenceId(), "settlementApplyList", settlementApplyListDto.getSettleDataRequest(), false);
         return true;
       }
 
@@ -140,7 +140,7 @@ public class SettlementClient {
       boolean isCall = BooleanUtils.toBoolean(QConfigHelper.getSwitchConfigByKey("FGCostNotifySettle", "F"));
 
       if(!isCall){
-        clientCompareHelper.addComparing(cancelOrderDto.getReferenceId(), "cancelorder", cancelOrderDto.getCancelOrderRequest(), true);
+        clientCompareHelper.addComparing(cancelOrderDto.getReferenceId(), "cancelorder", cancelOrderDto.getCancelOrderRequest(), false);
         return true;
       }
 
@@ -179,7 +179,7 @@ public class SettlementClient {
       boolean isCall = BooleanUtils.toBoolean(QConfigHelper.getSwitchConfigByKey("FGCostNotifySettle", "F"));
 
       if(!isCall){
-        clientCompareHelper.addComparing(settlementCancelListDto.getReferenceId(), "settlementCancelList", settlementCancelListDto.getCancelSettleData(), true);
+        clientCompareHelper.addComparing(settlementCancelListDto.getReferenceId(), "settlementCancelList", settlementCancelListDto.getCancelSettleData(), false);
         return true;
       }
 
