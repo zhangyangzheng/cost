@@ -29,6 +29,7 @@ public class SettlementService {
         return settlementRepository.callCancelOrder(cancelOrderUsedBo);
     }
 
+    // 判断是否走前置模块抛结算，VendorID=253或766或136，云梯(直通车)金额>0，订单确认方式为I,或者orderinfoID>0
     protected boolean isToPreprocess(AuditOrderInfoBO auditOrderInfoBO) {
         boolean result;
         List<String> hotelPreprocessVendorIDllist =

@@ -93,6 +93,8 @@ public class SettlementRepositoryImpl implements SettlementRepository {
     public boolean callSettlementApplyList(AuditOrderInfoBO auditOrderInfoBO) {
         SettleDataRequest settleDataRequest = SettlementDataPOMapper.INSTANCE.newOrderToSettlementApplyList(auditOrderInfoBO);
 
+        // todo copy过来改
+
         // 联合会员逻辑
         String associateMemberOrder = null;
         BigDecimal associateMemberCommissionRatio = null;
@@ -140,5 +142,10 @@ public class SettlementRepositoryImpl implements SettlementRepository {
             }
         }
         return settlementClient.callSettlementApplyList(settleDataRequest);
+    }
+
+    @Override
+    public boolean callSettlementApplyListHWP(AuditOrderInfoBO auditOrderInfoBO) {
+        return false;
     }
 }
