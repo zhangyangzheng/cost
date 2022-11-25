@@ -13,4 +13,6 @@ public interface SettlementRepository {
 
     boolean callSettlementPayDataReceive(AuditOrderInfoBO auditOrderInfoBO);
 
+    boolean callSettlementApplyList(AuditOrderInfoBO auditOrderInfoBO);
+
 }

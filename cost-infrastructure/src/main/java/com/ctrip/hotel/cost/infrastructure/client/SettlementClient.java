@@ -1,7 +1,6 @@
 package com.ctrip.hotel.cost.infrastructure.client;
 
 import com.ctrip.framework.foundation.Foundation;
-import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementApplyListUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementCancelListUsedBo;
 import com.ctrip.soa.hotel.settlement.api.*;
 import com.ctrip.soa.hotel.vendor.settlement.v2.SettlementCommonSOAV2Client;
@@ -64,10 +63,9 @@ public class SettlementClient extends SoaHelper {
   }
 
   // 抛结算新增修改流程
-  public boolean callSettlementApplyList(SettlementApplyListUsedBo settlementApplyListUsedBo){
+  public boolean callSettlementApplyList(SettleDataRequest settleDataRequest){
     boolean result = true;
     try {
-      SettleDataRequest settleDataRequest = settlementApplyListUsedBo.convertTo();
       SettlementApplyListRequestType request = new SettlementApplyListRequestType();
       request.setSettleDatas(new ArrayList<>());
       request.getSettleDatas().add(settleDataRequest);
@@ -78,7 +76,7 @@ public class SettlementClient extends SoaHelper {
       requestHead.setAsyncRequest("false");
       requestHead.setRequestType("Account.Vendor.SettlementWebServiceV2.SettlementApplyListRequest");
       requestHead.setReCallType("Account.Vendor.SettlementStatusWSV2.UpdateStatus");
-      requestHead.setReferenceID(settlementApplyListUsedBo.getReferenceId());
+//      requestHead.setReferenceID(settlementApplyListUsedBo.getReferenceId());
       requestHead.setEnvironment("FWS");
       requestHead.setUserID(Foundation.app().getAppId());
       request.setHeader(requestHead);
@@ -107,10 +105,10 @@ public class SettlementClient extends SoaHelper {
   }
 
   // 为了数据比对方便 现在都是假批量 一个一个调的（与原来一致） 后续比对完成会改成真批量
-  public List<Boolean> batchCallSettlementApplyList(List<SettlementApplyListUsedBo> settlementApplyListUsedBoList){
-    List<Boolean> resList = settlementApplyListUsedBoList.stream().map(p -> callSettlementApplyList(p)).collect(Collectors.toList());
-    return resList;
-  }
+//  public List<Boolean> batchCallSettlementApplyList(List<SettlementApplyListUsedBo> settlementApplyListUsedBoList){
+//    List<Boolean> resList = settlementApplyListUsedBoList.stream().map(p -> callSettlementApplyList(p)).collect(Collectors.toList());
+//    return resList;
+//  }
 
 
 
