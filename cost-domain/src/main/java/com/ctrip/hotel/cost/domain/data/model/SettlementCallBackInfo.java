@@ -10,4 +10,5 @@ import lombok.Data;
 @Data
 public class SettlementCallBackInfo {
     private Long settlementId;
+    private Long orderInfoId;
 }
