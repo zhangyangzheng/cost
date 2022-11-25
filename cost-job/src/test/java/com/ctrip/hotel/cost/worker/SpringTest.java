@@ -2,17 +2,11 @@ package com.ctrip.hotel.cost.worker;
 
 import com.alibaba.fastjson.JSON;
 import com.ctrip.hotel.cost.CostJobApplication;
-import com.ctrip.hotel.cost.domain.settlement.EnumHotelorderchannel;
 import com.ctrip.hotel.cost.infrastructure.client.OrderInfoDataClient;
 import com.ctrip.hotel.cost.infrastructure.client.SettlementClient;
-import com.ctrip.hotel.cost.domain.settlement.CancelOrderUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementApplyListUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementCancelListUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementPayDataUsedBo;
-import com.ctrip.hotel.cost.infrastructure.model.dto.CancelOrderDto;
-import com.ctrip.hotel.cost.infrastructure.model.dto.SettlementApplyListDto;
-import com.ctrip.hotel.cost.infrastructure.model.dto.SettlementCancelListDto;
-import com.ctrip.hotel.cost.infrastructure.model.dto.SettlementPayDataReceiveDto;
 import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepository;
 import com.ctrip.hotel.cost.job.FGNotifySettlementJob;
 import com.ctrip.soa.hotel.settlement.api.CancelSettleData;
@@ -24,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import soa.ctrip.com.hotel.order.checkin.audit.v2.getOrderAuditRoomData.OrderAuditRoomData;
-import soa.ctrip.com.hotel.vendor.settlement.v1.cancelorder.CancelorderRequesttype;
 import soa.ctrip.com.hotel.vendor.settlement.v1.settlementdata.SettlementPayData;
 
 import java.util.Arrays;
@@ -96,7 +89,7 @@ public class SpringTest {
 
     SettleDataRequest settleDataRequest = settlementApplyListUsedBo.convertTo();
     System.out.println(settleDataRequest);
-    settlementClient.callSettlementApplyList(new SettlementApplyListDto(settleDataRequest, "12312"));
+//    settlementClient.callSettlementApplyList(new SettlementApplyListDto(settleDataRequest, "12312"));
 
 
 
@@ -109,7 +102,7 @@ public class SpringTest {
     settlementCancelListUsedBo.setCancelItems(Arrays.asList(cancelDataItemUsed));
     CancelSettleData cancelSettleData = settlementCancelListUsedBo.convertTo();
     System.out.println(cancelSettleData);
-    settlementClient.callSettlementCancelList(new SettlementCancelListDto(cancelSettleData, "5672318tiw"));
+//    settlementClient.callSettlementCancelList(new SettlementCancelListDto(cancelSettleData, "5672318tiw"));
 
 
 
@@ -119,7 +112,7 @@ public class SpringTest {
     orderPromotionUsed.setBeginDate(Calendar.getInstance());
     settlementPayDataUsedBo.setOrderPromotionList(Arrays.asList(orderPromotionUsed));
     SettlementPayData settlementPayData = settlementPayDataUsedBo.convertTo();
-    settlementClient.callSettlementPayDataReceive(new SettlementPayDataReceiveDto(settlementPayData, "123789gujhi"));
+//    settlementClient.callSettlementPayDataReceive(new SettlementPayDataReceiveDto(settlementPayData, "123789gujhi"));
     System.out.println(settlementPayData);
   }
 

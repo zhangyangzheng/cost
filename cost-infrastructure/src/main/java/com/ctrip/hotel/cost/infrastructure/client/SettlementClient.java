@@ -2,7 +2,6 @@ package com.ctrip.hotel.cost.infrastructure.client;
 
 import com.ctrip.framework.foundation.Foundation;
 import com.ctrip.hotel.cost.infrastructure.client.compare.ClientCompareHelper;
-import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementCancelListUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.dto.CancelOrderDto;
 import com.ctrip.hotel.cost.infrastructure.model.dto.SettlementApplyListDto;
 import com.ctrip.hotel.cost.infrastructure.model.dto.SettlementCancelListDto;
@@ -18,7 +17,6 @@ import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import soa.ctrip.com.hotel.vendor.settlement.v1.SettlementWsClient;
-import soa.ctrip.com.hotel.vendor.settlement.v1.cancelorder.CancelorderRequesttype;
 import soa.ctrip.com.hotel.vendor.settlement.v1.cancelorder.CancelorderResponseType;
 import soa.ctrip.com.hotel.vendor.settlement.v1.settlementdata.SettlementPayData;
 import soa.ctrip.com.hotel.vendor.settlement.v1.settlementdata.SettlementPayDataReceiveRequestType;
@@ -132,6 +130,12 @@ public class SettlementClient {
 
     return result;
   }
+
+  // 为了数据比对方便 现在都是假批量 一个一个调的（与原来一致） 后续比对完成会改成真批量
+//  public List<Boolean> batchCallSettlementApplyList(List<SettlementApplyListUsedBo> settlementApplyListUsedBoList){
+//    List<Boolean> resList = settlementApplyListUsedBoList.stream().map(p -> callSettlementApplyList(p)).collect(Collectors.toList());
+//    return resList;
+//  }
 
   public boolean callCancelOrder(CancelOrderDto cancelOrderDto) {
     boolean result = true;
