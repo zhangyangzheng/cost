@@ -1,7 +1,6 @@
 package repository;
 
 import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
-import com.ctrip.hotel.cost.domain.settlement.CancelOrderUsedBo;
 
 /**
  * @author yangzhengzhang
@@ -10,11 +9,28 @@ import com.ctrip.hotel.cost.domain.settlement.CancelOrderUsedBo;
  */
 public interface SettlementRepository {
     /**
-     * 取消单
-     * @param cancelOrderUsedBo
+     * 抛前置取消单
+     * todo 未完工
+     * @param
      * @return
      */
-    boolean callCancelOrder(CancelOrderUsedBo cancelOrderUsedBo);
+    boolean callCancelOrder(AuditOrderInfoBO auditOrderInfoBO);
+
+    /**
+     * normal（601）结算取消
+     * todo 未完工
+     * @param auditOrderInfoBO
+     * @return
+     */
+    boolean callCancelSettlementCancelList(AuditOrderInfoBO auditOrderInfoBO);
+
+    /**
+     * 闪住（606）结算取消
+     * todo 未完工
+     * @param auditOrderInfoBO
+     * @return
+     */
+    boolean callCancelSettlementCancelListHWP(AuditOrderInfoBO auditOrderInfoBO);
 
     /**
      * 抛前置 done

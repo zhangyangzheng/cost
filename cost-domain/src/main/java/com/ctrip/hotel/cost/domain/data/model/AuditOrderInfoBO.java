@@ -14,6 +14,8 @@ import java.util.List;
  */
 @Data
 public class AuditOrderInfoBO {
+    private String opType;
+
     private Long orderId;
     private Long cusOrderId;
     private OrderBasicInfo orderBasicInfo;
@@ -31,6 +33,8 @@ public class AuditOrderInfoBO {
     private OrderNoShowInfo orderNoShowInfo;
 
     private SettlementCallBackInfo settlementCallBackInfo;
+
+    private String remarks;
 
     private BigDecimal quantity;// 间夜数
     private BigDecimal adjustAmount;//0

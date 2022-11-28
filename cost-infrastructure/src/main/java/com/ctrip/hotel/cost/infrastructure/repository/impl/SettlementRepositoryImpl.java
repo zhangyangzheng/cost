@@ -1,10 +1,8 @@
 package com.ctrip.hotel.cost.infrastructure.repository.impl;
 
 import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
-import com.ctrip.hotel.cost.domain.settlement.CancelOrderUsedBo;
 import com.ctrip.hotel.cost.infrastructure.client.SettlementClient;
 import com.ctrip.hotel.cost.infrastructure.mapper.SettlementDataPOMapper;
-import com.ctrip.hotel.cost.infrastructure.model.dto.CancelOrderDto;
 import com.ctrip.hotel.cost.infrastructure.model.dto.SettlementApplyListDto;
 import com.ctrip.hotel.cost.infrastructure.model.dto.SettlementPayDataReceiveDto;
 import com.ctrip.soa.hotel.settlement.api.DataItem;
@@ -31,13 +29,20 @@ public class SettlementRepositoryImpl implements SettlementRepository {
     @Autowired
     private SettlementClient settlementClient;
 
+
     @Override
-    public boolean callCancelOrder(CancelOrderUsedBo cancelOrderUsedBo) {
-        return settlementClient.callCancelOrder(
-                new CancelOrderDto(SettlementDataPOMapper.INSTANCE.cancelOrderUsedBoToCancelOrderRequestType(cancelOrderUsedBo),
-                        ""// todo set referenceId
-                )
-        );
+    public boolean callCancelOrder(AuditOrderInfoBO auditOrderInfoBO) {
+        return false;
+    }
+
+    @Override
+    public boolean callCancelSettlementCancelList(AuditOrderInfoBO auditOrderInfoBO) {
+        return false;
+    }
+
+    @Override
+    public boolean callCancelSettlementCancelListHWP(AuditOrderInfoBO auditOrderInfoBO) {
+        return false;
     }
 
     @Override
