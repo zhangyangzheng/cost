@@ -37,13 +37,20 @@ public class SettlementRepositoryImpl implements SettlementRepository {
     @Autowired
     private SettlementClient settlementClient;
 
+
     @Override
-    public boolean callCancelOrder(CancelOrderUsedBo cancelOrderUsedBo) {
-        return settlementClient.callCancelOrder(
-                new CancelOrderDto(SettlementDataPOMapper.INSTANCE.cancelOrderUsedBoToCancelOrderRequestType(cancelOrderUsedBo),
-                        ""// todo set referenceId
-                )
-        );
+    public boolean callCancelOrder(AuditOrderInfoBO auditOrderInfoBO) {
+        return false;
+    }
+
+    @Override
+    public boolean callCancelSettlementCancelList(AuditOrderInfoBO auditOrderInfoBO) {
+        return false;
+    }
+
+    @Override
+    public boolean callCancelSettlementCancelListHWP(AuditOrderInfoBO auditOrderInfoBO) {
+        return false;
     }
 
     @Override
