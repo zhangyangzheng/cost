@@ -158,7 +158,7 @@ public interface SettlementDataPOMapper {
     @Mapping(target = "merchantId", expression = "java( Integer.valueOf(6) )")
 //    @Mapping(target = "settlementItemName", expression = "java( SettlementItemName.FGHotel.getShowName() )")
     @Mapping(target = "settlementPriceType", expression = "java( new String(\"P\") )")
-    @Mapping(target = "collectionType", expression = "java( new String(\"P\") )")
+    @Mapping(target = "collectionType", expression = "java( new String(\"P\") )") // pushHWP 为 C
     @Mapping(target = "sourceId", expression = "java( new String(\"6\") )")
 //    @Mapping(target = "channelType", expression = "java( ChannelType.FGID.name() )")
 
