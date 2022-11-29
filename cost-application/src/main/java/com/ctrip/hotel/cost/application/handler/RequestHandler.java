@@ -5,18 +5,21 @@ import com.ctrip.hotel.cost.application.model.CostDTO;
 import com.ctrip.hotel.cost.application.model.vo.AuditOrderFgReqDTO;
 import com.ctrip.hotel.cost.application.resolver.FgOrderCostViewResolver;
 import com.ctrip.hotel.cost.application.resolver.ViewResolver;
+import com.ctrip.hotel.cost.domain.common.ThreadLocalCostHolder;
 import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
-import com.ctrip.hotel.cost.domain.data.model.OrderAuditFgMqBO;
 import com.ctrip.hotel.cost.domain.root.CostSupporter;
 import com.ctrip.hotel.cost.domain.scene.EnumScene;
 import com.ctrip.hotel.cost.domain.settlement.EnumOrderOpType;
 import com.ctrip.hotel.cost.domain.settlement.SettlementService;
+import hotel.settlement.common.LogHelper;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -36,32 +39,57 @@ public class RequestHandler implements HandlerApi{
      * @return 【现付审核离店订单】发起计费，返回计费成功的fgId，计费失败的fgId由job发起重试
      */
     @Override
-    public List<Long> auditOrderFg(List<AuditOrderFgReqDTO> request) {
+    public List<String> auditOrderFg(List<AuditOrderFgReqDTO> request) {
         if (CollectionUtils.isEmpty(request)) {
             return Collections.emptyList();
         }
-        List<AuditOrderFgReqDTO> cancelList = request.stream().filter(e -> e.getOrderAuditFgMqBO().getOpType().equals(EnumOrderOpType.CANCEL.getName())).collect(Collectors.toList());
-        List<AuditOrderFgReqDTO> costList = request.stream().filter(e -> !e.getOrderAuditFgMqBO().getOpType().equals(EnumOrderOpType.CANCEL.getName())).collect(Collectors.toList());
+        List<String> successes = new ArrayList<>();
 
-        // 计费+抛单
-        List<Long> costIds = costList.stream().map(e -> e.getOrderAuditFgMqBO().getFgId()).collect(Collectors.toList());
-        List<AuditOrderInfoBO> successOrders = auditOrderFgCollectPrice(costIds);
-        for (AuditOrderInfoBO order: successOrders) {
-            Boolean aBoolean = settlementService.callSettlementForFg(order);
+        try {
+            // set TransThreadLocal
+            ThreadLocalCostHolder.setThreadLocalCostContext("auditOrderFg");
+
+            List<AuditOrderFgReqDTO> cancelList = request.stream().filter(e -> e.getOrderAuditFgMqBO().getOpType().equals(EnumOrderOpType.CANCEL.getName())).collect(Collectors.toList());
+            List<AuditOrderFgReqDTO> costList = request.stream().filter(e -> !e.getOrderAuditFgMqBO().getOpType().equals(EnumOrderOpType.CANCEL.getName())).collect(Collectors.toList());
+            // 计费+抛单
+            List<Long> costIds = costList.stream().map(e -> e.getOrderAuditFgMqBO().getFgId()).collect(Collectors.toList());
+            List<AuditOrderInfoBO> successCostList = auditOrderFgCollectPrice(costIds);
+            Map<String, AuditOrderFgReqDTO> reqCostMap = costList.stream().collect(Collectors.toMap(a -> a.getOrderAuditFgMqBO().getOrderId().toString() + a.getOrderAuditFgMqBO().getFgId().toString(), a -> a, (k1, k2) -> k1));
+            for (AuditOrderInfoBO order: successCostList) {
+                ThreadLocalCostHolder.getTTL().get().getTags().put("orderId", order.getOrderAuditFgMqBO().getOrderId().toString());
+                ThreadLocalCostHolder.getTTL().get().getTags().put("fgId", order.getOrderAuditFgMqBO().getFgId().toString());
+                ThreadLocalCostHolder.getTTL().get().getTags().put("referenceId", order.getOrderAuditFgMqBO().getReferenceId());
+                ThreadLocalCostHolder.getTTL().get().getTags().put("businessType", order.getOrderAuditFgMqBO().getBusinessType().toString());
+
+                order.setOrderAuditFgMqBO(RequestBodyMapper.INSTANCE.fgReqToMqBo(reqCostMap.get(order.getOrderId().toString() + order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString()).getOrderAuditFgMqBO()));
+                order.setSettlementCallBackInfo(RequestBodyMapper.INSTANCE.fgReqToCallBackInfo(reqCostMap.get(order.getOrderId().toString() + order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString()).getSettlementCallBackInfo()));
+                if (settlementService.callSettlementForFg(order)) {
+                    successes.add(order.getOrderAuditFgMqBO().getReferenceId());
+                }
+            }
+
+            // 取消免计费抛单
+            List<Long> cancelIds = cancelList.stream().map(e -> e.getOrderAuditFgMqBO().getFgId()).collect(Collectors.toList());
+            List<AuditOrderInfoBO> cancelBOs = auditOrderFgNoPrice(cancelIds);
+            Map<String, AuditOrderFgReqDTO> reqCancelMap = cancelList.stream().collect(Collectors.toMap(a -> a.getOrderAuditFgMqBO().getOrderId().toString() + a.getOrderAuditFgMqBO().getFgId().toString(), a -> a, (k1, k2) -> k1));
+            for (AuditOrderInfoBO order : cancelBOs) {
+                ThreadLocalCostHolder.getTTL().get().getTags().put("orderId", order.getOrderAuditFgMqBO().getOrderId().toString());
+                ThreadLocalCostHolder.getTTL().get().getTags().put("fgId", order.getOrderAuditFgMqBO().getFgId().toString());
+                ThreadLocalCostHolder.getTTL().get().getTags().put("referenceId", order.getOrderAuditFgMqBO().getReferenceId());
+                ThreadLocalCostHolder.getTTL().get().getTags().put("businessType", order.getOrderAuditFgMqBO().getBusinessType().toString());
+
+                order.setOrderAuditFgMqBO(RequestBodyMapper.INSTANCE.fgReqToMqBo(reqCancelMap.get(order.getOrderId().toString() + order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString()).getOrderAuditFgMqBO()));
+                order.setSettlementCallBackInfo(RequestBodyMapper.INSTANCE.fgReqToCallBackInfo(reqCancelMap.get(order.getOrderId().toString() + order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString()).getSettlementCallBackInfo()));
+                if (settlementService.callCancelForFg(order)) {
+                    successes.add(order.getOrderAuditFgMqBO().getReferenceId());
+                }
+            }
+        } catch (Exception e) {
+            LogHelper.logError(ThreadLocalCostHolder.getTTL().get().getLinkTracing(), e);
+            // clear threadlocal
+            ThreadLocalCostHolder.getTTL().remove();
         }
-
-        // 取消抛单
-        List<Long> cancelIds = cancelList.stream().map(e -> e.getOrderAuditFgMqBO().getFgId()).collect(Collectors.toList());
-        List<AuditOrderInfoBO> auditOrderInfoBOS = auditOrderFgNoPrice(cancelIds);
-        for (AuditOrderFgReqDTO req : cancelList) {
-            AuditOrderInfoBO info = new AuditOrderInfoBO();
-
-            OrderAuditFgMqBO bo = RequestBodyMapper.INSTANCE.fgReqToBo(req);
-            info.setOrderAuditFgMqBO(bo);
-            // todo 填充子表内容 + 取消单也需要查询审核接口数据
-            settlementService.callCancelForFg(info);
-        }
-        return null;
+        return successes;
     }
 
     @Override

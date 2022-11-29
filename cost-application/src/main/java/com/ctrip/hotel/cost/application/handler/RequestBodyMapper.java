@@ -1,7 +1,7 @@
 package com.ctrip.hotel.cost.application.handler;
 
-import com.ctrip.hotel.cost.application.model.vo.AuditOrderFgReqDTO;
 import com.ctrip.hotel.cost.domain.data.model.OrderAuditFgMqBO;
+import com.ctrip.hotel.cost.domain.data.model.SettlementCallBackInfo;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -14,5 +14,6 @@ import org.mapstruct.factory.Mappers;
 public interface RequestBodyMapper {
     RequestBodyMapper INSTANCE = Mappers.getMapper(RequestBodyMapper.class);
 
-    OrderAuditFgMqBO fgReqToBo(AuditOrderFgReqDTO req);
+    OrderAuditFgMqBO fgReqToMqBo(OrderAuditFgMqBO orderAuditFgMqBO);
+    SettlementCallBackInfo fgReqToCallBackInfo(SettlementCallBackInfo settlementCallBackInfo);
 }

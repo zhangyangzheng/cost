@@ -36,7 +36,7 @@ public class AuditOrderInfoBO {
 
     private String remarks;
 
-    private BigDecimal quantity;// 间夜数
+    private BigDecimal quantity;// 间夜数--
     private BigDecimal adjustAmount;//0--
     private BigDecimal zeroCommissionAmount;//null--
     private BigDecimal priceAmount;//0--

@@ -11,7 +11,7 @@ import java.util.List;
  * @date 2022-11-03 1:54
  */
 public interface HandlerApi {
-    List<Long> auditOrderFg(List<AuditOrderFgReqDTO> request);
+    List<String> auditOrderFg(List<AuditOrderFgReqDTO> request);
 
     List<AuditOrderInfoBO> auditOrderFgCollectPrice(List<Long> costIds);
 }
