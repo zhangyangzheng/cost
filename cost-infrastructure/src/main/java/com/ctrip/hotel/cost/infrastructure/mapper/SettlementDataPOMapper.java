@@ -153,7 +153,7 @@ public interface SettlementDataPOMapper {
      * @param auditOrderInfoBO
      * @return
      */
-    @Mapping(target = "quantity", defaultValue = "0")// todo 需要计算
+//    @Mapping(target = "quantity", defaultValue = "0")// todo 需要计算
     @Mapping(target = "id", expression = "java( Integer.valueOf(0) )")
     @Mapping(target = "merchantId", expression = "java( Integer.valueOf(6) )")
 //    @Mapping(target = "settlementItemName", expression = "java( SettlementItemName.FGHotel.getShowName() )")
