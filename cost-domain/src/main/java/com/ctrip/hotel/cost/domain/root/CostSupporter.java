@@ -1,10 +1,14 @@
 package com.ctrip.hotel.cost.domain.root;
 
 import com.ctrip.hotel.cost.domain.data.DataCenter;
+import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
 import com.ctrip.hotel.cost.domain.scene.Scene;
 import com.ctrip.hotel.cost.domain.scene.SceneFactory;
+import hotel.settlement.common.DateHelper;
 import org.apache.commons.collections.CollectionUtils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,9 +43,40 @@ public class CostSupporter {
     }
 
     /**
-     * 返回计费结果
+     * 封装[fg audit order]需要的返回值
      * @return
      */
+    public List<AuditOrderInfoBO> getFgAuditResult() {
+        if (CollectionUtils.isEmpty(costContext.getDataCenters())) {
+            return Collections.emptyList();
+        }
+        return costContext.getDataCenters().stream().filter(DataCenter::getSuccess).map(e -> {
+            e.getAuditOrderInfoBO().setAdjustAmount(e.getAdjustCommission().total());
+            e.getAuditOrderInfoBO().setPriceAmount(e.getPriceAmountFg().total());
+            e.getAuditOrderInfoBO().setCostAmount(e.getPriceCostFg().total());
+            e.getAuditOrderInfoBO().setBidPrice(e.getBid().total());
+            e.getAuditOrderInfoBO().setRoomAmount(e.getRoomSelling().total());
+            e.getAuditOrderInfoBO().setRoomCost(e.getRoomCost().total());
+            e.getAuditOrderInfoBO().setZeroCommissionAmount(e.getZeroCommissionFee().total());
+            e.getAuditOrderInfoBO().setTripPromotionAmount(null);// todo
+            e.getAuditOrderInfoBO().setBuyoutDiscountAmount(null);// todo
+            e.getAuditOrderInfoBO().setQuantity(
+                    BigDecimal.valueOf(
+                            DateHelper.getDiffDays(
+                                    e.getAuditOrderInfoBO().getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getRealETD(),
+                                    e.getAuditOrderInfoBO().getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getEta())
+                    ).add(
+                            (
+                                    e.getAuditOrderInfoBO().getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getHourAdjuest() == null
+                                    ? BigDecimal.ZERO
+                                    : BigDecimal.valueOf(e.getAuditOrderInfoBO().getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getHourAdjuest())
+                            ).divide(new BigDecimal("24"), 4, RoundingMode.HALF_UP)
+                        )
+                    );
+            return e.getAuditOrderInfoBO();
+        }).collect(Collectors.toList());
+    }
+
     public List<Long> getCostSuccessData() {
         if (CollectionUtils.isEmpty(costContext.getDataCenters())) {
             return Collections.emptyList();

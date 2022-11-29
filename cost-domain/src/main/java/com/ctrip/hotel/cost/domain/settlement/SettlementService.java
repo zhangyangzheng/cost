@@ -21,31 +21,20 @@ public class SettlementService {
     @Autowired
     private SettlementRepository settlementRepository;
 
-    public Boolean callCancelOrderFg(Long orderId, Long fgId) {
-//        if () {
-//
-//        }
-//
-//
-//        CancelOrderUsedBo cancelOrderUsedBo = new CancelOrderUsedBo();
-//        cancelOrderUsedBo.setOrderchannel(EnumHotelorderchannel.hfg);
-//        cancelOrderUsedBo.setOrderid(String.valueOf(orderId));
-//        cancelOrderUsedBo.setFGID(fgId);
-//        return settlementRepository.callCancelOrder(cancelOrderUsedBo);
-        return false;
-    }
-
+    /**
+     * 整体成功/失败
+     * @param auditOrderInfoBO
+     * @return
+     */
     public Boolean callCancelForFg(AuditOrderInfoBO auditOrderInfoBO) {
         if (DefaultValueHelper.getValue(auditOrderInfoBO.getSettlementCallBackInfo().getOrderInfoId()) > 0) { // 前置模块已经抛单成功
             settlementRepository.callCancelOrder(auditOrderInfoBO);
-        } else {
-            // todo 区分付底还是付面
-            if (!DefaultValueHelper.getValue(auditOrderInfoBO.getSettlementCallBackInfo().getPushWalletPay())) { // normal（601）订单取消
-                settlementRepository.callCancelSettlementCancelList(auditOrderInfoBO); // todo set 接口返回值 outSettlementId
-            }
-            if (DefaultValueHelper.getValue(auditOrderInfoBO.getSettlementCallBackInfo().getPushWalletPay())) {
-                settlementRepository.callCancelSettlementCancelListHWP(auditOrderInfoBO); // todo set 接口返回值 outSettlementId
-            }
+        }
+        if (DefaultValueHelper.getValue(auditOrderInfoBO.getSettlementCallBackInfo().getSettlementId()) > 0) {
+            settlementRepository.callCancelSettlementCancelList(auditOrderInfoBO); // todo set 接口返回值 outSettlementId
+        }
+        if (DefaultValueHelper.getValue(auditOrderInfoBO.getSettlementCallBackInfo().getHwpSettlementId()) > 0) {
+            settlementRepository.callCancelSettlementCancelListHWP(auditOrderInfoBO); // todo set 接口返回值 outSettlementId
         }
         return true;
     }
@@ -56,7 +45,7 @@ public class SettlementService {
             settlementRepository.callSettlementPayDataReceive(auditOrderInfoBO); // todo set 接口返回值 orderinfoid
         } else {
             // 抛结算
-            if (EnumOrderOpType.CREATE.getName().equals(auditOrderInfoBO.getOpType())) {// 如果是“C”(新订单), 没有推送过
+            if (EnumOrderOpType.CREATE.getName().equals(auditOrderInfoBO.getOrderAuditFgMqBO().getOpType())) {// 如果是“C”(新订单), 没有推送过
                 // 区分闪住和非闪住
                 if (DefaultValueHelper.getValue(auditOrderInfoBO.getFlashOrderInfo().getIsFlashOrder())
                     && DefaultValueHelper.getValue(auditOrderInfoBO.getHotelBasicInfo().getPaymentType()).equals("P")
@@ -64,33 +53,31 @@ public class SettlementService {
                 ) {// 闪住 && 付面，只抛606
                     auditOrderInfoBO.getSettlementCallBackInfo().setPushWalletPay(true);
                     auditOrderInfoBO.setRemarks("闪住付面仅抛606");
-                    settlementRepository.callSettlementApplyListHWP(auditOrderInfoBO); // todo set 接口返回值 outSettlementId + PushWalletPay
+                    settlementRepository.callSettlementApplyListHWP(auditOrderInfoBO); // todo set 接口返回值 hWPSettlementId(settlementId) + PushWalletPay(没有该值，计费控制抛true?)
                 } else if (DefaultValueHelper.getValue(auditOrderInfoBO.getFlashOrderInfo().getIsFlashOrder())
                         && !DefaultValueHelper.getValue(auditOrderInfoBO.getHotelBasicInfo().getPaymentType()).equals("P")
                         && configCanPush()
                 ) {// 闪住 && 付底，抛601 + 606
-                    settlementRepository.callSettlementApplyList(auditOrderInfoBO);
-                    settlementRepository.callSettlementApplyListHWP(auditOrderInfoBO);
-                    // todo set 接口返回值 outSettlementId + outSettlementIdHWP
+                    settlementRepository.callSettlementApplyList(auditOrderInfoBO);// todo set 接口返回值 settlementId(settlementId)
+                    settlementRepository.callSettlementApplyListHWP(auditOrderInfoBO);// todo set 接口返回值 hWPSettlementId(settlementId)
                 } else {// 除了606，其他新订单都要抛一次601
-                    settlementRepository.callSettlementApplyList(auditOrderInfoBO); // todo set 接口返回值 outSettlementId
+                    settlementRepository.callSettlementApplyList(auditOrderInfoBO); // todo set 接口返回值 settlementId(settlementId)
                 }
-            } else if (EnumOrderOpType.UPDATE.getName().equals(auditOrderInfoBO.getOpType())) { // 如果是“U”(修改单)
+            } else if (EnumOrderOpType.UPDATE.getName().equals(auditOrderInfoBO.getOrderAuditFgMqBO().getOpType())) { // 如果是“U”(修改单)
                 // 区分闪住和非闪住
                 if (DefaultValueHelper.getValue(auditOrderInfoBO.getFlashOrderInfo().getIsFlashOrder())
                         && DefaultValueHelper.getValue(auditOrderInfoBO.getHotelBasicInfo().getPaymentType()).equals("P")
                         && configCanPush()
                 ) {// 闪住 && 付面，只抛606
-                    settlementRepository.callSettlementApplyListHWP(auditOrderInfoBO); // todo set 接口返回值 outSettlementId + PushWalletPay
+                    settlementRepository.callSettlementApplyListHWP(auditOrderInfoBO);// todo set 接口返回值 hWPSettlementId(settlementId) + PushWalletPay(没有该值，计费控制抛true?)
                 } else if (DefaultValueHelper.getValue(auditOrderInfoBO.getFlashOrderInfo().getIsFlashOrder())
                         && !DefaultValueHelper.getValue(auditOrderInfoBO.getHotelBasicInfo().getPaymentType()).equals("P")
                         && configCanPush()
                 ) {// 闪住 && 付底，抛601 + 606
-                    settlementRepository.callSettlementApplyList(auditOrderInfoBO);
-                    settlementRepository.callSettlementApplyListHWP(auditOrderInfoBO);
-                    // todo set 接口返回值 outSettlementId + outSettlementIdHWP
+                    settlementRepository.callSettlementApplyList(auditOrderInfoBO);// todo set 接口返回值 settlementId(settlementId)
+                    settlementRepository.callSettlementApplyListHWP(auditOrderInfoBO);// todo set 接口返回值 hWPSettlementId(settlementId)
                 } else {// 除了606，其他新订单都要抛一次601
-                    settlementRepository.callSettlementApplyList(auditOrderInfoBO); // todo set 接口返回值 outSettlementId
+                    settlementRepository.callSettlementApplyList(auditOrderInfoBO);// todo set 接口返回值 settlementId(settlementId)
                 }
             }
         }

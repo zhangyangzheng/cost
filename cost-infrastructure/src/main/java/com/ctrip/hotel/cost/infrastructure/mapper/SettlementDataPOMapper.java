@@ -4,6 +4,7 @@ import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
 import com.ctrip.hotel.cost.domain.data.model.PromotionDailyInfo;
 import com.ctrip.hotel.cost.domain.settlement.CancelOrderUsedBo;
 import com.ctrip.soa.hotel.settlement.api.SettleDataRequest;
+import com.ctrip.soa.hotel.settlement.api.SettlementPromotionDetail;
 import hotel.settlement.common.helpers.DefaultValueHelper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -180,4 +181,14 @@ public interface SettlementDataPOMapper {
 
     @Mapping(target = "settlementPromotionDetailLists", source = "promotionDailyInfoList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
     SettleDataRequest newOrderToSettlementApplyList(AuditOrderInfoBO auditOrderInfoBO);
+
+    @Mappings({
+            @Mapping(target = "beginDate", source = "promotionDailyInfo.effectDate"),
+            @Mapping(target = "priceAmount", source = "promotionDailyInfo.amount"),
+            @Mapping(target = "costAmount", source = "promotionDailyInfo.costDiscountAmount"),
+            @Mapping(target = "promotionName", source = "promotionDailyInfo.prepayCampaignName"),
+            @Mapping(target = "promotionNumber", source = "promotionDailyInfo.prepayCampaignID"),
+            @Mapping(target = "promotionVersionID", source = "promotionDailyInfo.prepayCampaignVersionID")
+    })
+    SettlementPromotionDetail createSettlementPromotionDetail(PromotionDailyInfo promotionDailyInfo);
 }
