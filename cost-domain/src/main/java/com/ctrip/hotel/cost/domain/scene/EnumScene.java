@@ -17,7 +17,9 @@ public enum EnumScene {
                     CostItemType.ROOM_COST_PRICE_FG,
                     CostItemType.AMOUNT_FG,
                     CostItemType.COST_FG,
-                    CostItemType.ADJUST_COMMISSION_FG)),
+                    CostItemType.ADJUST_COMMISSION_FG,
+                    CostItemType.ZERO_COMMISSION_FEE_PRICE_FG)
+    ),
     ;
 
     private int code;

@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Data
 public class AuditOrderInfoBO {
-    private String opType;
+    private OrderAuditFgMqBO orderAuditFgMqBO;
 
     private Long orderId;
     private Long cusOrderId;
@@ -37,13 +37,13 @@ public class AuditOrderInfoBO {
     private String remarks;
 
     private BigDecimal quantity;// 间夜数
-    private BigDecimal adjustAmount;//0
-    private BigDecimal zeroCommissionAmount;//null
-    private BigDecimal priceAmount;//0
-    private BigDecimal costAmount;//0
-    private BigDecimal bidPrice;//null
-    private BigDecimal roomAmount;;//0
-    private BigDecimal roomCost;;//0
+    private BigDecimal adjustAmount;//0--
+    private BigDecimal zeroCommissionAmount;//null--
+    private BigDecimal priceAmount;//0--
+    private BigDecimal costAmount;//0--
+    private BigDecimal bidPrice;//null--
+    private BigDecimal roomAmount;;//0--
+    private BigDecimal roomCost;;//0--
     private BigDecimal tripPromotionAmount;//携程承担促销 0                   ruleGroup != 1  叠加amount
     private BigDecimal buyoutDiscountAmount;//(促销)买断折扣金额 > 0 ? ~ : null     ruleGroup == 1 && discountDtype == 8 叠加costDiscountAmount
 

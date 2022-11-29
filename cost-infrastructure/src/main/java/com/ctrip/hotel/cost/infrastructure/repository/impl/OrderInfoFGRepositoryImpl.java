@@ -2,6 +2,7 @@ package com.ctrip.hotel.cost.infrastructure.repository.impl;
 
 import com.ctrip.hotel.cost.domain.data.DataCenter;
 import com.ctrip.hotel.cost.domain.data.OrderInfoFGRepository;
+import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
 import com.ctrip.hotel.cost.domain.element.bid.BidPriceFgOrderInfo;
 import com.ctrip.hotel.cost.domain.element.commission.AdjustCommissionPriceOrderInfo;
 import com.ctrip.hotel.cost.domain.element.price.PriceAmountFgInfo;
@@ -10,6 +11,7 @@ import com.ctrip.hotel.cost.domain.element.promotion.PromotionCostPriceFgOrderIn
 import com.ctrip.hotel.cost.domain.element.promotion.PromotionSellingPriceFgOrderInfo;
 import com.ctrip.hotel.cost.domain.element.room.fg.RoomCostPriceFgOrderInfo;
 import com.ctrip.hotel.cost.domain.element.room.fg.RoomSellingPriceFgOrderInfo;
+import com.ctrip.hotel.cost.domain.element.techfee.ZeroCommissionFeePriceOrderInfo;
 import com.ctrip.hotel.cost.infrastructure.client.OrderInfoDataClient;
 import com.ctrip.hotel.cost.infrastructure.mapper.OrderAuditRoomDataPOMapper;
 import hotel.settlement.common.LogHelper;
@@ -57,6 +59,9 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
         DataCenter dataCenter = new DataCenter();
         try {
             dataCenter.setDataId(order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().longValue());
+            dataCenter.setAuditOrderInfoBO(
+                    auditOrderInfoBOBuild(order)
+            );
             dataCenter.setBidPriceFgOrderInfos(
                     bidBuild(order.getBidOrderInfoList(), order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo())// 审核离店：房间维度,只有get(0)
             );
@@ -77,6 +82,9 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
             dataCenter.setAdjustCommissionPriceOrderInfo(
                     adjustCommissionBuild(order.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo(), order.getHotelBasicInfo())
             );
+            dataCenter.setZeroCommissionFeePriceOrderInfo(
+                    zeroCommissionFeeBuild(order.getTechFeeInfo())
+            );
             // 增加数据项
 
         } catch (Exception e) {
@@ -84,6 +92,10 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
             return null;
         }
         return dataCenter;
+    }
+
+    private AuditOrderInfoBO auditOrderInfoBOBuild(OrderAuditRoomData order) {
+        return OrderAuditRoomDataPOMapper.INSTANCE.auditOrderToBO(order);
     }
 
     /**
@@ -156,6 +168,12 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
                 && auditRoomOtherInfo.getAdjustCommission() != null
         ) {
             return OrderAuditRoomDataPOMapper.INSTANCE.auditOrderToAdjustCommission(auditRoomOtherInfo, hotelBasicInfo);
+        }
+        return null;
+    }
+    private ZeroCommissionFeePriceOrderInfo zeroCommissionFeeBuild(TechFeeInfo techFeeInfo) {
+        if (techFeeInfo != null) {
+            return OrderAuditRoomDataPOMapper.INSTANCE.auditOrderToZeroCommissionFee(techFeeInfo);
         }
         return null;
     }

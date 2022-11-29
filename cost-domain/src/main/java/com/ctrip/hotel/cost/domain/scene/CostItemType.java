@@ -17,6 +17,7 @@ public enum CostItemType {
     COST_FG("cost", "roomCostPrice-promotionCostPrice", "formula.costFg"),
 
     ADJUST_COMMISSION_FG("adjustCommission", "adjustCommission-roomSellingPrice+roomCostPrice", "formula.adjustCommissionFg"),
+    ZERO_COMMISSION_FEE_PRICE_FG("zeroCommissionFee", "cost*zeroCommissionFeeRatio", "formula.zeroCommissionFee"),
 
     // 以下统一
 //    BID_PRICE("bidPrice", "", "formula.bidPrice"),
