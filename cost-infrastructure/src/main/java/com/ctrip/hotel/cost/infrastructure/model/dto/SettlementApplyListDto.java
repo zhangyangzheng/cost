@@ -6,12 +6,15 @@ public class SettlementApplyListDto {
     SettleDataRequest settleDataRequest;
     String referenceId;
 
+    String isThrow;
+
     public SettlementApplyListDto() {
     }
 
-    public SettlementApplyListDto(SettleDataRequest settleDataRequest, String referenceId) {
+    public SettlementApplyListDto(SettleDataRequest settleDataRequest, String referenceId, String isThrow) {
         this.settleDataRequest = settleDataRequest;
         this.referenceId = referenceId;
+        this.isThrow = isThrow;
     }
 
     public SettleDataRequest getSettleDataRequest() {
@@ -28,5 +31,13 @@ public class SettlementApplyListDto {
 
     public void setReferenceId(String referenceId) {
         this.referenceId = referenceId;
+    }
+
+    public String getIsThrow() {
+        return isThrow;
+    }
+
+    public void setIsThrow(String isThrow) {
+        this.isThrow = isThrow;
     }
 }

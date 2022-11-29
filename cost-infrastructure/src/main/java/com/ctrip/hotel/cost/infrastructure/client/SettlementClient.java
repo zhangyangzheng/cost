@@ -44,9 +44,9 @@ public class SettlementClient {
       datalist.add(settlementPayDataReceiveDto.getSettlementPayData());
       prepayRequest.setSettlementPayDataList(datalist);
 
-      boolean isCall = BooleanUtils.toBoolean(QConfigHelper.getSwitchConfigByKey("FGCostNotifySettle", "F"));
+      boolean isThrow = BooleanUtils.toBoolean(settlementPayDataReceiveDto.getIsThrow());
 
-      if(!isCall){
+      if(!isThrow){
         clientCompareHelper.addComparing(settlementPayDataReceiveDto.getReferenceId(), "settlementPayDataReceive", settlementPayDataReceiveDto.getSettlementPayData(), false);
         return true;
       }
@@ -101,9 +101,9 @@ public class SettlementClient {
       requestHead.setUserID(Foundation.app().getAppId());
       request.setHeader(requestHead);
 
-      boolean isCall = BooleanUtils.toBoolean(QConfigHelper.getSwitchConfigByKey("FGCostNotifySettle", "F"));
+      boolean isThrow = BooleanUtils.toBoolean(settlementApplyListDto.getIsThrow());
 
-      if(!isCall){
+      if(!isThrow){
         clientCompareHelper.addComparing(settlementApplyListDto.getReferenceId(), "settlementApplyList", settlementApplyListDto.getSettleDataRequest(), false);
         return true;
       }
@@ -141,9 +141,9 @@ public class SettlementClient {
     boolean result = true;
     try {
 
-      boolean isCall = BooleanUtils.toBoolean(QConfigHelper.getSwitchConfigByKey("FGCostNotifySettle", "F"));
+      boolean isThrow = BooleanUtils.toBoolean(cancelOrderDto.getIsThrow());
 
-      if(!isCall){
+      if(!isThrow){
         clientCompareHelper.addComparing(cancelOrderDto.getReferenceId(), "cancelorder", cancelOrderDto.getCancelOrderRequest(), false);
         return true;
       }
@@ -180,9 +180,9 @@ public class SettlementClient {
       requestBody.setSettleDatas(new ArrayList<>());
       requestBody.getSettleDatas().add(settlementCancelListDto.getCancelSettleData());
 
-      boolean isCall = BooleanUtils.toBoolean(QConfigHelper.getSwitchConfigByKey("FGCostNotifySettle", "F"));
+      boolean isThrow = BooleanUtils.toBoolean(settlementCancelListDto.getIsThrow());
 
-      if(!isCall){
+      if(!isThrow){
         clientCompareHelper.addComparing(settlementCancelListDto.getReferenceId(), "settlementCancelList", settlementCancelListDto.getCancelSettleData(), false);
         return true;
       }

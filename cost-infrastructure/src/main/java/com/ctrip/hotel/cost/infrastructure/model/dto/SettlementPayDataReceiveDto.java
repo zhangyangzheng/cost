@@ -8,12 +8,15 @@ public class SettlementPayDataReceiveDto {
 
     String referenceId;
 
+    String isThrow;
+
     public SettlementPayDataReceiveDto() {
     }
 
-    public SettlementPayDataReceiveDto(SettlementPayData settlementPayData, String referenceId) {
+    public SettlementPayDataReceiveDto(SettlementPayData settlementPayData, String referenceId, String isThrow) {
         this.settlementPayData = settlementPayData;
         this.referenceId = referenceId;
+        this.isThrow = isThrow;
     }
 
     public SettlementPayData getSettlementPayData() {
@@ -30,5 +33,13 @@ public class SettlementPayDataReceiveDto {
 
     public void setReferenceId(String referenceId) {
         this.referenceId = referenceId;
+    }
+
+    public String getIsThrow() {
+        return isThrow;
+    }
+
+    public void setIsThrow(String isThrow) {
+        this.isThrow = isThrow;
     }
 }

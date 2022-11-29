@@ -13,11 +13,9 @@ import com.ctrip.soa.hotel.settlement.api.CancelDataItem;
 import com.ctrip.soa.hotel.settlement.api.CancelSettleData;
 import com.ctrip.soa.hotel.settlement.api.DataItem;
 import com.ctrip.soa.hotel.settlement.api.SettleDataRequest;
-import hotel.settlement.common.BigDecimalHelper;
-import hotel.settlement.common.ConvertHelper;
-import hotel.settlement.common.DateHelper;
-import hotel.settlement.common.QConfigHelper;
+import hotel.settlement.common.*;
 import hotel.settlement.common.helpers.DefaultValueHelper;
+import hotel.settlement.common.json.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -42,6 +40,85 @@ public class SettlementRepositoryImpl implements SettlementRepository {
     @Autowired
     private SettlementClient settlementClient;
 
+  private void addAssociateMembers(
+      SettleDataRequest requestData, AuditOrderInfoBO auditOrderInfoBO) {
+    // 联合会员逻辑
+    String associateMemberOrder = null;
+    BigDecimal associateMemberCommissionRatio = null;
+    Integer associateMemberHotelID = null;
+    String associateMemberCommissionType = null;
+    if (auditOrderInfoBO.getAssociateMember() != null) {
+      associateMemberOrder = auditOrderInfoBO.getAssociateMember().getAssociateMemberOrder();
+      associateMemberCommissionRatio =
+          auditOrderInfoBO.getAssociateMember().getAssociateMemberCommissionRatio();
+      associateMemberHotelID = auditOrderInfoBO.getAssociateMember().getAssociateMemberHotelID();
+      associateMemberCommissionType =
+          auditOrderInfoBO.getAssociateMember().getAssociateMemberCommissionType();
+    }
+    if (!StringUtils.isEmpty(associateMemberOrder)
+        && "true"
+            .equalsIgnoreCase(
+                QConfigHelper.getSwitchConfigByKey(
+                    "AssociateMemberIntoSettlementSwitch", "false"))) {
+      if ("1".equalsIgnoreCase(associateMemberOrder)) {
+        String associateMemberCommissionRatioNew = "";
+        if (DefaultValueHelper.getValue(associateMemberCommissionRatio).compareTo(BigDecimal.ZERO)
+            > 0) {
+          associateMemberCommissionRatioNew = associateMemberCommissionRatio.toString();
+        } else {
+          associateMemberCommissionRatioNew =
+              QConfigHelper.getSwitchConfigByKey(
+                  "AssociateMemberCommissionRatioDefaultValue", "0.02");
+        }
+
+        // 免佣(按比例收取技术服务费)
+        requestData.getDataItems().add(new DataItem("UinonMemberFlag", "T", "UinonMemberFlag"));
+        requestData
+            .getDataItems()
+            .add(
+                new DataItem(
+                    "ServiceFeeProportion",
+                    associateMemberCommissionRatioNew,
+                    "ServiceFeeProportion"));
+
+        if (DefaultValueHelper.getValue(auditOrderInfoBO.getBuyoutDiscountAmount())
+                .compareTo(BigDecimal.ZERO)
+            >= 0) {
+          requestData
+              .getDataItems()
+              .add(
+                  new DataItem(
+                      "BuyoutDiscountAmount",
+                      auditOrderInfoBO.getBuyoutDiscountAmount().toString(),
+                      "BuyoutDiscountAmount"));
+        }
+      } else if ("3".equalsIgnoreCase(associateMemberOrder)
+          && DefaultValueHelper.getValue(associateMemberHotelID) > 0
+          && DefaultValueHelper.getValue(associateMemberCommissionRatio).compareTo(BigDecimal.ZERO)
+              > 0
+          && "Refund".equalsIgnoreCase(associateMemberCommissionType)) {
+        // 返佣(按比例返酒店佣金)
+        requestData.getDataItems().add(new DataItem("RakebackFlag", "T", "RakebackFlag"));
+        requestData
+            .getDataItems()
+            .add(
+                new DataItem(
+                    "RakebackHotelId", associateMemberHotelID.toString(), "RakebackHotelId"));
+        requestData
+            .getDataItems()
+            .add(
+                new DataItem(
+                    "RakebackRate", associateMemberCommissionRatio.toString(), "RakebackRate"));
+        requestData
+            .getDataItems()
+            .add(
+                new DataItem(
+                    "TripPromotionAmount",
+                    auditOrderInfoBO.getTripPromotionAmount().toString(),
+                    "TripPromotionAmount"));
+      }
+    }
+  }
 
     @Override
     public boolean callCancelOrder(AuditOrderInfoBO auditOrderInfoBO) {
@@ -112,6 +189,9 @@ public class SettlementRepositoryImpl implements SettlementRepository {
     @Override
     public boolean callSettlementPayDataReceive(AuditOrderInfoBO auditOrderInfoBO) {
         SettlementPayData settlementPayData = SettlementDataPOMapper.INSTANCE.newOrderToSettlementPayDataReceive(auditOrderInfoBO);
+
+        OrderAuditFgMqBO orderAuditFgMqBO = auditOrderInfoBO.getOrderAuditFgMqBO();
+
         // 联合会员逻辑 todo 线上开关没开，这个业务什么时候开不一定，先写在这里过渡
         String associateMemberOrder = null;
         BigDecimal associateMemberCommissionRatio = null;
@@ -162,7 +242,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
         }
         return settlementClient.callSettlementPayDataReceive(
                 new SettlementPayDataReceiveDto(settlementPayData,
-                        ""// todo set referenceId
+                        orderAuditFgMqBO.getReferenceId(), orderAuditFgMqBO.getIsThrow()// todo set referenceId
                 )
         );
     }
@@ -170,6 +250,10 @@ public class SettlementRepositoryImpl implements SettlementRepository {
   @Override
   public boolean callSettlementApplyList(AuditOrderInfoBO auditOrderInfoBO) {
     try{
+      SettleDataRequest requestData =
+          SettlementDataPOMapper.INSTANCE.newOrderToSettlementApplyList(auditOrderInfoBO);
+
+      OrderAuditFgMqBO orderAuditFgMqBO = auditOrderInfoBO.getOrderAuditFgMqBO();
       OrderBasicInfo orderBasicInfo = auditOrderInfoBO.getOrderBasicInfo();
       SettlementCallBackInfo settlementCallBackInfo = auditOrderInfoBO.getSettlementCallBackInfo();
       AuditRoomInfo auditRoomInfo = auditOrderInfoBO.getAuditRoomInfoList().get(0);
@@ -182,8 +266,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
       TechFeeInfo techFeeInfo = auditOrderInfoBO.getTechFeeInfo();
       OutTimeDeductInfo outTimeDeductInfo = auditOrderInfoBO.getOutTimeDeductInfo();
 
-      SettleDataRequest requestData =
-          SettlementDataPOMapper.INSTANCE.newOrderToSettlementApplyList(auditOrderInfoBO);
+
       //        requestData.setCollectionType("P");
       //        requestData.setCompanyID(getSettlementProvider(dr));
       //        requestData.setCurrency(dr.getCurrency() == null ? "" : dr.getCurrency());
@@ -211,7 +294,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
       requestData.setChannelType(ChannelType.FGID.name());
 
       // 如果为修改数据则传SettlementId
-      if ("U".equals(auditOrderInfoBO.getOpType())
+      if ("U".equals(orderAuditFgMqBO.getOpType())
           && DefaultValueHelper.getValue(settlementCallBackInfo.getSettlementId()) > 0) {
         requestData.setSettlementId(settlementCallBackInfo.getSettlementId());
       }
@@ -719,60 +802,15 @@ public class SettlementRepositoryImpl implements SettlementRepository {
       Item.setDataDesc("过时扣款类型");
       requestData.getDataItems().add(Item);
 
-      return settlementClient.callSettlementApplyList(new SettlementApplyListDto(requestData, "jksda"));
+      // 联合会员逻辑
+      addAssociateMembers(requestData, auditOrderInfoBO);
 
-        // 联合会员逻辑
-        String associateMemberOrder = null;
-        BigDecimal associateMemberCommissionRatio = null;
-        Integer associateMemberHotelID = null;
-        String associateMemberCommissionType = null;
-        if (auditOrderInfoBO.getAssociateMember() != null) {
-            associateMemberOrder = auditOrderInfoBO.getAssociateMember().getAssociateMemberOrder();
-            associateMemberCommissionRatio = auditOrderInfoBO.getAssociateMember().getAssociateMemberCommissionRatio();
-            associateMemberHotelID = auditOrderInfoBO.getAssociateMember().getAssociateMemberHotelID();
-            associateMemberCommissionType = auditOrderInfoBO.getAssociateMember().getAssociateMemberCommissionType();
-        }
-        if (!StringUtils.isEmpty(associateMemberOrder)
-                && "true"
-                .equalsIgnoreCase(
-                        QConfigHelper.getSwitchConfigByKey(
-                                "AssociateMemberIntoSettlementSwitch", "false"))) {
-            if ("1".equalsIgnoreCase(associateMemberOrder)) {
-                String associateMemberCommissionRatioNew = "";
-                if (DefaultValueHelper.getValue(associateMemberCommissionRatio).compareTo(BigDecimal.ZERO)
-                        > 0) {
-                    associateMemberCommissionRatioNew = associateMemberCommissionRatio.toString();
-                } else {
-                    associateMemberCommissionRatioNew =
-                            QConfigHelper.getSwitchConfigByKey(
-                                    "AssociateMemberCommissionRatioDefaultValue", "0.02");
-                }
+      return settlementClient.callSettlementApplyList(
+          new SettlementApplyListDto(
+              requestData, orderAuditFgMqBO.getReferenceId(), orderAuditFgMqBO.getIsThrow()));
 
-                // 免佣(按比例收取技术服务费)
-                settleDataRequest.getDataItems().add(new DataItem("UinonMemberFlag", "T", "UinonMemberFlag"));
-                settleDataRequest.getDataItems().add(new DataItem("ServiceFeeProportion", associateMemberCommissionRatioNew, "ServiceFeeProportion"));
-
-                if (DefaultValueHelper.getValue(auditOrderInfoBO.getBuyoutDiscountAmount()).compareTo(BigDecimal.ZERO) >= 0) {
-                    settleDataRequest.getDataItems().add(new DataItem("BuyoutDiscountAmount", auditOrderInfoBO.getBuyoutDiscountAmount().toString(), "BuyoutDiscountAmount"));
-                }
-            } else if ("3".equalsIgnoreCase(associateMemberOrder)
-                    && DefaultValueHelper.getValue(associateMemberHotelID) > 0
-                    && DefaultValueHelper.getValue(associateMemberCommissionRatio).compareTo(BigDecimal.ZERO)
-                    > 0
-                    && "Refund".equalsIgnoreCase(associateMemberCommissionType)) {
-                // 返佣(按比例返酒店佣金)
-                settleDataRequest.getDataItems().add(new DataItem("RakebackFlag", "T", "RakebackFlag"));
-                settleDataRequest.getDataItems().add(new DataItem("RakebackHotelId", associateMemberHotelID.toString(), "RakebackHotelId"));
-                settleDataRequest.getDataItems().add(new DataItem("RakebackRate", associateMemberCommissionRatio.toString(), "RakebackRate"));
-                settleDataRequest.getDataItems().add(new DataItem("TripPromotionAmount", auditOrderInfoBO.getTripPromotionAmount().toString(), "TripPromotionAmount"));
-            }
-        }
-        return settlementClient.callSettlementApplyList(
-                new SettlementApplyListDto(settleDataRequest,
-                        ""// todo set referenceId
-                )
-        );
     }catch (Exception e){
+      LogHelper.logError("callSettlementApplyList", JsonUtils.beanToJson(auditOrderInfoBO));
       return false;
     }
 
@@ -781,7 +819,10 @@ public class SettlementRepositoryImpl implements SettlementRepository {
   @Override
   public boolean callSettlementApplyListHWP(AuditOrderInfoBO auditOrderInfoBO) {
     try {
+      SettleDataRequest requestData =
+          SettlementDataPOMapper.INSTANCE.newOrderToSettlementApplyList(auditOrderInfoBO);
 
+      OrderAuditFgMqBO orderAuditFgMqBO = auditOrderInfoBO.getOrderAuditFgMqBO();
       AuditRoomInfo auditRoomInfo = auditOrderInfoBO.getAuditRoomInfoList().get(0);
       AuditRoomBasicInfo auditRoomBasicInfo = auditRoomInfo.getAuditRoomBasicInfo();
       AuditRoomOtherInfo auditRoomOtherInfo = auditRoomInfo.getAuditRoomOtherInfo();
@@ -790,9 +831,6 @@ public class SettlementRepositoryImpl implements SettlementRepository {
       OrderBasicInfo orderBasicInfo = auditOrderInfoBO.getOrderBasicInfo();
       TechFeeInfo techFeeInfo = auditOrderInfoBO.getTechFeeInfo();
       OutTimeDeductInfo outTimeDeductInfo = auditOrderInfoBO.getOutTimeDeductInfo();
-
-      SettleDataRequest requestData =
-          SettlementDataPOMapper.INSTANCE.newOrderToSettlementApplyList(auditOrderInfoBO);
       requestData.setCollectionType("C");
       //        requestData.setCompanyID(dr.getHotel() == null ? "" : dr.getHotel().toString());
       //        requestData.setCurrency(DefaultValueHelper.getValue(dr.getCurrency()));
@@ -815,7 +853,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
         new Exception("tmp stage fgId should greater than zero");
       }
 
-      if ("U".equals(auditOrderInfoBO.getOpType())) {
+      if ("U".equals(orderAuditFgMqBO.getOpType())) {
         requestData.setSettlementId(settlementCallBackInfo.getSettlementId());
         if (DefaultValueHelper.getValue(requestData.getSettlementId()) <= 0) {
           throw new Exception("Abnormal HWPSettlementId parameter modification");
@@ -996,8 +1034,14 @@ public class SettlementRepositoryImpl implements SettlementRepository {
       Item.setDataDesc("过时扣款类型");
       requestData.getDataItems().add(Item);
 
-      return settlementClient.callSettlementApplyList(new SettlementApplyListDto(requestData, "ssa"));
+      // 联合会员逻辑
+      addAssociateMembers(requestData, auditOrderInfoBO);
+
+      return settlementClient.callSettlementApplyList(
+          new SettlementApplyListDto(
+              requestData, orderAuditFgMqBO.getReferenceId(), orderAuditFgMqBO.getIsThrow()));
     } catch (Exception e) {
+      LogHelper.logError("callSettlementApplyListHWP", JsonUtils.beanToJson(auditOrderInfoBO));
       return false;
     }
   }

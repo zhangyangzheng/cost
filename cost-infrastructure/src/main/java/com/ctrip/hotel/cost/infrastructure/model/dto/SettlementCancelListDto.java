@@ -6,12 +6,15 @@ public class SettlementCancelListDto {
     CancelSettleData cancelSettleData;
     String referenceId;
 
+    String isThrow;
+
     public SettlementCancelListDto() {
     }
 
-    public SettlementCancelListDto(CancelSettleData cancelSettleData, String referenceId) {
+    public SettlementCancelListDto(CancelSettleData cancelSettleData, String referenceId, String isThrow) {
         this.cancelSettleData = cancelSettleData;
         this.referenceId = referenceId;
+        this.isThrow = isThrow;
     }
 
     public CancelSettleData getCancelSettleData() {
@@ -28,5 +31,13 @@ public class SettlementCancelListDto {
 
     public void setReferenceId(String referenceId) {
         this.referenceId = referenceId;
+    }
+
+    public String getIsThrow() {
+        return isThrow;
+    }
+
+    public void setIsThrow(String isThrow) {
+        this.isThrow = isThrow;
     }
 }

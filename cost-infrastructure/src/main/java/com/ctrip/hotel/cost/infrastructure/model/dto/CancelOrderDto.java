@@ -7,12 +7,15 @@ public class CancelOrderDto {
 
     String referenceId;
 
+    String isThrow;
+
     public CancelOrderDto() {
     }
 
-    public CancelOrderDto(CancelorderRequesttype cancelOrderRequest, String referenceId) {
+    public CancelOrderDto(CancelorderRequesttype cancelOrderRequest, String referenceId, String isThrow) {
         this.cancelOrderRequest = cancelOrderRequest;
         this.referenceId = referenceId;
+        this.isThrow = isThrow;
     }
 
     public CancelorderRequesttype getCancelOrderRequest() {
@@ -29,5 +32,13 @@ public class CancelOrderDto {
 
     public void setReferenceId(String referenceId) {
         this.referenceId = referenceId;
+    }
+
+    public String getIsThrow() {
+        return isThrow;
+    }
+
+    public void setIsThrow(String isThrow) {
+        this.isThrow = isThrow;
     }
 }
