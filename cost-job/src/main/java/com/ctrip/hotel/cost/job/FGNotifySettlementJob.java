@@ -8,6 +8,8 @@ import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepository;
 import com.ctrip.hotel.cost.infrastructure.repository.SettleCallbackInfoRepository;
 import hotel.settlement.common.ListHelper;
 import hotel.settlement.common.LogHelper;
+import hotel.settlement.common.LongHelper;
+import hotel.settlement.common.QConfigHelper;
 import hotel.settlement.common.beans.BeanHelper;
 import hotel.settlement.common.tuples.Tuple;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
@@ -270,8 +272,8 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
 
   @Override
   protected List<OrderAuditFgMqTiDBGen> getPending(List<Integer> sliceIndexList) throws Exception {
-    Integer minBetween = 60; // 后续从qconfig拿
-    Integer count = 100; // 后续从qconfig拿
+    Integer minBetween = Integer.parseInt(QConfigHelper.getSwitchConfigByKey("fgNotifySettlementJobMinuteBetween", "60"));
+    Integer count = Integer.parseInt(QConfigHelper.getSwitchConfigByKey("fgNotifySettlementJobBatchSize", "100"));
     List<OrderAuditFgMqTiDBGen> pendingJobs =
         orderAuditFgMqRepository.getPendingJobs(sliceIndexList, minBetween, count);
     return pendingJobs;

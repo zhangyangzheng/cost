@@ -21,7 +21,7 @@ public class OrderMetaInterpreter {
     @Autowired
     private SettlementRepository settlementRepository;
 
-    public Boolean resolver(AuditOrderInfoBO auditOrderInfoBO) {
+    public Boolean resolver(AuditOrderInfoBO auditOrderInfoBO) throws Exception {
         /**
          * 现付审核离店：结算只需要酒店承担促销信息
          */
