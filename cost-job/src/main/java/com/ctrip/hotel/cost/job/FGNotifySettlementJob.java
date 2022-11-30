@@ -2,6 +2,7 @@ package com.ctrip.hotel.cost.job;
 
 import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepository;
 import hotel.settlement.common.ListHelper;
+import hotel.settlement.common.LogHelper;
 import hotel.settlement.common.beans.BeanHelper;
 import hotel.settlement.common.tuples.Tuple;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
@@ -44,6 +45,10 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     public WJobMergeItem(OrderAuditFgMqTiDBGen leader, List<OrderAuditFgMqTiDBGen> followers) {
       this.leader = leader;
       this.followers = followers;
+    }
+
+    public void setFollowersRemark(String remark){
+      followers.stream().forEach(job -> job.setRemark(remark));
     }
   }
 
@@ -135,9 +140,9 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     return ProcessPendingJobMethod.ThrowSettle;
   }
 
-  protected void updateJobListStatus(List<OrderAuditFgMqTiDBGen> jobList, String jobStatus)
+  protected void processDoneAllJobList(List<OrderAuditFgMqTiDBGen> jobList)
           throws Exception {
-    jobList.stream().forEach(job -> job.setJobStatus(jobStatus));
+    jobList.stream().forEach(job -> {job.setJobStatus("T"); job.setRemark("已经有成功执行的删除单 或 有删除单且没有成功抛出的创建修改单");});
     orderAuditFgMqRepository.batchUpdate(jobList);
   }
 
@@ -170,10 +175,12 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
       if ("D".equals(job.getOpType())) {
         // 不会发生取不到的情况
         List<OrderAuditFgMqTiDBGen> identityJobList = identifyJobListMap.get(identity);
+        identityJobList.stream().forEach(p -> p.setRemark("删除单抛成功 所有单置为成功"));
         allSuccessJobList.addAll(identityJobList);
       } else {
         // 不会发生取不到的情况
         WJobMergeItem wJobMergeItem = identifyWJobMergeItemMap.get(identity);
+        wJobMergeItem.setFollowersRemark("主单抛成功 副单跟随成功");
         // 主单和副单同生共死
         allSuccessJobList.add(wJobMergeItem.leader);
         allSuccessJobList.addAll(wJobMergeItem.followers);
@@ -195,6 +202,7 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
       Identify identity = new Identify(job.getOrderId(), job.getFgId());
       // 不会发生取不到的情况
       WJobMergeItem wJobMergeItem = identifyWJobMergeItemMap.get(identity);
+      wJobMergeItem.setFollowersRemark("主单抛失败 副单跟随处理");
       // 主单和副单同生共死
       allFailJobList.add(wJobMergeItem.leader);
       allFailJobList.addAll(wJobMergeItem.followers);
@@ -259,7 +267,7 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     }
 
     // 批量设置不需要处理的Job为执行成功
-    updateJobListStatus(setSuccessStatusList, "T");
+    processDoneAllJobList(setSuccessStatusList);
 
     // 后续改为调用计费函数 返回成功结果集;
     List<OrderAuditFgMqTiDBGen> successJobList = new ArrayList<>();

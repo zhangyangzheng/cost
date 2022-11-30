@@ -3,6 +3,7 @@ package com.ctrip.hotel.cost.consumer;
 import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepository;
 import com.ctrip.hotel.cost.infrastructure.repository.SettleCallbackInfoRepository;
 import com.ctrip.hotel.cost.infrastructure.util.LongHelper;
+import com.ctrip.platform.dal.dao.annotation.DalTransactional;
 import hotel.settlement.common.LogHelper;
 import hotel.settlement.common.json.JsonUtils;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
@@ -39,6 +40,9 @@ public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgM
   protected SettleCallbackInfoTiDBGen getSettleCallbackInfo(Message message){
     SettleCallbackInfoTiDBGen settleCallbackInfoTiDBGen = new SettleCallbackInfoTiDBGen();
 
+    // 幂等字段
+    String referenceId = message.getStringProperty("referenceId");
+    // 业务字段
     Long settlementId = LongHelper.getNullableLong(message.getStringProperty("SettlementId"));
     Long orderInfoId = LongHelper.getNullableLong(message.getStringProperty("OrderInfoID"));
     Long hwpSettlementId = LongHelper.getNullableLong(message.getStringProperty("HWPSettlementId"));
@@ -46,6 +50,7 @@ public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgM
     String pushReferenceId = message.getStringProperty("PushReferenceID");
     String hwpReferenceId = message.getStringProperty("HWPReferenceID");
 
+    settleCallbackInfoTiDBGen.setReferenceId(referenceId);
     settleCallbackInfoTiDBGen.setSettlementId(settlementId);
     settleCallbackInfoTiDBGen.setOrderInfoId(orderInfoId);
     settleCallbackInfoTiDBGen.setHwpSettlementId(hwpSettlementId);
@@ -113,7 +118,6 @@ public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgM
   }
 
   @Override
-  @Transactional(rollbackFor = SQLException.class)
   public void insertInto(Message message) throws Exception {
     OrderAuditFgMqTiDBGen orderAuditFgMqTiDBGen = convertTo(message);
     if (!legalCheck(orderAuditFgMqTiDBGen)) {
@@ -124,6 +128,5 @@ public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgM
     SettleCallbackInfoTiDBGen settleCallbackInfoTiDBGen = getSettleCallbackInfo(message);
     orderAuditFgMqRepository.insert(orderAuditFgMqTiDBGen);
     settleCallbackInfoRepository.insert(settleCallbackInfoTiDBGen);
-    throw new SQLException();
   }
 }
