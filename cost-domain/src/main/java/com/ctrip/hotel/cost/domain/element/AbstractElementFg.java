@@ -37,7 +37,7 @@ public abstract class AbstractElementFg {
         if (stepSize < 1) {
             return Arrays.asList(DateHelper.format(beginTime) + "~" + DateHelper.format(endTime));
         }
-        long gapDay = DateHelper.dateDiff(DateDiffType.Day, beginTime, endTime);
+        long gapDay = DateHelper.dateDiff(DateDiffType.Day, endTime, beginTime);
         if (gapDay < 1) {
             return Collections.emptyList();
         }

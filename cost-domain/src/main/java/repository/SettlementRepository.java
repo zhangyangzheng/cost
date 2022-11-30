@@ -14,7 +14,7 @@ public interface SettlementRepository {
      * @param
      * @return
      */
-    boolean callCancelOrder(AuditOrderInfoBO auditOrderInfoBO);
+    boolean callCancelOrder(AuditOrderInfoBO auditOrderInfoBO) throws Exception;
 
     /**
      * normal（601）结算取消
@@ -22,7 +22,7 @@ public interface SettlementRepository {
      * @param auditOrderInfoBO
      * @return
      */
-    boolean callCancelSettlementCancelList(AuditOrderInfoBO auditOrderInfoBO);
+    boolean callCancelSettlementCancelList(AuditOrderInfoBO auditOrderInfoBO) throws Exception;
 
     /**
      * 闪住（606）结算取消
@@ -30,14 +30,14 @@ public interface SettlementRepository {
      * @param auditOrderInfoBO
      * @return
      */
-    boolean callCancelSettlementCancelListHWP(AuditOrderInfoBO auditOrderInfoBO);
+    boolean callCancelSettlementCancelListHWP(AuditOrderInfoBO auditOrderInfoBO) throws Exception;
 
     /**
      * 抛前置 done
      * @param auditOrderInfoBO
      * @return
      */
-    boolean callSettlementPayDataReceive(AuditOrderInfoBO auditOrderInfoBO);
+    boolean callSettlementPayDataReceive(AuditOrderInfoBO auditOrderInfoBO) throws Exception;
 
     /**
      * 新单或修改单抛结算
@@ -45,7 +45,7 @@ public interface SettlementRepository {
      * @param auditOrderInfoBO
      * @return
      */
-    boolean callSettlementApplyList(AuditOrderInfoBO auditOrderInfoBO);
+    boolean callSettlementApplyList(AuditOrderInfoBO auditOrderInfoBO) throws Exception;
 
     /**
      * 新单或修改单抛HWP
@@ -53,6 +53,6 @@ public interface SettlementRepository {
      * @param auditOrderInfoBO
      * @return
      */
-    boolean callSettlementApplyListHWP(AuditOrderInfoBO auditOrderInfoBO);
+    boolean callSettlementApplyListHWP(AuditOrderInfoBO auditOrderInfoBO) throws Exception;
 
 }

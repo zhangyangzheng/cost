@@ -37,6 +37,8 @@ public class CostContext {
             } catch (Exception e) {
                 // 一笔订单计费失败的异常，在此处理。计费失败被丢弃，外部重试
                 LogHelper.logError(this.getClass().getSimpleName(), e);// todo 优化日志
+                System.out.println(e);
+                System.out.println(e.getMessage());
             }
         }
     }

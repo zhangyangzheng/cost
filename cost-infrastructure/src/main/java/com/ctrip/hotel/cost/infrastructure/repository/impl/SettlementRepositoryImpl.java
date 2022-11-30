@@ -40,7 +40,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
 
 
     @Override
-    public boolean callCancelOrder(AuditOrderInfoBO auditOrderInfoBO) {
+    public boolean callCancelOrder(AuditOrderInfoBO auditOrderInfoBO) throws Exception {
         CancelorderRequesttype cancelOrderRequest = new CancelorderRequesttype();
         cancelOrderRequest.setOrderchannel(Hotelorderchannel.hfg);
         cancelOrderRequest.setOrderid(auditOrderInfoBO.getOrderAuditFgMqBO().getOrderId().toString());
@@ -53,7 +53,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
     }
 
     @Override
-    public boolean callCancelSettlementCancelList(AuditOrderInfoBO auditOrderInfoBO) {
+    public boolean callCancelSettlementCancelList(AuditOrderInfoBO auditOrderInfoBO) throws Exception {
         CancelSettleData request = new CancelSettleData();
         request.setId(0);
         request.setMerchantId(6);
@@ -88,7 +88,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
     }
 
     @Override
-    public boolean callCancelSettlementCancelListHWP(AuditOrderInfoBO auditOrderInfoBO) {
+    public boolean callCancelSettlementCancelListHWP(AuditOrderInfoBO auditOrderInfoBO) throws Exception {
         CancelSettleData request = new CancelSettleData();
         request.setId(0);
         request.setMerchantId(6);
@@ -106,7 +106,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
     }
 
     @Override
-    public boolean callSettlementPayDataReceive(AuditOrderInfoBO auditOrderInfoBO) {
+    public boolean callSettlementPayDataReceive(AuditOrderInfoBO auditOrderInfoBO) throws Exception {
         SettlementPayData settlementPayData = SettlementDataPOMapper.INSTANCE.newOrderToSettlementPayDataReceive(auditOrderInfoBO);
         // 联合会员逻辑 todo 线上开关没开，这个业务什么时候开不一定，先写在这里过渡
         String associateMemberOrder = null;
@@ -164,7 +164,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
     }
 
     @Override
-    public boolean callSettlementApplyList(AuditOrderInfoBO auditOrderInfoBO) {
+    public boolean callSettlementApplyList(AuditOrderInfoBO auditOrderInfoBO) throws Exception {
         SettleDataRequest settleDataRequest = SettlementDataPOMapper.INSTANCE.newOrderToSettlementApplyList(auditOrderInfoBO);
 
         // todo copy过来改
