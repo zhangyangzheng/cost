@@ -9,6 +9,7 @@ import com.ctrip.hotel.cost.domain.element.room.fg.RoomCostPriceFgOrderInfo;
 import com.ctrip.hotel.cost.domain.element.room.fg.RoomSellingPriceFgOrderInfo;
 import com.ctrip.hotel.cost.domain.element.techfee.ZeroCommissionFeePriceOrderInfo;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import soa.ctrip.com.hotel.order.checkin.audit.v2.getOrderAuditRoomData.*;
 
@@ -23,7 +24,9 @@ public interface OrderAuditRoomDataPOMapper {
 
     BidPriceFgOrderInfo auditOrderToBid(BidOrderInfo bidOrderInfo, AuditRoomBasicInfo roomBasicInfo);
 
+    @Mapping(target = "orderETA", source = "roomBasicInfo.eta")
     RoomSellingPriceFgOrderInfo auditOrderToRoomPrice(OrderPriceInfo orderPriceInfo, AuditRoomBasicInfo roomBasicInfo);
+    @Mapping(target = "orderETA", source = "roomBasicInfo.eta")
     RoomCostPriceFgOrderInfo auditOrderToRoomCost(OrderPriceInfo orderPriceInfo, AuditRoomBasicInfo roomBasicInfo);
 
     PromotionSellingPriceFgOrderInfo auditOrderToPromotion(PromotionDailyInfo promotionInfo, AuditRoomBasicInfo roomBasicInfo);

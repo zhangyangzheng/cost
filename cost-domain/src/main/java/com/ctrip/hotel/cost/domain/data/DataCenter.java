@@ -56,7 +56,7 @@ public class  DataCenter {
 //    private PriceAmountFgInfo priceAmountFgInfo;
 //    private PriceCostFgInfo priceCostFgInfo;
 
-    private Boolean success;
+    private Boolean success = false;
 
     /**
      * 数据初始化后，开始单项计费

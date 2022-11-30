@@ -2,6 +2,8 @@ package com.ctrip.hotel.cost.worker;
 
 import com.alibaba.fastjson.JSON;
 import com.ctrip.hotel.cost.CostJobApplication;
+import com.ctrip.hotel.cost.application.handler.HandlerApi;
+import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
 import com.ctrip.hotel.cost.infrastructure.client.OrderInfoDataClient;
 import com.ctrip.hotel.cost.infrastructure.client.SettlementClient;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementApplyListUsedBo;
@@ -20,6 +22,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import soa.ctrip.com.hotel.order.checkin.audit.v2.getOrderAuditRoomData.OrderAuditRoomData;
 import soa.ctrip.com.hotel.vendor.settlement.v1.settlementdata.SettlementPayData;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -39,6 +42,17 @@ public class SpringTest {
 
   @Autowired
   FGNotifySettlementJob fgNotifySettlementJob;
+
+  @Autowired
+  HandlerApi handlerApi;
+
+  @Test
+  public void auditOrderFgCollectPrice() {
+    List<Long> ids = new ArrayList<>();
+    ids.add(597573600L);
+    List<AuditOrderInfoBO> orders = handlerApi.auditOrderFgCollectPrice(ids);
+    System.out.println(orders.size());
+  }
 
   @Test
   public void dalTest() throws Exception {
