@@ -132,6 +132,22 @@ public class SpringTest {
 
 
   @Test
+  public void fgJudgeTest(){
+    try {
+      settlementClient.callConfigCanPush();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+
+    try {
+      settlementClient.callCheckFGBidSplit(123, 123, "ss", true);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+
+  @Test
   public void jobTest(){
     try {
       fgNotifySettlementJob.execute(Arrays.asList(19));

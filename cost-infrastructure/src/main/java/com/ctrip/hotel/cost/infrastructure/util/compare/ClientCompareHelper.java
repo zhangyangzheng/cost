@@ -1,4 +1,4 @@
-package com.ctrip.hotel.cost.infrastructure.client.compare;
+package com.ctrip.hotel.cost.infrastructure.util.compare;
 
 import cn.hutool.core.util.HashUtil;
 import com.ctrip.hotel.cost.infrastructure.client.SoaHelper;
