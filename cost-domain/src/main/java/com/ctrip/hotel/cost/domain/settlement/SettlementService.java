@@ -23,6 +23,9 @@ public class SettlementService {
     @Autowired
     private SettlementRepository settlementRepository;
 
+    @Autowired
+    private OrderMetaInterpreter orderMetaInterpreter;
+
     /**
      * 整体成功/失败
      * @param auditOrderInfoBO
@@ -49,6 +52,7 @@ public class SettlementService {
 
     public Boolean callSettlementForFg(AuditOrderInfoBO auditOrderInfoBO) {
         try {
+            auditOrderInfoBO = orderMetaInterpreter.resolverOrderFg(auditOrderInfoBO);
             if (isToPreprocess(auditOrderInfoBO)) {
                 // 抛前置
                 settlementRepository.callSettlementPayDataReceive(auditOrderInfoBO); // todo set 接口返回值 orderinfoid

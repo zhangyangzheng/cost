@@ -86,7 +86,7 @@ public class TripPromotionSellingPriceFgOrderInfo implements PromotionSellingPri
      */
     @Override
     public Factor days() {
-        if (PromotionEnum.C_TRIP.equals(createSettlementType())) {
+        if (PromotionEnum.HOTEL.equals(createSettlementType())) {
             return new Factor("days", BigDecimal.ZERO);
         }
 

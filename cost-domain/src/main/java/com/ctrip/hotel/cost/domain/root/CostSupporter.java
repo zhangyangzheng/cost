@@ -51,15 +51,15 @@ public class CostSupporter {
             return Collections.emptyList();
         }
         return costContext.getDataCenters().stream().filter(DataCenter::getSuccess).map(e -> {
-            e.getAuditOrderInfoBO().setAdjustAmount(e.getAdjustCommission().total());
-            e.getAuditOrderInfoBO().setPriceAmount(e.getPriceAmountFg().total());
-            e.getAuditOrderInfoBO().setCostAmount(e.getPriceCostFg().total());
-            e.getAuditOrderInfoBO().setBidPrice(e.getBid().total());
-            e.getAuditOrderInfoBO().setRoomAmount(e.getRoomSelling().total());
-            e.getAuditOrderInfoBO().setRoomCost(e.getRoomCost().total());
-            e.getAuditOrderInfoBO().setZeroCommissionAmount(e.getZeroCommissionFee().total());
-            e.getAuditOrderInfoBO().setTripPromotionAmount(null);// todo
-            e.getAuditOrderInfoBO().setBuyoutDiscountAmount(null);// todo
+            e.getAuditOrderInfoBO().setAdjustAmount(e.getAdjustCommission() == null ? null : e.getAdjustCommission().total());
+            e.getAuditOrderInfoBO().setPriceAmount(e.getPriceAmountFg() == null ? null : e.getPriceAmountFg().total());
+            e.getAuditOrderInfoBO().setCostAmount(e.getPriceCostFg() == null ? null : e.getPriceCostFg().total());
+            e.getAuditOrderInfoBO().setBidPrice(e.getBid() == null ? null : e.getBid().total());
+            e.getAuditOrderInfoBO().setRoomAmount(e.getRoomSelling() == null ? null : e.getRoomSelling().total());
+            e.getAuditOrderInfoBO().setRoomCost(e.getRoomCost() == null ? null : e.getRoomCost().total());
+            e.getAuditOrderInfoBO().setZeroCommissionAmount(e.getZeroCommissionFee() == null ? null : e.getZeroCommissionFee().total());
+            e.getAuditOrderInfoBO().setTripPromotionAmount(e.getTripPromotionSelling() == null ? null : e.getTripPromotionSelling().total());
+            e.getAuditOrderInfoBO().setBuyoutDiscountAmount(e.getBuyoutDiscountPromotionCost() == null ? null : e.getBuyoutDiscountPromotionCost().total());
             e.getAuditOrderInfoBO().setQuantity(
                     BigDecimal.valueOf(
                             DateHelper.getDiffDays(
