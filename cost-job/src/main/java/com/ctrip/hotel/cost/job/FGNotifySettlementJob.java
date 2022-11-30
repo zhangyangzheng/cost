@@ -1,14 +1,21 @@
 package com.ctrip.hotel.cost.job;
 
+import com.ctrip.hotel.cost.application.handler.HandlerApi;
+import com.ctrip.hotel.cost.application.model.vo.AuditOrderFgReqDTO;
+import com.ctrip.hotel.cost.domain.data.model.OrderAuditFgMqBO;
+import com.ctrip.hotel.cost.domain.data.model.SettlementCallBackInfo;
 import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepository;
+import com.ctrip.hotel.cost.infrastructure.repository.SettleCallbackInfoRepository;
 import hotel.settlement.common.ListHelper;
 import hotel.settlement.common.LogHelper;
 import hotel.settlement.common.beans.BeanHelper;
 import hotel.settlement.common.tuples.Tuple;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
+import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.SettleCallbackInfoTiDBGen;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,7 +54,7 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
       this.followers = followers;
     }
 
-    public void setFollowersRemark(String remark){
+    public void setFollowersRemark(String remark) {
       followers.stream().forEach(job -> job.setRemark(remark));
     }
   }
@@ -77,13 +84,16 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
 
   final int maxExeCount = 8;
 
-  @Autowired
-  OrderAuditFgMqRepository orderAuditFgMqRepository;
+  @Autowired OrderAuditFgMqRepository orderAuditFgMqRepository;
+
+  @Autowired SettleCallbackInfoRepository settleCallbackInfoRepository;
+
+  @Autowired HandlerApi handlerApi;
 
   protected Tuple<JobStatusStatistics, List<OrderAuditFgMqTiDBGen>> getStatusAndJobList(
-          Identify identify) throws Exception {
+      Identify identify) throws Exception {
     List<OrderAuditFgMqTiDBGen> orderAuditFgMqTiDBGenList =
-            orderAuditFgMqRepository.getJobsByOrderIdAndFgId(identify.orderId, identify.fgId);
+        orderAuditFgMqRepository.getJobsByOrderIdAndFgId(identify.orderId, identify.fgId);
     JobStatusStatistics jobStatusStatistics = new JobStatusStatistics();
     if (!ListHelper.isEmpty(orderAuditFgMqTiDBGenList)) {
       for (OrderAuditFgMqTiDBGen orderAuditFgMqTiDBGen : orderAuditFgMqTiDBGenList) {
@@ -118,7 +128,7 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
   }
 
   protected ProcessPendingJobMethod getProcessMethodByJobStatusStatistics(
-          JobStatusStatistics jobStatusStatistics, OrderAuditFgMqTiDBGen tmpJob) {
+      JobStatusStatistics jobStatusStatistics, OrderAuditFgMqTiDBGen tmpJob) {
     // 已经有成功执行的删除单 不管啥单子 都设置全部完成
     if (jobStatusStatistics.tDeleteCount > 0) {
       return ProcessPendingJobMethod.DoneAll;
@@ -140,19 +150,23 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     return ProcessPendingJobMethod.ThrowSettle;
   }
 
-  protected void processDoneAllJobList(List<OrderAuditFgMqTiDBGen> jobList)
-          throws Exception {
-    jobList.stream().forEach(job -> {job.setJobStatus("T"); job.setRemark("已经有成功执行的删除单 或 有删除单且没有成功抛出的创建修改单");});
+  protected void processDoneAllJobList(List<OrderAuditFgMqTiDBGen> jobList) throws Exception {
+    jobList.stream()
+        .forEach(
+            job -> {
+              job.setJobStatus("T");
+              job.setRemark("已经有成功执行的删除单 或 有删除单且没有成功抛出的创建修改单");
+            });
     orderAuditFgMqRepository.batchUpdate(jobList);
   }
 
   // 获取合并后的job 被合并的job 拼为一个对象返回
   protected WJobMergeItem getWJobMergeItem(List<OrderAuditFgMqTiDBGen> jobList) {
     List<OrderAuditFgMqTiDBGen> wJobList =
-            jobList.stream()
-                    .filter(p -> "W".equals(p.getJobStatus()))
-                    .map(p -> BeanHelper.convert(p, OrderAuditFgMqTiDBGen.class))
-                    .collect(Collectors.toList());
+        jobList.stream()
+            .filter(p -> "W".equals(p.getJobStatus()))
+            .map(p -> BeanHelper.convert(p, OrderAuditFgMqTiDBGen.class))
+            .collect(Collectors.toList());
     // 如果说没有删除单 取最后一单 如果说有删除单 取最后一个删除单 （优先后面的是因为删除移动少）
     int selectedJobInd = wJobList.size() - 1;
     for (int i = 0; i < wJobList.size(); i++) {
@@ -165,10 +179,10 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
   }
 
   protected void processSuccessJobList(
-          List<OrderAuditFgMqTiDBGen> successJobList,
-          Map<Identify, WJobMergeItem> identifyWJobMergeItemMap,
-          Map<Identify, List<OrderAuditFgMqTiDBGen>> identifyJobListMap)
-          throws Exception {
+      List<OrderAuditFgMqTiDBGen> successJobList,
+      Map<Identify, WJobMergeItem> identifyWJobMergeItemMap,
+      Map<Identify, List<OrderAuditFgMqTiDBGen>> identifyJobListMap)
+      throws Exception {
     List<OrderAuditFgMqTiDBGen> allSuccessJobList = new ArrayList<>();
     for (OrderAuditFgMqTiDBGen job : successJobList) {
       Identify identity = new Identify(job.getOrderId(), job.getFgId());
@@ -194,9 +208,9 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
   }
 
   protected void processFailJobList(
-          List<OrderAuditFgMqTiDBGen> failJobList,
-          Map<Identify, WJobMergeItem> identifyWJobMergeItemMap)
-          throws Exception {
+      List<OrderAuditFgMqTiDBGen> failJobList,
+      Map<Identify, WJobMergeItem> identifyWJobMergeItemMap)
+      throws Exception {
     List<OrderAuditFgMqTiDBGen> allFailJobList = new ArrayList<>();
     for (OrderAuditFgMqTiDBGen job : failJobList) {
       Identify identity = new Identify(job.getOrderId(), job.getFgId());
@@ -219,10 +233,39 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
   protected Set<Identify> getPendingIdentify(List<Integer> sliceIndexList) throws Exception {
     List<OrderAuditFgMqTiDBGen> pendingJobs = getPending(sliceIndexList);
     Set<Identify> identifySet =
-            pendingJobs.stream()
-                    .map(p -> new Identify(p.getOrderId(), p.getFgId()))
-                    .collect(Collectors.toSet());
+        pendingJobs.stream()
+            .map(p -> new Identify(p.getOrderId(), p.getFgId()))
+            .collect(Collectors.toSet());
     return identifySet;
+  }
+
+  protected List<AuditOrderFgReqDTO> getAuditOrderFgReqDTOList(
+      List<OrderAuditFgMqTiDBGen> orderAuditFgMqTiDBGenList) throws Exception {
+    List<AuditOrderFgReqDTO> auditOrderFgReqDTOList = new ArrayList<>();
+    List<String> referenceIdList =
+        orderAuditFgMqTiDBGenList.stream()
+            .map(p -> p.getReferenceId())
+            .collect(Collectors.toList());
+    Map<String, SettleCallbackInfoTiDBGen> referenceIdSettleCallbackInfoMap =
+        settleCallbackInfoRepository.getMapByReferenceIdList(referenceIdList);
+    for (OrderAuditFgMqTiDBGen orderAuditFgMqTiDBGen : orderAuditFgMqTiDBGenList) {
+      String referenceId = orderAuditFgMqTiDBGen.getReferenceId();
+      SettleCallbackInfoTiDBGen settleCallbackInfoTiDBGen =
+          referenceIdSettleCallbackInfoMap.get(referenceId);
+      if (settleCallbackInfoTiDBGen == null) {
+        throw new Exception("settleCallbackInfo missing");
+      }
+
+      OrderAuditFgMqBO orderAuditFgMqBO =
+          BeanHelper.convert(orderAuditFgMqTiDBGen, OrderAuditFgMqBO.class);
+      SettlementCallBackInfo settlementCallBackInfo =
+          BeanHelper.convert(settleCallbackInfoTiDBGen, SettlementCallBackInfo.class);
+
+      AuditOrderFgReqDTO auditOrderFgReqDTO =
+          new AuditOrderFgReqDTO(orderAuditFgMqBO, settlementCallBackInfo);
+      auditOrderFgReqDTOList.add(auditOrderFgReqDTO);
+    }
+    return auditOrderFgReqDTOList;
   }
 
   @Override
@@ -230,7 +273,7 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     Integer minBetween = 60; // 后续从qconfig拿
     Integer count = 100; // 后续从qconfig拿
     List<OrderAuditFgMqTiDBGen> pendingJobs =
-            orderAuditFgMqRepository.getPendingJobs(sliceIndexList, minBetween, count);
+        orderAuditFgMqRepository.getPendingJobs(sliceIndexList, minBetween, count);
     return pendingJobs;
   }
 
@@ -249,7 +292,7 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
 
     for (Identify identify : identifySet) {
       Tuple<JobStatusStatistics, List<OrderAuditFgMqTiDBGen>> jobStatusStatisticsAndJobList =
-              getStatusAndJobList(identify);
+          getStatusAndJobList(identify);
       JobStatusStatistics jobStatusStatistics = jobStatusStatisticsAndJobList.getFirst();
       List<OrderAuditFgMqTiDBGen> identityJobList = jobStatusStatisticsAndJobList.getSecond();
       WJobMergeItem wJobMergeItem = getWJobMergeItem(identityJobList);
@@ -258,7 +301,7 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
       OrderAuditFgMqTiDBGen leaderJob = wJobMergeItem.leader;
       // 获取处理方式
       ProcessPendingJobMethod processMethod =
-              getProcessMethodByJobStatusStatistics(jobStatusStatistics, leaderJob);
+          getProcessMethodByJobStatusStatistics(jobStatusStatistics, leaderJob);
       if (processMethod.equals(ProcessPendingJobMethod.ThrowSettle)) {
         throwSettleList.add(leaderJob);
       } else if (processMethod.equals(ProcessPendingJobMethod.DoneAll)) {
@@ -266,17 +309,25 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
       }
     }
 
+    List<AuditOrderFgReqDTO> throwSettleDtoList = getAuditOrderFgReqDTOList(throwSettleList);
+
+    List<String> successReferenceList = handlerApi.auditOrderFg(throwSettleDtoList);
+
+    Set<String> successReferenceIdSet = new HashSet<>(successReferenceList);
+
+    // 成功列表
+    List<OrderAuditFgMqTiDBGen> successJobList =
+        throwSettleList.stream()
+            .filter(p -> successReferenceIdSet.contains(p.getReferenceId()))
+            .collect(Collectors.toList());
+    // 失败列表
+    List<OrderAuditFgMqTiDBGen> failJobList =
+        throwSettleList.stream()
+            .filter(p -> !successReferenceIdSet.contains(p.getReferenceId()))
+            .collect(Collectors.toList());
+
     // 批量设置不需要处理的Job为执行成功
     processDoneAllJobList(setSuccessStatusList);
-
-    // 后续改为调用计费函数 返回成功结果集;
-    List<OrderAuditFgMqTiDBGen> successJobList = new ArrayList<>();
-    // 不在失败列表里的为成功的
-    List<OrderAuditFgMqTiDBGen> failJobList =
-            throwSettleList.stream()
-                    .filter(p -> !successJobList.contains(p))
-                    .map(p -> BeanHelper.convert(p, OrderAuditFgMqTiDBGen.class))
-                    .collect(Collectors.toList());
     // 处理成功列表
     processSuccessJobList(successJobList, identifyWJobMergeItemMap, identifyJobListMap);
     // 处理失败列表
