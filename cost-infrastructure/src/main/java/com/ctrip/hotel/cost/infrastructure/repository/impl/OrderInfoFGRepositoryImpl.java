@@ -39,7 +39,7 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
     private List<OrderAuditRoomData> getOrders(List<Long> dataIds) {
         List<OrderAuditRoomData> auditRoomOrders = orderInfoDataClient.getOrderAuditRoomDataByFgId(dataIds);
         // todo insert table ORDER_INFO_FG, 写入失败捕获异常，不要影响计费主流程，如果失败，可以通过接口日志查询
-        return Collections.emptyList();
+        return auditRoomOrders;
     }
 
     /**
@@ -193,7 +193,7 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
                 || CollectionUtils.isEmpty(order.getAuditRoomInfoList())
                 || auditRoomCheckFail(order.getAuditRoomInfoList())
                 || order.getHotelBasicInfo() == null
-                || order.getHotelBasicInfo().getOperatMode() == null
+//                || order.getHotelBasicInfo().getOperatMode() == null
                 ;
     }
 

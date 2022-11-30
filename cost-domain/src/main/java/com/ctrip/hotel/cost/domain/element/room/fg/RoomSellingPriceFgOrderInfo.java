@@ -28,7 +28,7 @@ public class RoomSellingPriceFgOrderInfo extends AbstractElementFg implements Ro
     private Calendar eTD;
 
     // 订单属性
-    private Calendar eta;
+    private Calendar orderETA;
     private Calendar realETD;
     private Integer hourAdjuest;
 
@@ -37,7 +37,7 @@ public class RoomSellingPriceFgOrderInfo extends AbstractElementFg implements Ro
 
     @Override
     public Calendar orderBeginDate() {
-        return eta;
+        return orderETA;
 //        return this.getEta();
     }
 

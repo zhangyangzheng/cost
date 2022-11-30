@@ -10,6 +10,8 @@ public enum CostItemType {
     BID_PRICE_FG("bidPrice", "bidCostEffort*orgCost*days*quantity", "formula.bidPriceFg"),
     PROMOTION_SELLING_PRICE_FG("promotionSellingPrice", "amount*days*quantity", "formula.promotionSellingPriceFg"),
     PROMOTION_COST_PRICE_FG("promotionCostPrice", "costDiscountAmount*days*quantity", "formula.promotionCostPriceFg"),
+    TRIP_PROMOTION_SELLING_PRICE_FG("tripPromotionSellingPrice", "amount*days*quantity", "formula.tripPromotionSellingPriceFg"),// 携程承担？
+    BUYOUT_DISCOUNT_PROMOTION_COST_PRICE_FG("buyoutDiscountPromotionCostPrice", "costDiscountAmount*days*quantity", "formula.buyoutDiscountPromotionCostPrice"),// 非携程，买断折扣？
     ROOM_SELLING_PRICE_FG("roomSellingPrice", "amount*days*quantity", "formula.roomSellingPriceFg"),
     ROOM_COST_PRICE_FG("roomCostPrice", "cost*days*quantity", "formula.roomCostPriceFg"),
 
