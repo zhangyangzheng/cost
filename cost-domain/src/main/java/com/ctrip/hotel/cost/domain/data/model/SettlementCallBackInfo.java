@@ -12,7 +12,7 @@ public class SettlementCallBackInfo {
     private Long settlementId;
     private Long hwpSettlementId;// 信用住订单结算单号
     private Long orderInfoId;// 前置接口返回的OrderInfoID
-    private String pushReferenceID;// 抛结算抛单接口调用，接口头部ReferenceID
-    private String hwpReferenceID;// HWP接口调用，接口头部ReferenceID
+    private String pushReferenceId;// 抛结算抛单接口调用，接口头部ReferenceID
+    private String hwpReferenceId;// HWP接口调用，接口头部ReferenceID
     private Boolean pushWalletPay;// 是否只推送闪住结算数据
 }

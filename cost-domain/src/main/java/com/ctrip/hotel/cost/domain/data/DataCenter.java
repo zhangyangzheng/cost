@@ -37,6 +37,7 @@ public class  DataCenter {
 
     private Bid bid;
     private PromotionCost promotionCost;
+    private TripPromotionCost tripPromotionCost;
     private BuyoutDiscountPromotionCost buyoutDiscountPromotionCost;
     private PromotionSelling promotionSelling;
     private TripPromotionSelling tripPromotionSelling;
@@ -113,6 +114,10 @@ public class  DataCenter {
         PromotionCost pC = new PromotionCost(new ArrayList<>(promotionCostPriceFgOrderInfos));
         this.setPromotionCost(pC);
         itemCollector.add(pC);
+
+        TripPromotionCost tPC = new TripPromotionCost(new ArrayList<>(promotionCostPriceFgOrderInfos));
+        this.setTripPromotionCost(tPC);
+        itemCollector.add(tPC);
     }
 
     public void setBuyoutDiscountPromotionCostPriceFgOrderInfos(List<PromotionCostPriceFgOrderInfo> promotionCostPriceFgOrderInfos) throws Exception {

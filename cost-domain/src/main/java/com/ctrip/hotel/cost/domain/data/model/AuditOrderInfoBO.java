@@ -44,8 +44,11 @@ public class AuditOrderInfoBO {
     private BigDecimal bidPrice;//null--
     private BigDecimal roomAmount;;//0--
     private BigDecimal roomCost;;//0--
-    private BigDecimal tripPromotionAmount;//携程承担促销 0                   ruleGroup != 1  叠加amount
-    private BigDecimal buyoutDiscountAmount;//(促销)买断折扣金额 > 0 ? ~ : null     ruleGroup == 1 && discountDtype == 8 叠加costDiscountAmount
+    private BigDecimal tripPromotionAmount;//携程承担促销 0
+    private BigDecimal tripPromotionCost;
+    private BigDecimal hotelPromotionAmount;
+    private BigDecimal hotelPromotionCost;
+    private BigDecimal buyoutDiscountAmount;//(促销)买断折扣金额 > 0 ? ~ : null
 
     public List<PromotionDailyInfo> getPromotionDailyInfoList() {
         if (CollectionUtils.isEmpty(promotionDailyInfoList)) {

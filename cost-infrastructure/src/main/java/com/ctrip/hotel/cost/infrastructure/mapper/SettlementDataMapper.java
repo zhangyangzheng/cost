@@ -23,8 +23,8 @@ import java.util.List;
  * @date 2022-11-18 14:56
  */
 @Mapper(componentModel = "spring", imports = {DefaultValueHelper.class})
-public interface SettlementDataPOMapper {
-    SettlementDataPOMapper INSTANCE = Mappers.getMapper(SettlementDataPOMapper.class);
+public interface SettlementDataMapper {
+    SettlementDataMapper INSTANCE = Mappers.getMapper(SettlementDataMapper.class);
 
     /**
      * 订单取消-->结算
