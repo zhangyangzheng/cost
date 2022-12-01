@@ -1,5 +1,8 @@
 package com.ctrip.hotel.cost.infrastructure.client;
 
+import com.alibaba.fastjson.JSON;
+import com.ctrip.framework.clogging.domain.thrift.LogLevel;
+import com.ctrip.hotel.cost.domain.common.ThreadLocalCostHolder;
 import com.ctriposs.baiji.rpc.client.ServiceClientBase;
 import com.dianping.cat.Cat;
 import com.dianping.cat.message.Transaction;
@@ -60,10 +63,13 @@ public class SoaHelper {
       soaTransaction.setStatus(ex);
       // 记录错误信息
       LogHelper.logError(requestType, ex);
+      ThreadLocalCostHolder.allLinkTracingLog(ex, LogLevel.ERROR);
     } finally {
       try {
         LogHelper.logInfoES(
             requestType, watch.stop().elapsed(TimeUnit.MILLISECONDS), request, response);
+        ThreadLocalCostHolder.allLinkTracingLog(JSON.toJSONString(request), LogLevel.INFO);
+        ThreadLocalCostHolder.allLinkTracingLog(JSON.toJSONString(response), LogLevel.INFO);
       } catch (Exception ex) {
       }
       soaTransaction.complete();

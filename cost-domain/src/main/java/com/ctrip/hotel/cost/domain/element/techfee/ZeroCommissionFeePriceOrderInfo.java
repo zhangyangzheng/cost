@@ -29,7 +29,7 @@ public class ZeroCommissionFeePriceOrderInfo implements ZeroCommissionFeePrice {
 
     @Override
     public Factor zeroCommissionFeeRatio() {
-        return new Factor("adjustCommission", this.getZeroCommissionFeeRatio());
+        return new Factor("zeroCommissionFeeRatio", this.getZeroCommissionFeeRatio());
     }
 
     @Override

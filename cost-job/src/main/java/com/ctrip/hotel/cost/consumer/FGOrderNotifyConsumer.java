@@ -2,7 +2,7 @@ package com.ctrip.hotel.cost.consumer;
 
 import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepository;
 import com.ctrip.hotel.cost.infrastructure.repository.SettleCallbackInfoRepository;
-import com.ctrip.hotel.cost.infrastructure.util.type.LongHelper;
+import com.ctrip.hotel.cost.domain.common.LongHelper;
 import hotel.settlement.common.LogHelper;
 import hotel.settlement.common.json.JsonUtils;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
