@@ -9,8 +9,9 @@ import com.ctrip.hotel.cost.infrastructure.client.SettlementClient;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementApplyListUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementCancelListUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementPayDataUsedBo;
+import com.ctrip.hotel.cost.infrastructure.model.dto.FgBackToAuditDto;
+import com.ctrip.hotel.cost.infrastructure.mq.AuditMqProducer;
 import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepository;
-import com.ctrip.hotel.cost.infrastructure.util.message.MessageConfig;
 import com.ctrip.hotel.cost.job.FGNotifySettlementJob;
 import com.ctrip.soa.hotel.settlement.api.CancelSettleData;
 import com.ctrip.soa.hotel.settlement.api.SettleDataRequest;
@@ -23,6 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import soa.ctrip.com.hotel.order.checkin.audit.v2.getOrderAuditRoomData.OrderAuditRoomData;
 import soa.ctrip.com.hotel.vendor.settlement.v1.settlementdata.SettlementPayData;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -47,9 +49,8 @@ public class SpringTest {
   @Autowired
   HandlerApi handlerApi;
 
-
   @Autowired
-  MessageConfig messageConfig;
+  AuditMqProducer auditMqProducer;
 
   @Test
   public void auditOrderFgCollectPrice() {
@@ -163,8 +164,39 @@ public class SpringTest {
 
 
   @Test
-  public void messageConfigTest(){
-    messageConfig.getMessage("name");
+  public void auditMqProducerTest(){
+    FgBackToAuditDto fgBackToAuditDto = new FgBackToAuditDto();
+
+    fgBackToAuditDto.setOrderId(1l);
+    fgBackToAuditDto.setFgId(1l);
+    fgBackToAuditDto.setBusinessType(1);
+    fgBackToAuditDto.setOpType('c');
+    fgBackToAuditDto.setReferenceId("111");
+    fgBackToAuditDto.setIsThrow('1');
+
+    fgBackToAuditDto.setSettlementId(1l);
+    fgBackToAuditDto.setPushReferenceID("asd");
+    fgBackToAuditDto.setHWPSettlementId(1l);
+    fgBackToAuditDto.setPushWalletPay(true);
+    fgBackToAuditDto.setResultCode(1);
+    fgBackToAuditDto.setHWPReferenceID("111");
+    fgBackToAuditDto.setOrderInfoID(1l);
+
+    fgBackToAuditDto.setAmount(new BigDecimal(1));
+    fgBackToAuditDto.setCost(new BigDecimal(1));
+    fgBackToAuditDto.setBidPrice(new BigDecimal(1));
+    fgBackToAuditDto.setRoomAmount(new BigDecimal(1));
+    fgBackToAuditDto.setRoomCost(new BigDecimal(1));
+    fgBackToAuditDto.setPromotionAmountHotel(new BigDecimal(1));
+    fgBackToAuditDto.setPromotionCostHotel(new BigDecimal(1));
+    fgBackToAuditDto.setPromotionAmountTrip(new BigDecimal(1));
+    fgBackToAuditDto.setPromotionCostTrip(new BigDecimal(1));
+
+    try {
+      auditMqProducer.fgBackToAudit(fgBackToAuditDto);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
   }
 
 }
