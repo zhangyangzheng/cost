@@ -4,12 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.ctrip.hotel.cost.CostJobApplication;
 import com.ctrip.hotel.cost.application.handler.HandlerApi;
 import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
-import com.ctrip.hotel.cost.infrastructure.client.OrderInfoDataClient;
+import com.ctrip.hotel.cost.infrastructure.client.AuditClient;
 import com.ctrip.hotel.cost.infrastructure.client.SettlementClient;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementApplyListUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementCancelListUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementPayDataUsedBo;
 import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepository;
+import com.ctrip.hotel.cost.infrastructure.util.message.MessageConfig;
 import com.ctrip.hotel.cost.job.FGNotifySettlementJob;
 import com.ctrip.soa.hotel.settlement.api.CancelSettleData;
 import com.ctrip.soa.hotel.settlement.api.SettleDataRequest;
@@ -38,13 +39,17 @@ public class SpringTest {
   SettlementClient settlementClient;
 
   @Autowired
-  OrderInfoDataClient orderInfoDataClient;
+  AuditClient auditClient;
 
   @Autowired
   FGNotifySettlementJob fgNotifySettlementJob;
 
   @Autowired
   HandlerApi handlerApi;
+
+
+  @Autowired
+  MessageConfig messageConfig;
 
   @Test
   public void auditOrderFgCollectPrice() {
@@ -63,7 +68,7 @@ public class SpringTest {
 
   @Test
   public void getDetailDataTest(){
-    List<OrderAuditRoomData> fgIdRes = orderInfoDataClient.getOrderAuditRoomDataByFgId(Arrays.asList(560039249l));
+    List<OrderAuditRoomData> fgIdRes = auditClient.getOrderAuditRoomDataByFgId(Arrays.asList(560039249l));
     System.out.println(fgIdRes);
   }
 
@@ -155,4 +160,11 @@ public class SpringTest {
       throw new RuntimeException(e);
     }
   }
+
+
+  @Test
+  public void messageConfigTest(){
+    messageConfig.getMessage("name");
+  }
+
 }

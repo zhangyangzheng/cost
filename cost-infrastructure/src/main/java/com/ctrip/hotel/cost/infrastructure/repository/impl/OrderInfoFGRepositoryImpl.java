@@ -12,7 +12,7 @@ import com.ctrip.hotel.cost.domain.element.promotion.PromotionSellingPriceFgOrde
 import com.ctrip.hotel.cost.domain.element.room.fg.RoomCostPriceFgOrderInfo;
 import com.ctrip.hotel.cost.domain.element.room.fg.RoomSellingPriceFgOrderInfo;
 import com.ctrip.hotel.cost.domain.element.techfee.ZeroCommissionFeePriceOrderInfo;
-import com.ctrip.hotel.cost.infrastructure.client.OrderInfoDataClient;
+import com.ctrip.hotel.cost.infrastructure.client.AuditClient;
 import com.ctrip.hotel.cost.infrastructure.mapper.OrderAuditRoomDataPOMapper;
 import hotel.settlement.common.LogHelper;
 import org.apache.commons.collections.CollectionUtils;
@@ -34,10 +34,10 @@ import java.util.stream.Collectors;
 public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
 
     @Autowired
-    private OrderInfoDataClient orderInfoDataClient;
+    private AuditClient auditClient;
 
     private List<OrderAuditRoomData> getOrders(List<Long> dataIds) {
-        List<OrderAuditRoomData> auditRoomOrders = orderInfoDataClient.getOrderAuditRoomDataByFgId(dataIds);
+        List<OrderAuditRoomData> auditRoomOrders = auditClient.getOrderAuditRoomDataByFgId(dataIds);
         // todo insert table ORDER_INFO_FG, 写入失败捕获异常，不要影响计费主流程，如果失败，可以通过接口日志查询
         return auditRoomOrders;
     }
