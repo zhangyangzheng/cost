@@ -1,4 +1,4 @@
-package com.ctrip.hotel.cost.domain.common;
+package com.ctrip.hotel.cost.common;
 
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package com.ctrip.hotel.cost.domain.common;
+package com.ctrip.hotel.cost.common;
 
 public class LongHelper {
     public static Long getNullableLong(String longStr){

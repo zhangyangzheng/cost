@@ -21,7 +21,7 @@ import hotel.settlement.common.helpers.DefaultValueHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import repository.SettlementRepository;
+import com.ctrip.hotel.cost.repository.SettlementRepository;
 import soa.ctrip.com.hotel.vendor.settlement.v1.Hotelorderchannel;
 import soa.ctrip.com.hotel.vendor.settlement.v1.cancelorder.CancelorderRequesttype;
 import soa.ctrip.com.hotel.vendor.settlement.v1.settlementdata.SettlementPayData;

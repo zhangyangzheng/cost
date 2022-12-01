@@ -1,4 +1,4 @@
-package repository;
+package com.ctrip.hotel.cost.repository;
 
 import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
 

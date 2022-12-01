@@ -5,7 +5,7 @@ import com.ctrip.hotel.cost.application.model.CostDTO;
 import com.ctrip.hotel.cost.application.model.vo.AuditOrderFgReqDTO;
 import com.ctrip.hotel.cost.application.resolver.FgOrderCostViewResolver;
 import com.ctrip.hotel.cost.application.resolver.ViewResolver;
-import com.ctrip.hotel.cost.domain.common.ThreadLocalCostHolder;
+import com.ctrip.hotel.cost.common.ThreadLocalCostHolder;
 import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
 import com.ctrip.hotel.cost.domain.root.CostSupporter;
 import com.ctrip.hotel.cost.domain.scene.EnumScene;

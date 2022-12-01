@@ -1,4 +1,4 @@
-package com.ctrip.hotel.cost.domain.common;
+package com.ctrip.hotel.cost.common;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
 import com.ctrip.framework.clogging.domain.thrift.LogLevel;

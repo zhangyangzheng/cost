@@ -1,13 +1,13 @@
 package com.ctrip.hotel.cost.domain.settlement;
 
 import com.ctrip.framework.clogging.domain.thrift.LogLevel;
-import com.ctrip.hotel.cost.domain.common.ThreadLocalCostHolder;
+import com.ctrip.hotel.cost.common.ThreadLocalCostHolder;
 import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
 import hotel.settlement.common.QConfigHelper;
 import hotel.settlement.common.helpers.DefaultValueHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import repository.SettlementRepository;
+import com.ctrip.hotel.cost.repository.SettlementRepository;
 
 import java.util.Arrays;
 import java.util.List;
