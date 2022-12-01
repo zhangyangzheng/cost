@@ -21,7 +21,7 @@ import hotel.settlement.common.helpers.DefaultValueHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import repository.SettlementRepository;
+import com.ctrip.hotel.cost.repository.SettlementRepository;
 import soa.ctrip.com.hotel.vendor.settlement.v1.Hotelorderchannel;
 import soa.ctrip.com.hotel.vendor.settlement.v1.cancelorder.CancelorderRequesttype;
 import soa.ctrip.com.hotel.vendor.settlement.v1.settlementdata.SettlementPayData;
@@ -189,7 +189,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
     }
 
     @Override
-    public boolean callSettlementPayDataReceive(AuditOrderInfoBO auditOrderInfoBO) throws Exception {
+    public Long callSettlementPayDataReceive(AuditOrderInfoBO auditOrderInfoBO) throws Exception {
         SettlementPayData settlementPayData = SettlementDataPOMapper.INSTANCE.newOrderToSettlementPayDataReceive(auditOrderInfoBO);
 
         OrderAuditFgMqBO orderAuditFgMqBO = auditOrderInfoBO.getOrderAuditFgMqBO();
@@ -250,7 +250,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
     }
 
     @Override
-    public boolean callSettlementApplyList(AuditOrderInfoBO auditOrderInfoBO) throws Exception {
+    public Long callSettlementApplyList(AuditOrderInfoBO auditOrderInfoBO) throws Exception {
         SettleDataRequest requestData =
                 SettlementDataPOMapper.INSTANCE.newOrderToSettlementApplyList(auditOrderInfoBO);
 
@@ -814,7 +814,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
     }
 
     @Override
-    public boolean callSettlementApplyListHWP(AuditOrderInfoBO auditOrderInfoBO) throws Exception {
+    public Long callSettlementApplyListHWP(AuditOrderInfoBO auditOrderInfoBO) throws Exception {
         SettleDataRequest requestData =
                 SettlementDataPOMapper.INSTANCE.newOrderToSettlementApplyList(auditOrderInfoBO);
 
@@ -1036,5 +1036,15 @@ public class SettlementRepositoryImpl implements SettlementRepository {
         return settlementClient.callSettlementApplyList(
                 new SettlementApplyListDto(
                         requestData, orderAuditFgMqBO.getReferenceId(), orderAuditFgMqBO.getIsThrow()));
+    }
+
+    @Override
+    public boolean callConfigCanPush() throws Exception {
+        return settlementClient.callConfigCanPush();
+    }
+
+    @Override
+    public boolean callCheckFGBidSplit(Integer vendorChannelID, Integer hotelId, String orderConfirmType, Boolean isSupportAnticipation) throws Exception {
+        return settlementClient.callCheckFGBidSplit(vendorChannelID, hotelId, orderConfirmType, isSupportAnticipation);
     }
 }

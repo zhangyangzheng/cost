@@ -11,7 +11,6 @@ import com.ctrip.hotel.cost.domain.element.promotion.PromotionCostPriceFgOrderIn
 import com.ctrip.hotel.cost.domain.element.promotion.PromotionSellingPriceFgOrderInfo;
 import com.ctrip.hotel.cost.domain.element.room.fg.RoomCostPriceFgOrderInfo;
 import com.ctrip.hotel.cost.domain.element.room.fg.RoomSellingPriceFgOrderInfo;
-import com.ctrip.hotel.cost.domain.element.techfee.ZeroCommissionFeePrice;
 import com.ctrip.hotel.cost.domain.element.techfee.ZeroCommissionFeePriceOrderInfo;
 import com.ctrip.hotel.cost.domain.scene.CostItemType;
 import lombok.Data;
@@ -38,7 +37,9 @@ public class  DataCenter {
 
     private Bid bid;
     private PromotionCost promotionCost;
+    private BuyoutDiscountPromotionCost buyoutDiscountPromotionCost;
     private PromotionSelling promotionSelling;
+    private TripPromotionSelling tripPromotionSelling;
     private RoomCost roomCost;
     private RoomSelling roomSelling;
     private PriceAmountFg priceAmountFg;
@@ -102,11 +103,22 @@ public class  DataCenter {
 //        this.promotionSellingPriceFgOrderInfos = promotionSellingPriceFgOrderInfos;
     }
 
+    public void setTripPromotionSellingPriceFgOrderInfos(List<PromotionSellingPriceFgOrderInfo> promotionSellingPriceFgOrderInfos) throws Exception {
+        TripPromotionSelling pS = new TripPromotionSelling(new ArrayList<>(promotionSellingPriceFgOrderInfos));
+        this.setTripPromotionSelling(pS);
+        itemCollector.add(pS);
+    }
+
     public void setPromotionCostPriceFgOrderInfos(List<PromotionCostPriceFgOrderInfo> promotionCostPriceFgOrderInfos) throws Exception {
         PromotionCost pC = new PromotionCost(new ArrayList<>(promotionCostPriceFgOrderInfos));
         this.setPromotionCost(pC);
         itemCollector.add(pC);
-//        this.promotionCostPriceFgOrderInfos = promotionCostPriceFgOrderInfos;
+    }
+
+    public void setBuyoutDiscountPromotionCostPriceFgOrderInfos(List<PromotionCostPriceFgOrderInfo> promotionCostPriceFgOrderInfos) throws Exception {
+        BuyoutDiscountPromotionCost pC = new BuyoutDiscountPromotionCost(new ArrayList<>(promotionCostPriceFgOrderInfos));
+        this.setBuyoutDiscountPromotionCost(pC);
+        itemCollector.add(pC);
     }
 
     public void setPriceAmountFgInfo(PriceAmountFgInfo priceAmountFgInfo) {
@@ -126,7 +138,7 @@ public class  DataCenter {
     }
 
     public void setAdjustCommissionPriceOrderInfo(AdjustCommissionPriceOrderInfo adjustCommissionPriceOrderInfo) {
-        if (adjustCommissionPriceOrderInfo != null) {
+        if (adjustCommissionPriceOrderInfo != null && adjustCommissionPriceOrderInfo.getAdjustCommission() != null) {
             adjustCommissionPriceOrderInfo.setSupplier(this::getCostCollector);
             AdjustCommission aC = new AdjustCommission(adjustCommissionPriceOrderInfo);
             this.setAdjustCommission(aC);
@@ -135,7 +147,7 @@ public class  DataCenter {
 //        this.adjustCommissionPriceOrderInfo = adjustCommissionPriceOrderInfo;
     }
     public void setZeroCommissionFeePriceOrderInfo(ZeroCommissionFeePriceOrderInfo zeroCommissionFeePriceOrderInfo) {
-        if (zeroCommissionFeePriceOrderInfo != null) {
+        if (zeroCommissionFeePriceOrderInfo != null && zeroCommissionFeePriceOrderInfo.getZeroCommissionFeeRatio() != null) {
             zeroCommissionFeePriceOrderInfo.setSupplier(this::getCostCollector);
             ZeroCommissionFee zC = new ZeroCommissionFee(zeroCommissionFeePriceOrderInfo);
             this.setZeroCommissionFee(zC);

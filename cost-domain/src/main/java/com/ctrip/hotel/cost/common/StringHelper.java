@@ -1,4 +1,4 @@
-package com.ctrip.hotel.cost.infrastructure.util.type;
+package com.ctrip.hotel.cost.common;
 
 public class StringHelper {
 

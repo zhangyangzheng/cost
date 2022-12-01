@@ -74,7 +74,13 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
             dataCenter.setPromotionSellingPriceFgOrderInfos(
                     promotionPriceBuild(order.getPromotionDailyInfoList(), order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo())
             );
+            dataCenter.setTripPromotionSellingPriceFgOrderInfos(
+                    promotionPriceBuild(order.getPromotionDailyInfoList(), order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo())
+            );
             dataCenter.setPromotionCostPriceFgOrderInfos(
+                    promotionCostBuild(order.getPromotionDailyInfoList(), order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo())
+            );
+            dataCenter.setBuyoutDiscountPromotionCostPriceFgOrderInfos(
                     promotionCostBuild(order.getPromotionDailyInfoList(), order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo())
             );
             dataCenter.setPriceAmountFgInfo(new PriceAmountFgInfo());
@@ -172,7 +178,7 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
         return null;
     }
     private ZeroCommissionFeePriceOrderInfo zeroCommissionFeeBuild(TechFeeInfo techFeeInfo) {
-        if (techFeeInfo != null) {
+        if (techFeeInfo != null && techFeeInfo.getZeroCommissionFeeRatio() != null) {
             return OrderAuditRoomDataPOMapper.INSTANCE.auditOrderToZeroCommissionFee(techFeeInfo);
         }
         return null;

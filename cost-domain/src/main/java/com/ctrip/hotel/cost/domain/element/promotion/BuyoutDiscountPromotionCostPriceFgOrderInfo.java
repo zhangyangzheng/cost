@@ -90,7 +90,7 @@ public class BuyoutDiscountPromotionCostPriceFgOrderInfo implements PromotionCos
      */
     @Override
     public Factor days() {
-        if (PromotionEnum.C_TRIP.equals(createSettlementType())) {
+        if (PromotionEnum.C_TRIP.equals(createSettlementType()) || discountDtype != 8) {
             return new Factor("days", BigDecimal.ZERO);
         }
 

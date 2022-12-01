@@ -2,6 +2,7 @@ package com.ctrip.hotel.cost.infrastructure.mq;
 
 import com.ctrip.hotel.cost.infrastructure.util.type.StringHelper;
 import com.mysql.jdbc.log.Log;
+import com.ctrip.hotel.cost.common.StringHelper;
 import hotel.settlement.common.LogHelper;
 import hotel.settlement.common.json.JsonUtils;
 import org.springframework.stereotype.Component;

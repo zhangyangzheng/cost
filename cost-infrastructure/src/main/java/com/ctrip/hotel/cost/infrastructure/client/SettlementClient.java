@@ -1,8 +1,6 @@
 package com.ctrip.hotel.cost.infrastructure.client;
 
 import com.ctrip.framework.foundation.Foundation;
-import com.ctrip.hotel.cost.domain.common.ThreadLocalCostHolder;
-import com.ctrip.hotel.cost.infrastructure.util.compare.ClientCompareHelper;
 import com.ctrip.hotel.cost.infrastructure.model.dto.CancelOrderDto;
 import com.ctrip.hotel.cost.infrastructure.model.dto.SettlementApplyListDto;
 import com.ctrip.hotel.cost.infrastructure.model.dto.SettlementCancelListDto;
@@ -15,7 +13,7 @@ import com.ctrip.soa.hotel.vendor.settlement.v2.SettlementCommonSOAV2Client;
 import com.ctrip.soa.settlement.common.api.v2.CodeEnum;
 import com.ctriposs.baiji.rpc.common.types.AckCodeType;
 import hotel.settlement.common.ListHelper;
-import hotel.settlement.common.LogHelper;
+import hotel.settlement.common.LongHelper;
 import hotel.settlement.common.helpers.DefaultValueHelper;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +30,13 @@ import java.util.List;
 @Component
 public class SettlementClient {
 
-  @Autowired ClientCompareHelper clientCompareHelper;
+  @Autowired
+  CompareHbaseClient compareHbaseClient;
 
   @Autowired SoaHelper soaHelper;
 
   // 现付订单抛到前置模块
-  public boolean callSettlementPayDataReceive(
+  public Long callSettlementPayDataReceive(
       SettlementPayDataReceiveDto settlementPayDataReceiveDto) throws Exception {
     boolean result = true;
     SettlementPayDataReceiveRequestType prepayRequest = new SettlementPayDataReceiveRequestType();
@@ -47,12 +46,12 @@ public class SettlementClient {
 
     boolean isThrow = BooleanUtils.toBoolean(settlementPayDataReceiveDto.getIsThrow());
     if (!isThrow) {
-      clientCompareHelper.addComparing(
+      compareHbaseClient.addComparing(
           settlementPayDataReceiveDto.getReferenceId(),
           "settlementPayDataReceive",
           settlementPayDataReceiveDto.getSettlementPayData(),
           false);
-      return true;
+      return -1L;
     }
 
     SettlementPayDataReceiveResponseType response =
@@ -81,13 +80,13 @@ public class SettlementClient {
                 + response.getSettlementPayDataResultList().get(0).getMessage());
       }
     }
-    return result;
+
+    return LongHelper.tryGetValue(response.getSettlementPayDataResultList().get(0).getSerialNo());
   }
 
   // 抛结算新增修改流程
-  public boolean callSettlementApplyList(SettlementApplyListDto settlementApplyListDto)
+  public Long callSettlementApplyList(SettlementApplyListDto settlementApplyListDto)
       throws Exception {
-    boolean result = true;
     SettlementApplyListRequestType request = new SettlementApplyListRequestType();
     request.setSettleDatas(new ArrayList<>());
     request.getSettleDatas().add(settlementApplyListDto.getSettleDataRequest());
@@ -105,12 +104,12 @@ public class SettlementClient {
     boolean isThrow = BooleanUtils.toBoolean(settlementApplyListDto.getIsThrow());
 
     if (!isThrow) {
-      clientCompareHelper.addComparing(
+      compareHbaseClient.addComparing(
           settlementApplyListDto.getReferenceId(),
           "settlementApplyList",
           settlementApplyListDto.getSettleDataRequest(),
           false);
-      return true;
+      return -1L;
     }
 
     SettlementApplyListResponseType response =
@@ -131,8 +130,7 @@ public class SettlementClient {
     } else {
       throw new Exception("settlementApplyList client error, response is null");
     }
-
-    return result;
+    return DefaultValueHelper.getValue(response.getSettleDatas().get(0).getSettlementId());
   }
 
   public boolean callCancelOrder(CancelOrderDto cancelOrderDto) throws Exception {
@@ -141,7 +139,7 @@ public class SettlementClient {
     boolean isThrow = BooleanUtils.toBoolean(cancelOrderDto.getIsThrow());
 
     if (!isThrow) {
-      clientCompareHelper.addComparing(
+      compareHbaseClient.addComparing(
           cancelOrderDto.getReferenceId(),
           "cancelorder",
           cancelOrderDto.getCancelOrderRequest(),
@@ -168,11 +166,7 @@ public class SettlementClient {
       if (response.getResponseResult().getStatus() != null
           && response.getResponseResult().getStatus().getValue()
               == AckCodeType.Failure.getValue()) {
-        result = false;
-        LogHelper.logError(
-            ThreadLocalCostHolder.getTTL().get().getLinkTracing(),
-            "cancelorder client error, response is fail",
-            ThreadLocalCostHolder.getTTL().get().getTags());
+        throw new Exception("cancelorder client error, response is fail");
       }
     }
     return result;
@@ -188,7 +182,7 @@ public class SettlementClient {
     boolean isThrow = BooleanUtils.toBoolean(settlementCancelListDto.getIsThrow());
 
     if (!isThrow) {
-      clientCompareHelper.addComparing(
+      compareHbaseClient.addComparing(
           settlementCancelListDto.getReferenceId(),
           "settlementCancelList",
           settlementCancelListDto.getCancelSettleData(),
@@ -228,7 +222,7 @@ public class SettlementClient {
         || response.getResponseResult() == null
         || response.getResponseResult().getCode() == null
         || response.getResponseResult().getCode() == CodeEnum.Failure) {
-      throw new Exception("call configCanPush error");
+      throw new Exception("configCanPush client error, response is fail");
     }
     return response.getResult();
   }
@@ -260,7 +254,7 @@ public class SettlementClient {
         || response.getResponseResult() == null
         || response.getResponseResult().getCode() == null
         || response.getResponseResult().getCode() == CodeEnum.Failure) {
-      throw new Exception("call checkFGBidSplit error");
+      throw new Exception("checkFGBidSplit client error, response is fail");
     }
     return response.getResult();
   }

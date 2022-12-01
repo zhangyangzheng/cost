@@ -1,4 +1,4 @@
-package repository;
+package com.ctrip.hotel.cost.repository;
 
 import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
 
@@ -10,7 +10,6 @@ import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
 public interface SettlementRepository {
     /**
      * 抛前置取消单
-     * todo 未完工
      * @param
      * @return
      */
@@ -18,7 +17,6 @@ public interface SettlementRepository {
 
     /**
      * normal（601）结算取消
-     * todo 未完工
      * @param auditOrderInfoBO
      * @return
      */
@@ -26,33 +24,38 @@ public interface SettlementRepository {
 
     /**
      * 闪住（606）结算取消
-     * todo 未完工
      * @param auditOrderInfoBO
      * @return
      */
     boolean callCancelSettlementCancelListHWP(AuditOrderInfoBO auditOrderInfoBO) throws Exception;
 
     /**
-     * 抛前置 done
+     * 抛前置
      * @param auditOrderInfoBO
      * @return
      */
-    boolean callSettlementPayDataReceive(AuditOrderInfoBO auditOrderInfoBO) throws Exception;
+    Long callSettlementPayDataReceive(AuditOrderInfoBO auditOrderInfoBO) throws Exception;
 
     /**
      * 新单或修改单抛结算
-     * todo 未完工
      * @param auditOrderInfoBO
      * @return
      */
-    boolean callSettlementApplyList(AuditOrderInfoBO auditOrderInfoBO) throws Exception;
+    Long callSettlementApplyList(AuditOrderInfoBO auditOrderInfoBO) throws Exception;
 
     /**
      * 新单或修改单抛HWP
-     * todo 未完工
      * @param auditOrderInfoBO
      * @return
      */
-    boolean callSettlementApplyListHWP(AuditOrderInfoBO auditOrderInfoBO) throws Exception;
+    Long callSettlementApplyListHWP(AuditOrderInfoBO auditOrderInfoBO) throws Exception;
 
+    boolean callConfigCanPush() throws Exception;
+
+    boolean callCheckFGBidSplit(
+            Integer vendorChannelID,
+            Integer hotelId,
+            String orderConfirmType,
+            Boolean isSupportAnticipation)
+            throws Exception;
 }

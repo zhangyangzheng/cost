@@ -2,10 +2,9 @@ package com.ctrip.hotel.cost.domain.settlement;
 
 import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
 import com.ctrip.hotel.cost.domain.data.model.PromotionDailyInfo;
+import com.ctrip.hotel.cost.domain.element.promotion.PromotionEnum;
 import hotel.settlement.common.helpers.DefaultValueHelper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import repository.SettlementRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,16 +17,13 @@ import java.util.stream.Collectors;
 @Component
 public class OrderMetaInterpreter {
 
-    @Autowired
-    private SettlementRepository settlementRepository;
-
-    public Boolean resolver(AuditOrderInfoBO auditOrderInfoBO) throws Exception {
+    public AuditOrderInfoBO resolverOrderFg(AuditOrderInfoBO auditOrderInfoBO) {
         /**
          * 现付审核离店：结算只需要酒店承担促销信息
          */
-        List<PromotionDailyInfo> hotelPromotion = auditOrderInfoBO.getPromotionDailyInfoList().stream().filter(e -> DefaultValueHelper.getValue(e.getRuleGroup()) == 1).collect(Collectors.toList());
+        List<PromotionDailyInfo> hotelPromotion = auditOrderInfoBO.getPromotionDailyInfoList().stream().filter(e -> e.getSettlementType().equals(PromotionEnum.HOTEL)).collect(Collectors.toList());
         auditOrderInfoBO.setPromotionDailyInfoList(hotelPromotion);
-        return settlementRepository.callSettlementPayDataReceive(auditOrderInfoBO);
+        return auditOrderInfoBO;
     }
 
 }
