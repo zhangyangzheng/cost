@@ -1,6 +1,9 @@
 package com.ctrip.hotel.cost.infrastructure.mq;
 
+import com.alibaba.fastjson.JSON;
+import com.ctrip.framework.clogging.domain.thrift.LogLevel;
 import com.ctrip.hotel.cost.common.StringHelper;
+import com.ctrip.hotel.cost.common.ThreadLocalCostHolder;
 import hotel.settlement.common.LogHelper;
 import hotel.settlement.common.json.JsonUtils;
 import org.springframework.stereotype.Component;
@@ -33,6 +36,7 @@ public class QmqHelper {
 
 
     final private void sendMessage(String subject, Message message) throws Exception {
+        ThreadLocalCostHolder.allLinkTracingLog(subject + ": " + JSON.toJSONString(message), LogLevel.INFO);
         messageProducer.sendMessage(message, new MessageSendStateListener() {
             @Override
             public void onSuccess(Message message) {

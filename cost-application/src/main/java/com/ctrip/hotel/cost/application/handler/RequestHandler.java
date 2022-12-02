@@ -1,6 +1,5 @@
 package com.ctrip.hotel.cost.application.handler;
 
-import com.ctrip.framework.clogging.domain.thrift.LogLevel;
 import com.ctrip.hotel.cost.application.model.AuditOrderFgCostDTO;
 import com.ctrip.hotel.cost.application.model.CostDTO;
 import com.ctrip.hotel.cost.application.model.vo.AuditOrderFgReqDTO;
@@ -50,7 +49,6 @@ public class RequestHandler implements HandlerApi{
             // set TransThreadLocal
             ThreadLocalCostHolder.setThreadLocalCostContext("auditOrderFg");
 
-            List<AuditOrderFgReqDTO> cancelList = request.stream().filter(e -> e.getOrderAuditFgMqBO().getOpType().equals(EnumOrderOpType.CANCEL.getName())).collect(Collectors.toList());
             List<AuditOrderFgReqDTO> costList = request.stream().filter(e -> !e.getOrderAuditFgMqBO().getOpType().equals(EnumOrderOpType.CANCEL.getName())).collect(Collectors.toList());
             // 计费+抛单
             List<Long> costIds = costList.stream().map(e -> e.getOrderAuditFgMqBO().getFgId()).collect(Collectors.toList());
@@ -68,7 +66,17 @@ public class RequestHandler implements HandlerApi{
                     successes.add(order.getOrderAuditFgMqBO().getReferenceId());
                 }
             }
+        } catch (Exception e) {
+            LogHelper.logError("auditOrderFg", e);
+            // clear threadlocal
+            ThreadLocalCostHolder.getTTL().remove();
+        }
 
+        try {
+            // set TransThreadLocal
+            ThreadLocalCostHolder.setThreadLocalCostContext("auditOrderFg");
+
+            List<AuditOrderFgReqDTO> cancelList = request.stream().filter(e -> e.getOrderAuditFgMqBO().getOpType().equals(EnumOrderOpType.CANCEL.getName())).collect(Collectors.toList());
             // 取消免计费抛单
             List<Long> cancelIds = cancelList.stream().map(e -> e.getOrderAuditFgMqBO().getFgId()).collect(Collectors.toList());
             List<AuditOrderInfoBO> cancelBOs = auditOrderFgNoPrice(cancelIds);
@@ -86,7 +94,7 @@ public class RequestHandler implements HandlerApi{
                 }
             }
         } catch (Exception e) {
-            ThreadLocalCostHolder.allLinkTracingLog(e, LogLevel.ERROR);
+            LogHelper.logError("auditOrderFg", e);
             // clear threadlocal
             ThreadLocalCostHolder.getTTL().remove();
         }
@@ -126,6 +134,6 @@ public class RequestHandler implements HandlerApi{
         CostSupporter costSupporter = new CostSupporter(request.getAppSceneCode(), request.allDataId());
         // done
         viewResolver.setModel(costSupporter);
-        return viewResolver.resolveView();
+        return viewResolver.resolveViewExtend();
     }
 }

@@ -177,6 +177,7 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
         }
         return null;
     }
+
     private ZeroCommissionFeePriceOrderInfo zeroCommissionFeeBuild(TechFeeInfo techFeeInfo) {
         if (techFeeInfo != null && techFeeInfo.getZeroCommissionFeeRatio() != null) {
             return OrderAuditRoomDataPOMapper.INSTANCE.auditOrderToZeroCommissionFee(techFeeInfo);
@@ -190,7 +191,7 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
     }
 
     private Boolean orderCheckFail(OrderAuditRoomData order) {
-        return order == null
+        boolean b = order == null
                 || order.getOrderId() == null
                 || order.getCusOrderId() == null
                 || order.getOrderBasicInfo() == null
@@ -198,9 +199,21 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
                 || order.getOrderBasicInfo().getHourRoom() == null
                 || CollectionUtils.isEmpty(order.getAuditRoomInfoList())
                 || auditRoomCheckFail(order.getAuditRoomInfoList())
-                || order.getHotelBasicInfo() == null
-//                || order.getHotelBasicInfo().getOperatMode() == null
-                ;
+                || order.getHotelBasicInfo() == null;
+        StringBuilder stringBuilder = new StringBuilder("");
+        stringBuilder.append("getOrderAuditRoomData client error data is unpass");
+        stringBuilder.append("order is null/");
+        stringBuilder.append("order.cusOrderId is null/");
+        stringBuilder.append("order.orderBasicInfo is null/");
+        stringBuilder.append("order.orderBasicInfo.eta is null/");
+        stringBuilder.append("order.orderBasicInfo.hourRoom is null/");
+        stringBuilder.append("order.auditRoomInfoList is null/");
+        stringBuilder.append("order.auditRoomInfoList.auditRoomBasicInfo is null/");
+        stringBuilder.append("order.auditRoomInfoList.auditRoomBasicInfo.realETD is null/");
+        stringBuilder.append("order.auditRoomInfoList.auditRoomBasicInfo.fgid is null/");
+        stringBuilder.append("order.hotelBasicInfo is null/");
+        LogHelper.logError("auditOrderFg", stringBuilder.toString());
+        return b;
     }
 
     private Boolean auditRoomCheckFail(List<AuditRoomInfo> rooms) {

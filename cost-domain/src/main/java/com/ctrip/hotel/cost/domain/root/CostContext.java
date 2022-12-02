@@ -1,5 +1,6 @@
 package com.ctrip.hotel.cost.domain.root;
 
+import com.ctrip.hotel.cost.common.ThreadLocalCostHolder;
 import com.ctrip.hotel.cost.domain.data.DataCenter;
 import com.ctrip.hotel.cost.domain.data.DataCenterFactory;
 import com.ctrip.hotel.cost.domain.scene.Scene;
@@ -32,6 +33,11 @@ public class CostContext {
         }
         for (DataCenter dataCenter : this.getDataCenters()) {
             try {
+                ThreadLocalCostHolder.getTTL().get().getTags().put("orderId", dataCenter.getAuditOrderInfoBO().getOrderAuditFgMqBO().getOrderId().toString());
+                ThreadLocalCostHolder.getTTL().get().getTags().put("fgId", dataCenter.getAuditOrderInfoBO().getOrderAuditFgMqBO().getFgId().toString());
+                ThreadLocalCostHolder.getTTL().get().getTags().put("referenceId", dataCenter.getAuditOrderInfoBO().getOrderAuditFgMqBO().getReferenceId());
+                ThreadLocalCostHolder.getTTL().get().getTags().put("businessType", dataCenter.getAuditOrderInfoBO().getOrderAuditFgMqBO().getBusinessType().toString());
+
                 dataCenter.compute(this.getScene().getCostItemTypes());
                 dataCenter.setSuccess(true);
             } catch (Exception e) {
