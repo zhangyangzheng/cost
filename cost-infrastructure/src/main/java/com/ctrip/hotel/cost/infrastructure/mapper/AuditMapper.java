@@ -17,11 +17,23 @@ import org.mapstruct.factory.Mappers;
 public interface AuditMapper {
     AuditMapper INSTANCE = Mappers.getMapper(AuditMapper.class);
 
-    @Mapping(target = "amount", source = "priceAmount")
-    @Mapping(target = "cost", source = "costAmount")
-    @Mapping(target = "promotionAmountHotel", source = "hotelPromotionAmount")
-    @Mapping(target = "promotionCostHotel", source = "hotelPromotionCost")
-    @Mapping(target = "promotionAmountTrip", source = "tripPromotionAmount")
-    @Mapping(target = "promotionCostTrip", source = "tripPromotionCost")
+    @Mapping(target = "orderId", source = "orderAuditFgMqBO.orderId")
+    @Mapping(target = "fgId", source = "orderAuditFgMqBO.fgId")
+    @Mapping(target = "businessType", source = "orderAuditFgMqBO.businessType")
+    @Mapping(target = "opType", source = "orderAuditFgMqBO.opType")
+    @Mapping(target = "referenceId", source = "orderAuditFgMqBO.referenceId")
+    @Mapping(target = "isThrow", source = "orderAuditFgMqBO.isThrow")
+    @Mapping(target = "settlementId", source = "settlementCallBackInfo.settlementId")
+    @Mapping(target = "hwpSettlementId", source = "settlementCallBackInfo.hwpSettlementId")
+    @Mapping(target = "orderInfoId", source = "settlementCallBackInfo.orderInfoId")
+    @Mapping(target = "pushReferenceId", source = "settlementCallBackInfo.pushReferenceId")
+    @Mapping(target = "hwpReferenceId", source = "settlementCallBackInfo.hwpReferenceId")
+    @Mapping(target = "pushWalletPay", source = "settlementCallBackInfo.pushWalletPay")
+    @Mapping(target = "amount", source = "auditOrderInfoBO.priceAmount")
+    @Mapping(target = "cost", source = "auditOrderInfoBO.costAmount")
+    @Mapping(target = "promotionAmountHotel", source = "auditOrderInfoBO.hotelPromotionAmount")
+    @Mapping(target = "promotionCostHotel", source = "auditOrderInfoBO.hotelPromotionCost")
+    @Mapping(target = "promotionAmountTrip", source = "auditOrderInfoBO.tripPromotionAmount")
+    @Mapping(target = "promotionCostTrip", source = "auditOrderInfoBO.tripPromotionCost")
     FgBackToAuditDto AuditOrderInfoBOToFgBackToAuditDto(AuditOrderInfoBO auditOrderInfoBO, OrderAuditFgMqBO orderAuditFgMqBO, SettlementCallBackInfo settlementCallBackInfo);
 }
