@@ -14,6 +14,7 @@ import hotel.settlement.common.beans.BeanHelper;
 import hotel.settlement.common.tuples.Tuple;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.SettleCallbackInfoTiDBGen;
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -241,6 +242,19 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     return identifySet;
   }
 
+  protected AuditOrderFgReqDTO getAuditOrderFgReqDTO(OrderAuditFgMqTiDBGen orderAuditFgMqTiDBGen, SettleCallbackInfoTiDBGen settleCallbackInfoTiDBGen){
+    OrderAuditFgMqBO orderAuditFgMqBO =
+            BeanHelper.convert(orderAuditFgMqTiDBGen, OrderAuditFgMqBO.class);
+    SettlementCallBackInfo settlementCallBackInfo =
+            BeanHelper.convert(settleCallbackInfoTiDBGen, SettlementCallBackInfo.class);
+    settlementCallBackInfo.setPushWalletPay(BooleanUtils.toBooleanObject(settleCallbackInfoTiDBGen.getPushWalletPay()));
+
+    AuditOrderFgReqDTO auditOrderFgReqDTO =
+            new AuditOrderFgReqDTO(orderAuditFgMqBO, settlementCallBackInfo);
+
+    return auditOrderFgReqDTO;
+  }
+
   protected List<AuditOrderFgReqDTO> getAuditOrderFgReqDTOList(
       List<OrderAuditFgMqTiDBGen> orderAuditFgMqTiDBGenList) throws Exception {
     List<AuditOrderFgReqDTO> auditOrderFgReqDTOList = new ArrayList<>();
@@ -258,13 +272,8 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
         throw new Exception("settleCallbackInfo missing");
       }
 
-      OrderAuditFgMqBO orderAuditFgMqBO =
-          BeanHelper.convert(orderAuditFgMqTiDBGen, OrderAuditFgMqBO.class);
-      SettlementCallBackInfo settlementCallBackInfo =
-          BeanHelper.convert(settleCallbackInfoTiDBGen, SettlementCallBackInfo.class);
+      AuditOrderFgReqDTO auditOrderFgReqDTO = getAuditOrderFgReqDTO(orderAuditFgMqTiDBGen, settleCallbackInfoTiDBGen);
 
-      AuditOrderFgReqDTO auditOrderFgReqDTO =
-          new AuditOrderFgReqDTO(orderAuditFgMqBO, settlementCallBackInfo);
       auditOrderFgReqDTOList.add(auditOrderFgReqDTO);
     }
     return auditOrderFgReqDTOList;

@@ -15,4 +15,6 @@ public class SettlementCallBackInfo {
     private String pushReferenceId;// 抛结算抛单接口调用，接口头部ReferenceID
     private String hwpReferenceId;// HWP接口调用，接口头部ReferenceID
     private Boolean pushWalletPay;// 是否只推送闪住结算数据
+
+
 }
