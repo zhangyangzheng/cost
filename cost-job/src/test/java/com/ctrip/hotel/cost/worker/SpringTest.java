@@ -155,8 +155,12 @@ public class SpringTest {
 
   @Test
   public void jobTest(){
+    List<Integer> sliceList = new ArrayList<>();
+    for (int i = 0; i < 32; i++) {
+      sliceList.add(i);
+    }
     try {
-      fgNotifySettlementJob.execute(Arrays.asList(19));
+      fgNotifySettlementJob.execute(sliceList);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }

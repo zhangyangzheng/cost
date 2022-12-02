@@ -65,10 +65,11 @@ public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgM
   @Override
   protected OrderAuditFgMqTiDBGen convertTo(Message message) throws Exception {
     try {
-      Long orderId = Long.parseLong(message.getStringProperty("orderId"));
+      Long orderId =
+              Long.parseLong(Optional.ofNullable(message.getStringProperty("orderId")).orElse("-1"));
       Long fgId =
               Long.parseLong(Optional.ofNullable(message.getStringProperty("fgId")).orElse("-1"));
-      Integer businessType = Integer.parseInt(message.getStringProperty("businessType"));
+      Integer businessType = Integer.parseInt(Optional.ofNullable(message.getStringProperty("businessType")).orElse("-1"));
       String opType = message.getStringProperty("opType");
       String isThrow = message.getStringProperty("isThrow");
       String referenceId = message.getStringProperty("referenceId");
@@ -88,17 +89,16 @@ public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgM
 
   @Override
   protected boolean legalCheck(OrderAuditFgMqTiDBGen item) throws Exception {
-    if (item.getOrderId() != null
-            && item.getFgId() != null
-            && item.getBusinessType() != null
+    if ((item.getOrderId() != -1L
+            || item.getFgId() != -1L)
+            && item.getBusinessType() != -1
             && item.getOpType() != null
             && item.getIsThrow() != null
             && item.getReferenceId() != null) {
       // 业务类型 操作类型 OrderId检查
       if (isInLegalArr(item.getBusinessType(), businessTypeArr)
               && isInLegalArr(item.getOpType(), opTypeArr)
-              && isInLegalArr(item.getIsThrow(), isThrowArr)
-              && item.getOrderId() > 0) {
+              && isInLegalArr(item.getIsThrow(), isThrowArr)) {
         // 如果业务类型不为ns 需要校验fgId是否有效
         if (item.getBusinessType() == 0) {
           if (item.getFgId() > 0) {

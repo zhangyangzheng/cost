@@ -8,6 +8,7 @@ import com.dianping.cat.Cat;
 import com.dianping.cat.message.Transaction;
 import com.google.common.base.Stopwatch;
 import hotel.settlement.common.LogHelper;
+import hotel.settlement.common.QConfigHelper;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
@@ -29,8 +30,7 @@ public class SoaHelper {
     Objects.requireNonNull(requestType);
     Objects.requireNonNull(responseClass);
 
-    // 后续读qConfig
-    int retryTimes = 1;
+    int retryTimes = Integer.parseInt(QConfigHelper.getSwitchConfigByKey(requestType, "1"));
     TRes response = null;
     if (retryTimes <= 1) {
       response = callSoaOnce(request, client, requestType, responseClass);
