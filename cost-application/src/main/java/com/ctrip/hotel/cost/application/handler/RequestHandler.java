@@ -1,5 +1,6 @@
 package com.ctrip.hotel.cost.application.handler;
 
+import com.ctrip.framework.clogging.domain.thrift.LogLevel;
 import com.ctrip.hotel.cost.application.model.AuditOrderFgCostDTO;
 import com.ctrip.hotel.cost.application.model.CostDTO;
 import com.ctrip.hotel.cost.application.model.vo.AuditOrderFgReqDTO;
@@ -85,7 +86,7 @@ public class RequestHandler implements HandlerApi{
                 }
             }
         } catch (Exception e) {
-            LogHelper.logError(ThreadLocalCostHolder.getTTL().get().getLinkTracing(), e);
+            ThreadLocalCostHolder.allLinkTracingLog(e, LogLevel.ERROR);
             // clear threadlocal
             ThreadLocalCostHolder.getTTL().remove();
         }
