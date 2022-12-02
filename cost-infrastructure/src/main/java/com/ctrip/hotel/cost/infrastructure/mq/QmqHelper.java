@@ -17,7 +17,7 @@ public class QmqHelper {
     @Resource(name = "messageProducer")
     MessageProducerProvider messageProducer;
 
-    public final void sendMessage(String subject, Object obj) throws Exception {
+    final public void sendMessage(String subject, Object obj) throws Exception {
         Message message = messageProducer.generateMessage(subject);
 
         Class objClass = obj.getClass();
@@ -32,7 +32,7 @@ public class QmqHelper {
     }
 
 
-    final public void sendMessage(String subject, Message message) throws Exception {
+    final private void sendMessage(String subject, Message message) throws Exception {
         messageProducer.sendMessage(message, new MessageSendStateListener() {
             @Override
             public void onSuccess(Message message) {
