@@ -14,6 +14,7 @@ public enum EnumScene {
                     CostItemType.PROMOTION_SELLING_PRICE_FG,
                     CostItemType.PROMOTION_COST_PRICE_FG,
                     CostItemType.TRIP_PROMOTION_SELLING_PRICE_FG,
+                    CostItemType.TRIP_PROMOTION_COST_PRICE_FG,
                     CostItemType.BUYOUT_DISCOUNT_PROMOTION_COST_PRICE_FG,
                     CostItemType.ROOM_SELLING_PRICE_FG,
                     CostItemType.ROOM_COST_PRICE_FG,

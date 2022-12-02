@@ -3,6 +3,7 @@ package com.ctrip.hotel.cost.domain.settlement;
 import com.ctrip.framework.clogging.domain.thrift.LogLevel;
 import com.ctrip.hotel.cost.common.ThreadLocalCostHolder;
 import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
+import com.ctrip.hotel.cost.repository.AuditRepository;
 import hotel.settlement.common.QConfigHelper;
 import hotel.settlement.common.helpers.DefaultValueHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ public class SettlementService {
     @Autowired
     private OrderMetaInterpreter orderMetaInterpreter;
 
+    @Autowired
+    private AuditRepository auditRepository;
+
     /**
      * 整体成功/失败
      * @param auditOrderInfoBO
@@ -42,7 +46,7 @@ public class SettlementService {
             if (DefaultValueHelper.getValue(auditOrderInfoBO.getSettlementCallBackInfo().getHwpSettlementId()) > 0) {
                 settlementRepository.callCancelSettlementCancelListHWP(auditOrderInfoBO);
             }
-            // todo mq to audit
+            auditRepository.notifyResult(auditOrderInfoBO);
         } catch (Exception e) {
             ThreadLocalCostHolder.allLinkTracingLog(e, LogLevel.ERROR);
             return false;
@@ -69,7 +73,7 @@ public class SettlementService {
                         auditOrderInfoBO.setRemarks("闪住付面仅抛606");
                         Long hwpSettlementId = settlementRepository.callSettlementApplyListHWP(auditOrderInfoBO);
                         auditOrderInfoBO.getSettlementCallBackInfo().setHwpSettlementId(hwpSettlementId);
-                        auditOrderInfoBO.getSettlementCallBackInfo().setHwpReferenceID(auditOrderInfoBO.getOrderAuditFgMqBO().getReferenceId());
+                        auditOrderInfoBO.getSettlementCallBackInfo().setHwpReferenceId(auditOrderInfoBO.getOrderAuditFgMqBO().getReferenceId());
                     } else if (DefaultValueHelper.getValue(auditOrderInfoBO.getFlashOrderInfo().getIsFlashOrder())
                             && !DefaultValueHelper.getValue(auditOrderInfoBO.getHotelBasicInfo().getPaymentType()).equals("P")
                             && configCanPush()
@@ -78,12 +82,12 @@ public class SettlementService {
                         Long hwpSettlementId = settlementRepository.callSettlementApplyListHWP(auditOrderInfoBO);
                         auditOrderInfoBO.getSettlementCallBackInfo().setSettlementId(settlementId);
                         auditOrderInfoBO.getSettlementCallBackInfo().setHwpSettlementId(hwpSettlementId);
-                        auditOrderInfoBO.getSettlementCallBackInfo().setPushReferenceID(auditOrderInfoBO.getOrderAuditFgMqBO().getReferenceId());
-                        auditOrderInfoBO.getSettlementCallBackInfo().setHwpReferenceID(auditOrderInfoBO.getOrderAuditFgMqBO().getReferenceId());
+                        auditOrderInfoBO.getSettlementCallBackInfo().setPushReferenceId(auditOrderInfoBO.getOrderAuditFgMqBO().getReferenceId());
+                        auditOrderInfoBO.getSettlementCallBackInfo().setHwpReferenceId(auditOrderInfoBO.getOrderAuditFgMqBO().getReferenceId());
                     } else {// 除了606，其他新订单都要抛一次601
                         Long settlementId = settlementRepository.callSettlementApplyList(auditOrderInfoBO);
                         auditOrderInfoBO.getSettlementCallBackInfo().setSettlementId(settlementId);
-                        auditOrderInfoBO.getSettlementCallBackInfo().setPushReferenceID(auditOrderInfoBO.getOrderAuditFgMqBO().getReferenceId());
+                        auditOrderInfoBO.getSettlementCallBackInfo().setPushReferenceId(auditOrderInfoBO.getOrderAuditFgMqBO().getReferenceId());
                     }
                 } else if (EnumOrderOpType.UPDATE.getName().equals(auditOrderInfoBO.getOrderAuditFgMqBO().getOpType())) { // 如果是“U”(修改单)
                     // 区分闪住和非闪住
@@ -93,7 +97,7 @@ public class SettlementService {
                     ) {// 闪住 && 付面，只抛606
                         Long hwpSettlementId = settlementRepository.callSettlementApplyListHWP(auditOrderInfoBO);
                         auditOrderInfoBO.getSettlementCallBackInfo().setHwpSettlementId(hwpSettlementId);
-                        auditOrderInfoBO.getSettlementCallBackInfo().setHwpReferenceID(auditOrderInfoBO.getOrderAuditFgMqBO().getReferenceId());
+                        auditOrderInfoBO.getSettlementCallBackInfo().setHwpReferenceId(auditOrderInfoBO.getOrderAuditFgMqBO().getReferenceId());
                     } else if (DefaultValueHelper.getValue(auditOrderInfoBO.getFlashOrderInfo().getIsFlashOrder())
                             && !DefaultValueHelper.getValue(auditOrderInfoBO.getHotelBasicInfo().getPaymentType()).equals("P")
                             && configCanPush()
@@ -102,16 +106,16 @@ public class SettlementService {
                         Long hwpSettlementId = settlementRepository.callSettlementApplyListHWP(auditOrderInfoBO);
                         auditOrderInfoBO.getSettlementCallBackInfo().setSettlementId(settlementId);
                         auditOrderInfoBO.getSettlementCallBackInfo().setHwpSettlementId(hwpSettlementId);
-                        auditOrderInfoBO.getSettlementCallBackInfo().setPushReferenceID(auditOrderInfoBO.getOrderAuditFgMqBO().getReferenceId());
-                        auditOrderInfoBO.getSettlementCallBackInfo().setHwpReferenceID(auditOrderInfoBO.getOrderAuditFgMqBO().getReferenceId());
+                        auditOrderInfoBO.getSettlementCallBackInfo().setPushReferenceId(auditOrderInfoBO.getOrderAuditFgMqBO().getReferenceId());
+                        auditOrderInfoBO.getSettlementCallBackInfo().setHwpReferenceId(auditOrderInfoBO.getOrderAuditFgMqBO().getReferenceId());
                     } else {// 除了606，其他新订单都要抛一次601
                         Long settlementId = settlementRepository.callSettlementApplyList(auditOrderInfoBO);
                         auditOrderInfoBO.getSettlementCallBackInfo().setSettlementId(settlementId);
-                        auditOrderInfoBO.getSettlementCallBackInfo().setPushReferenceID(auditOrderInfoBO.getOrderAuditFgMqBO().getReferenceId());
+                        auditOrderInfoBO.getSettlementCallBackInfo().setPushReferenceId(auditOrderInfoBO.getOrderAuditFgMqBO().getReferenceId());
                     }
                 }
             }
-            // todo mq to audit
+            auditRepository.notifyResult(auditOrderInfoBO);
         } catch (Exception e) {
             ThreadLocalCostHolder.allLinkTracingLog(e, LogLevel.ERROR);
             return false;

@@ -4,7 +4,7 @@ import com.ctrip.hotel.cost.domain.data.model.*;
 import com.ctrip.hotel.cost.domain.settlement.ChannelType;
 import com.ctrip.hotel.cost.domain.settlement.SettlementItemName;
 import com.ctrip.hotel.cost.infrastructure.client.SettlementClient;
-import com.ctrip.hotel.cost.infrastructure.mapper.SettlementDataPOMapper;
+import com.ctrip.hotel.cost.infrastructure.mapper.SettlementDataMapper;
 import com.ctrip.hotel.cost.infrastructure.model.dto.CancelOrderDto;
 import com.ctrip.hotel.cost.infrastructure.model.dto.SettlementApplyListDto;
 import com.ctrip.hotel.cost.infrastructure.model.dto.SettlementCancelListDto;
@@ -190,7 +190,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
 
     @Override
     public Long callSettlementPayDataReceive(AuditOrderInfoBO auditOrderInfoBO) throws Exception {
-        SettlementPayData settlementPayData = SettlementDataPOMapper.INSTANCE.newOrderToSettlementPayDataReceive(auditOrderInfoBO);
+        SettlementPayData settlementPayData = SettlementDataMapper.INSTANCE.newOrderToSettlementPayDataReceive(auditOrderInfoBO);
 
         OrderAuditFgMqBO orderAuditFgMqBO = auditOrderInfoBO.getOrderAuditFgMqBO();
 
@@ -252,7 +252,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
     @Override
     public Long callSettlementApplyList(AuditOrderInfoBO auditOrderInfoBO) throws Exception {
         SettleDataRequest requestData =
-                SettlementDataPOMapper.INSTANCE.newOrderToSettlementApplyList(auditOrderInfoBO);
+                SettlementDataMapper.INSTANCE.newOrderToSettlementApplyList(auditOrderInfoBO);
 
         OrderAuditFgMqBO orderAuditFgMqBO = auditOrderInfoBO.getOrderAuditFgMqBO();
         OrderBasicInfo orderBasicInfo = auditOrderInfoBO.getOrderBasicInfo();
@@ -816,7 +816,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
     @Override
     public Long callSettlementApplyListHWP(AuditOrderInfoBO auditOrderInfoBO) throws Exception {
         SettleDataRequest requestData =
-                SettlementDataPOMapper.INSTANCE.newOrderToSettlementApplyList(auditOrderInfoBO);
+                SettlementDataMapper.INSTANCE.newOrderToSettlementApplyList(auditOrderInfoBO);
 
         OrderAuditFgMqBO orderAuditFgMqBO = auditOrderInfoBO.getOrderAuditFgMqBO();
         AuditRoomInfo auditRoomInfo = auditOrderInfoBO.getAuditRoomInfoList().get(0);
