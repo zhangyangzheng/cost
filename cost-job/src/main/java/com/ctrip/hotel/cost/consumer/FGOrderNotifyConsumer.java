@@ -39,12 +39,12 @@ public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgM
     // 幂等字段
     String referenceId = message.getStringProperty("referenceId");
     // 业务字段
-    Long settlementId = LongHelper.getNullableLong(message.getStringProperty("SettlementId"));
-    Long orderInfoId = LongHelper.getNullableLong(message.getStringProperty("OrderInfoID"));
-    Long hwpSettlementId = LongHelper.getNullableLong(message.getStringProperty("HWPSettlementId"));
-    String pushWalletPay = message.getStringProperty("PushWalletPay");
-    String pushReferenceId = message.getStringProperty("PushReferenceID");
-    String hwpReferenceId = message.getStringProperty("HWPReferenceID");
+    Long settlementId = LongHelper.getNullableLong(message.getStringProperty("settlementId"));
+    Long orderInfoId = LongHelper.getNullableLong(message.getStringProperty("orderInfoId"));
+    Long hwpSettlementId = LongHelper.getNullableLong(message.getStringProperty("hwpSettlementId"));
+    String pushWalletPay = message.getStringProperty("pushWalletPay");
+    String pushReferenceId = message.getStringProperty("pushReferenceId");
+    String hwpReferenceId = message.getStringProperty("hwpReferenceId");
 
     settleCallbackInfoTiDBGen.setReferenceId(referenceId);
     settleCallbackInfoTiDBGen.setSettlementId(settlementId);

@@ -179,12 +179,11 @@ public class SpringTest {
     fgBackToAuditDto.setIsThrow('1');
 
     fgBackToAuditDto.setSettlementId(1l);
-    fgBackToAuditDto.setPushReferenceID("asd");
-    fgBackToAuditDto.setHWPSettlementId(1l);
+    fgBackToAuditDto.setPushReferenceId("asd");
+    fgBackToAuditDto.setHwpSettlementId(1l);
     fgBackToAuditDto.setPushWalletPay(true);
-    fgBackToAuditDto.setResultCode(1);
-    fgBackToAuditDto.setHWPReferenceID("111");
-    fgBackToAuditDto.setOrderInfoID(1l);
+    fgBackToAuditDto.setHwpReferenceId("111");
+    fgBackToAuditDto.setOrderInfoId(1l);
 
     fgBackToAuditDto.setAmount(new BigDecimal(1));
     fgBackToAuditDto.setCost(new BigDecimal(1));

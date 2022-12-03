@@ -10,6 +10,7 @@ import qunar.tc.qmq.producer.MessageProducerProvider;
 
 import javax.annotation.Resource;
 import java.lang.reflect.Field;
+import java.util.concurrent.Semaphore;
 
 @Component
 public class QmqHelper {
@@ -32,10 +33,12 @@ public class QmqHelper {
     }
 
 
-    final private void sendMessage(String subject, Message message) throws Exception {
+    private void sendMessage(String subject, Message message) throws Exception {
+        Semaphore sem = new Semaphore(0);
         messageProducer.sendMessage(message, new MessageSendStateListener() {
             @Override
             public void onSuccess(Message message) {
+                sem.release();
                 LogHelper.logInfo("subject:" + subject, JsonUtils.beanToJson(message));
             }
 
@@ -44,5 +47,7 @@ public class QmqHelper {
                 LogHelper.logError("subject:" + subject, JsonUtils.beanToJson(message));
             }
         });
+
+        sem.acquire();
     }
 }
