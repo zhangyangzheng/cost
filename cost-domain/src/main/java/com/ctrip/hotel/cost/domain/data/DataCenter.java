@@ -1,5 +1,8 @@
 package com.ctrip.hotel.cost.domain.data;
 
+import com.alibaba.fastjson.JSON;
+import com.ctrip.framework.clogging.domain.thrift.LogLevel;
+import com.ctrip.hotel.cost.common.ThreadLocalCostHolder;
 import com.ctrip.hotel.cost.domain.core.MeasurementCenter;
 import com.ctrip.hotel.cost.domain.data.item.*;
 import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
@@ -48,17 +51,17 @@ public class  DataCenter {
     private AdjustCommission adjustCommission;
     private ZeroCommissionFee zeroCommissionFee;
 
-    // child instance // todo 上游契约定义不统一，后续的迭代希望可以统一，无需每种业务实现一种
-//    private List<BidPriceFgOrderInfo> bidPriceFgOrderInfos;
-//    private List<RoomSellingPriceFgOrderInfo> roomSellingPriceFgOrderInfos;
-//    private List<RoomCostPriceFgOrderInfo> roomCostPriceFgOrderInfos;
-//    private List<PromotionSellingPriceFgOrderInfo> promotionSellingPriceFgOrderInfos;
-//    private List<PromotionCostPriceFgOrderInfo> promotionCostPriceFgOrderInfos;
-//    private AdjustCommissionPriceOrderInfo adjustCommissionPriceOrderInfo;
-//    private PriceAmountFgInfo priceAmountFgInfo;
-//    private PriceCostFgInfo priceCostFgInfo;
-
     private Boolean success = false;
+
+    private void formulaLog(Item<? extends MeasurementCenter> item) {
+        StringBuilder stringLog = new StringBuilder("");
+        stringLog.append(item.costItemType().getCostItemName());
+        stringLog.append("=");
+        stringLog.append(item.formula());
+        stringLog.append("\n");
+        stringLog.append(JSON.toJSONString(item.parametersAndResult()));
+        ThreadLocalCostHolder.allLinkTracingLog(stringLog, LogLevel.INFO);
+    }
 
     /**
      * 数据初始化后，开始单项计费
@@ -71,6 +74,7 @@ public class  DataCenter {
                 item.countTotal();
                 // 费用收集器，收集单项费用结果
                 this.costCollector.put(item.costItemType().getCostItemName(), item.total());
+                formulaLog(item);
             }
         }
     }
@@ -80,28 +84,24 @@ public class  DataCenter {
         Bid b = new Bid(new ArrayList<>(bidPriceFgOrderInfos));
         this.setBid(b);
         itemCollector.add(b);
-//        this.bidPriceFgOrderInfos = bidPriceFgOrderInfos;
     }
 
     public void setRoomSellingPriceFgOrderInfos(List<RoomSellingPriceFgOrderInfo> roomSellingPriceFgOrderInfos) throws Exception {
         RoomSelling rS = new RoomSelling(new ArrayList<>(roomSellingPriceFgOrderInfos));
         this.setRoomSelling(rS);
         itemCollector.add(rS);
-//        this.roomSellingPriceFgOrderInfos = roomSellingPriceFgOrderInfos;
     }
 
     public void setRoomCostPriceFgOrderInfos(List<RoomCostPriceFgOrderInfo> roomCostPriceFgOrderInfos) throws Exception {
         RoomCost rC = new RoomCost(new ArrayList<>(roomCostPriceFgOrderInfos));
         this.setRoomCost(rC);
         itemCollector.add(rC);
-//        this.roomCostPriceFgOrderInfos = roomCostPriceFgOrderInfos;
     }
 
     public void setPromotionSellingPriceFgOrderInfos(List<PromotionSellingPriceFgOrderInfo> promotionSellingPriceFgOrderInfos) throws Exception {
         PromotionSelling pS = new PromotionSelling(new ArrayList<>(promotionSellingPriceFgOrderInfos));
         this.setPromotionSelling(pS);
         itemCollector.add(pS);
-//        this.promotionSellingPriceFgOrderInfos = promotionSellingPriceFgOrderInfos;
     }
 
     public void setTripPromotionSellingPriceFgOrderInfos(List<PromotionSellingPriceFgOrderInfo> promotionSellingPriceFgOrderInfos) throws Exception {
@@ -131,7 +131,6 @@ public class  DataCenter {
         PriceAmountFg pA = new PriceAmountFg(priceAmountFgInfo);
         this.setPriceAmountFg(pA);
         itemCollector.add(pA);
-//        this.priceAmountFgInfo = priceAmountFgInfo;
     }
 
     public void setPriceCostFgInfo(PriceCostFgInfo priceCostFgInfo) {
@@ -139,7 +138,6 @@ public class  DataCenter {
         PriceCostFg pC = new PriceCostFg(priceCostFgInfo);
         this.setPriceCostFg(pC);
         itemCollector.add(pC);
-//        this.priceCostFgInfo = priceCostFgInfo;
     }
 
     public void setAdjustCommissionPriceOrderInfo(AdjustCommissionPriceOrderInfo adjustCommissionPriceOrderInfo) {
@@ -149,7 +147,6 @@ public class  DataCenter {
             this.setAdjustCommission(aC);
             itemCollector.add(aC);
         }
-//        this.adjustCommissionPriceOrderInfo = adjustCommissionPriceOrderInfo;
     }
     public void setZeroCommissionFeePriceOrderInfo(ZeroCommissionFeePriceOrderInfo zeroCommissionFeePriceOrderInfo) {
         if (zeroCommissionFeePriceOrderInfo != null && zeroCommissionFeePriceOrderInfo.getZeroCommissionFeeRatio() != null) {
@@ -158,7 +155,6 @@ public class  DataCenter {
             this.setZeroCommissionFee(zC);
             itemCollector.add(zC);
         }
-//        this.adjustCommissionPriceOrderInfo = adjustCommissionPriceOrderInfo;
     }
     // set 计费项初始化end
 

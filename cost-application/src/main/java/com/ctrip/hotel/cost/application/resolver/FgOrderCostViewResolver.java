@@ -15,6 +15,15 @@ public class FgOrderCostViewResolver extends AbstractViewResolver<List<AuditOrde
     @Override
     public List<AuditOrderInfoBO> resolveView() {
         // model provide all data
+        return model.getFgAuditCostSuccessResult();
+    }
+
+    /**
+     * todo 未来和结算解耦开后，下掉该接口
+     * @return
+     */
+    @Override
+    public List<AuditOrderInfoBO> resolveViewExtend() {
         return model.getFgAuditResult();
     }
 }

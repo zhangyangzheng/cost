@@ -43,10 +43,10 @@ public class CostSupporter {
     }
 
     /**
-     * 封装[fg audit order]需要的返回值
+     * 封装[fg audit order cost success]需要的返回值
      * @return
      */
-    public List<AuditOrderInfoBO> getFgAuditResult() {
+    public List<AuditOrderInfoBO> getFgAuditCostSuccessResult() {
         if (CollectionUtils.isEmpty(costContext.getDataCenters())) {
             return Collections.emptyList();
         }
@@ -78,6 +78,17 @@ public class CostSupporter {
                     );
             return e.getAuditOrderInfoBO();
         }).collect(Collectors.toList());
+    }
+
+    /**
+     * 封装[fg audit order]的返回值
+     * @return
+     */
+    public List<AuditOrderInfoBO> getFgAuditResult() {
+        if (CollectionUtils.isEmpty(costContext.getDataCenters())) {
+            return Collections.emptyList();
+        }
+        return costContext.getDataCenters().stream().map(DataCenter::getAuditOrderInfoBO).collect(Collectors.toList());
     }
 
     public List<Long> getCostSuccessData() {

@@ -9,6 +9,12 @@ public interface ViewResolver<VIEW, MODEL> {
 
     VIEW resolveView();
 
+    /**
+     * 未来和结算解耦开后，下掉该接口
+     * @return
+     */
+    VIEW resolveViewExtend();
+
     void setModel(MODEL model);
 
 }
