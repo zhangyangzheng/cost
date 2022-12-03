@@ -10,6 +10,6 @@ public class AuditMqProducer {
     QmqHelper qmqHelper;
 
     public void fgBackToAudit(FgBackToAuditDto fgBackToAuditDto) throws Exception {
-        qmqHelper.sendMessage("hotel.cost.notifybackaudit", fgBackToAuditDto);
+        qmqHelper.sendMessageSync("hotel.cost.notifybackaudit", fgBackToAuditDto);
     }
 }

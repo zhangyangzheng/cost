@@ -1,6 +1,5 @@
 package com.ctrip.hotel.cost.infrastructure.mq;
 
-import com.alibaba.fastjson.JSON;
 import com.ctrip.framework.clogging.domain.thrift.LogLevel;
 import com.ctrip.hotel.cost.common.StringHelper;
 import com.ctrip.hotel.cost.common.ThreadLocalCostHolder;
@@ -18,39 +17,49 @@ import java.util.concurrent.Semaphore;
 @Component
 public class QmqHelper {
 
-    @Resource(name = "messageProducer")
-    MessageProducerProvider messageProducer;
+  @Resource(name = "messageProducer")
+  MessageProducerProvider messageProducer;
 
-    final public void sendMessage(String subject, Object obj) throws Exception {
-        Message message = messageProducer.generateMessage(subject);
+  public final void sendMessageSync(String subject, Object obj) throws Exception {
+    Message message = messageProducer.generateMessage(subject);
 
-        Class objClass = obj.getClass();
-        Field[] fields = objClass.getDeclaredFields();
-        for (Field field : fields) {
-            field.setAccessible(true);
-            Object fieldValue = field.get(obj);
-            message.setProperty(field.getName(), StringHelper.valueOf(fieldValue));
-        }
-
-        sendMessage(subject, message);
+    Class objClass = obj.getClass();
+    Field[] fields = objClass.getDeclaredFields();
+    for (Field field : fields) {
+      field.setAccessible(true);
+      Object fieldValue = field.get(obj);
+      message.setProperty(field.getName(), StringHelper.valueOf(fieldValue));
     }
 
+    sendMessageSync(subject, message);
+  }
 
-    final private void sendMessage(String subject, Message message) throws Exception {
-        ThreadLocalCostHolder.allLinkTracingLog(subject + ": " + JSON.toJSONString(message), LogLevel.INFO);
-        messageProducer.sendMessage(message, new MessageSendStateListener() {
-            @Override
-            public void onSuccess(Message message) {
-                sem.release();
-                LogHelper.logInfo("subject:" + subject, JsonUtils.beanToJson(message));
-            }
+  private void sendMessageSync(String subject, Message message) throws Exception {
+    ThreadLocalCostHolder.allLinkTracingLog(
+        subject + ": " + JsonUtils.beanToJson(message), LogLevel.INFO);
 
-            @Override
-            public void onFailed(Message message) {
-                LogHelper.logError("subject:" + subject, JsonUtils.beanToJson(message));
-            }
+    Thread mainThread = Thread.currentThread();
+
+    Semaphore sem = new Semaphore(0);
+    messageProducer.sendMessage(
+        message,
+        new MessageSendStateListener() {
+          @Override
+          public void onSuccess(Message message) {
+            sem.release();
+            LogHelper.logInfo("subject:" + subject, JsonUtils.beanToJson(message));
+          }
+
+          @Override
+          public void onFailed(Message message) {
+            mainThread.interrupt();
+            LogHelper.logError("subject:" + subject, JsonUtils.beanToJson(message));
+          }
         });
-
-        sem.acquire();
+    try {
+      sem.acquire();
+    } catch (InterruptedException e) {
+      throw new Exception("message Send Error");
     }
+  }
 }

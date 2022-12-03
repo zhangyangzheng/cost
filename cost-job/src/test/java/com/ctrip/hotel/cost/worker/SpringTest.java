@@ -200,6 +200,7 @@ public class SpringTest {
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
+    int i = 0;
   }
 
 }
