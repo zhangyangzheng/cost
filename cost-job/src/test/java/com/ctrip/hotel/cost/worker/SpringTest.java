@@ -61,6 +61,8 @@ public class SpringTest {
 
       List<Long> ids = new ArrayList<>();
       ids.add(560025073L);
+      ids.add(597574744L);
+      ids.add(560021118L);
       List<AuditOrderInfoBO> orders = handlerApi.auditOrderFgCollectPrice(ids);
       System.out.println(orders.size());
     } catch (Exception e) {

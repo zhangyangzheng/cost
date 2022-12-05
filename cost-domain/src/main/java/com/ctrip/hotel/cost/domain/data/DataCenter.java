@@ -16,6 +16,7 @@ import com.ctrip.hotel.cost.domain.element.room.fg.RoomCostPriceFgOrderInfo;
 import com.ctrip.hotel.cost.domain.element.room.fg.RoomSellingPriceFgOrderInfo;
 import com.ctrip.hotel.cost.domain.element.techfee.ZeroCommissionFeePriceOrderInfo;
 import com.ctrip.hotel.cost.domain.scene.CostItemType;
+import hotel.settlement.common.MathUtil;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -55,6 +56,10 @@ public class  DataCenter {
 
     private void formulaLog(Item<? extends MeasurementCenter> item) {
         StringBuilder stringLog = new StringBuilder("");
+        stringLog.append(item.costItemType().getCostItemName());
+        stringLog.append("=");
+        stringLog.append(item.total().toString());
+        stringLog.append("\n");
         stringLog.append(item.costItemType().getCostItemName());
         stringLog.append("=");
         stringLog.append(item.formula());
