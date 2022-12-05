@@ -55,19 +55,21 @@ public class RequestHandler implements HandlerApi{
             List<AuditOrderInfoBO> successCostList = auditOrderFgCollectPrice(costIds);
             Map<String, AuditOrderFgReqDTO> reqCostMap = costList.stream().collect(Collectors.toMap(a -> a.getOrderAuditFgMqBO().getOrderId().toString() + a.getOrderAuditFgMqBO().getFgId().toString(), a -> a, (k1, k2) -> k1));
             for (AuditOrderInfoBO order: successCostList) {
+                order.setOrderAuditFgMqBO(RequestBodyMapper.INSTANCE.fgReqToMqBo(reqCostMap.get(order.getOrderId().toString() + order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString()).getOrderAuditFgMqBO()));
+                order.setSettlementCallBackInfo(RequestBodyMapper.INSTANCE.fgReqToCallBackInfo(reqCostMap.get(order.getOrderId().toString() + order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString()).getSettlementCallBackInfo()));
+
                 ThreadLocalCostHolder.getTTL().get().getTags().put("orderId", order.getOrderAuditFgMqBO().getOrderId().toString());
                 ThreadLocalCostHolder.getTTL().get().getTags().put("fgId", order.getOrderAuditFgMqBO().getFgId().toString());
                 ThreadLocalCostHolder.getTTL().get().getTags().put("referenceId", order.getOrderAuditFgMqBO().getReferenceId());
                 ThreadLocalCostHolder.getTTL().get().getTags().put("businessType", order.getOrderAuditFgMqBO().getBusinessType().toString());
 
-                order.setOrderAuditFgMqBO(RequestBodyMapper.INSTANCE.fgReqToMqBo(reqCostMap.get(order.getOrderId().toString() + order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString()).getOrderAuditFgMqBO()));
-                order.setSettlementCallBackInfo(RequestBodyMapper.INSTANCE.fgReqToCallBackInfo(reqCostMap.get(order.getOrderId().toString() + order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString()).getSettlementCallBackInfo()));
                 if (settlementService.callSettlementForFg(order)) {
                     successes.add(order.getOrderAuditFgMqBO().getReferenceId());
                 }
             }
         } catch (Exception e) {
             LogHelper.logError("auditOrderFg", e);
+        } finally {
             // clear threadlocal
             ThreadLocalCostHolder.getTTL().remove();
         }
@@ -82,19 +84,21 @@ public class RequestHandler implements HandlerApi{
             List<AuditOrderInfoBO> cancelBOs = auditOrderFgNoPrice(cancelIds);
             Map<String, AuditOrderFgReqDTO> reqCancelMap = cancelList.stream().collect(Collectors.toMap(a -> a.getOrderAuditFgMqBO().getOrderId().toString() + a.getOrderAuditFgMqBO().getFgId().toString(), a -> a, (k1, k2) -> k1));
             for (AuditOrderInfoBO order : cancelBOs) {
+                order.setOrderAuditFgMqBO(RequestBodyMapper.INSTANCE.fgReqToMqBo(reqCancelMap.get(order.getOrderId().toString() + order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString()).getOrderAuditFgMqBO()));
+                order.setSettlementCallBackInfo(RequestBodyMapper.INSTANCE.fgReqToCallBackInfo(reqCancelMap.get(order.getOrderId().toString() + order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString()).getSettlementCallBackInfo()));
+
                 ThreadLocalCostHolder.getTTL().get().getTags().put("orderId", order.getOrderAuditFgMqBO().getOrderId().toString());
                 ThreadLocalCostHolder.getTTL().get().getTags().put("fgId", order.getOrderAuditFgMqBO().getFgId().toString());
                 ThreadLocalCostHolder.getTTL().get().getTags().put("referenceId", order.getOrderAuditFgMqBO().getReferenceId());
                 ThreadLocalCostHolder.getTTL().get().getTags().put("businessType", order.getOrderAuditFgMqBO().getBusinessType().toString());
 
-                order.setOrderAuditFgMqBO(RequestBodyMapper.INSTANCE.fgReqToMqBo(reqCancelMap.get(order.getOrderId().toString() + order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString()).getOrderAuditFgMqBO()));
-                order.setSettlementCallBackInfo(RequestBodyMapper.INSTANCE.fgReqToCallBackInfo(reqCancelMap.get(order.getOrderId().toString() + order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString()).getSettlementCallBackInfo()));
                 if (settlementService.callCancelForFg(order)) {
                     successes.add(order.getOrderAuditFgMqBO().getReferenceId());
                 }
             }
         } catch (Exception e) {
             LogHelper.logError("auditOrderFg", e);
+        } finally {
             // clear threadlocal
             ThreadLocalCostHolder.getTTL().remove();
         }
