@@ -60,7 +60,7 @@ public class  DataCenter {
         stringLog.append(item.formula());
         stringLog.append("\n");
         stringLog.append(JSON.toJSONString(item.parametersAndResult()));
-        ThreadLocalCostHolder.allLinkTracingLog(stringLog, LogLevel.INFO);
+        ThreadLocalCostHolder.allLinkTracingLog(stringLog.toString(), LogLevel.INFO);
     }
 
     /**

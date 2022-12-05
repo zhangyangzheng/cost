@@ -33,10 +33,9 @@ public class CostContext {
         }
         for (DataCenter dataCenter : this.getDataCenters()) {
             try {
-                ThreadLocalCostHolder.getTTL().get().getTags().put("orderId", dataCenter.getAuditOrderInfoBO().getOrderAuditFgMqBO().getOrderId().toString());
-                ThreadLocalCostHolder.getTTL().get().getTags().put("fgId", dataCenter.getAuditOrderInfoBO().getOrderAuditFgMqBO().getFgId().toString());
-                ThreadLocalCostHolder.getTTL().get().getTags().put("referenceId", dataCenter.getAuditOrderInfoBO().getOrderAuditFgMqBO().getReferenceId());
-                ThreadLocalCostHolder.getTTL().get().getTags().put("businessType", dataCenter.getAuditOrderInfoBO().getOrderAuditFgMqBO().getBusinessType().toString());
+                ThreadLocalCostHolder.getTTL().get().getTags().put("orderId", dataCenter.getAuditOrderInfoBO().getOrderId().toString());
+                ThreadLocalCostHolder.getTTL().get().getTags().put("fgId", dataCenter.getAuditOrderInfoBO().getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString());
+                ThreadLocalCostHolder.getTTL().get().getTags().put("businessType", scene.getSceneCode().toString());
 
                 dataCenter.compute(this.getScene().getCostItemTypes());
                 dataCenter.setSuccess(true);

@@ -3,6 +3,7 @@ package com.ctrip.hotel.cost.worker;
 import com.alibaba.fastjson.JSON;
 import com.ctrip.hotel.cost.CostJobApplication;
 import com.ctrip.hotel.cost.application.handler.HandlerApi;
+import com.ctrip.hotel.cost.common.ThreadLocalCostHolder;
 import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
 import com.ctrip.hotel.cost.infrastructure.client.AuditClient;
 import com.ctrip.hotel.cost.infrastructure.client.SettlementClient;
@@ -54,10 +55,17 @@ public class SpringTest {
 
   @Test
   public void auditOrderFgCollectPrice() {
-    List<Long> ids = new ArrayList<>();
-    ids.add(597573600L);
-    List<AuditOrderInfoBO> orders = handlerApi.auditOrderFgCollectPrice(ids);
-    System.out.println(orders.size());
+    try {
+      // set TransThreadLocal
+      ThreadLocalCostHolder.setThreadLocalCostContext("auditOrderFg");
+
+      List<Long> ids = new ArrayList<>();
+      ids.add(560025073L);
+      List<AuditOrderInfoBO> orders = handlerApi.auditOrderFgCollectPrice(ids);
+      System.out.println(orders.size());
+    } catch (Exception e) {
+      ThreadLocalCostHolder.getTTL().remove();
+    }
   }
 
   @Test

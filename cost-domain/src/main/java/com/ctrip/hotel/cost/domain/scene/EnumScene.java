@@ -9,7 +9,7 @@ import java.util.List;
  * @date 2022-11-01 0:12
  */
 public enum EnumScene {
-    AUDIT_ORDER_FG(100,
+    AUDIT_ORDER_FG(0,
             Arrays.asList(CostItemType.BID_PRICE_FG,
                     CostItemType.PROMOTION_SELLING_PRICE_FG,
                     CostItemType.PROMOTION_COST_PRICE_FG,
@@ -21,16 +21,20 @@ public enum EnumScene {
                     CostItemType.AMOUNT_FG,
                     CostItemType.COST_FG,
                     CostItemType.ADJUST_COMMISSION_FG,
-                    CostItemType.ZERO_COMMISSION_FEE_PRICE_FG)
+                    CostItemType.ZERO_COMMISSION_FEE_PRICE_FG),
+            "审核离店"
     ),
+
     ;
 
     private int code;
     private List<CostItemType> costItemTypes;
+    private String name;
 
-    EnumScene(int code, List<CostItemType> costItemTypes) {
+    EnumScene(int code, List<CostItemType> costItemTypes, String name) {
         this.code = code;
         this.costItemTypes = costItemTypes;
+        this.name = name;
     }
 
     public int getCode() {
@@ -39,6 +43,10 @@ public enum EnumScene {
 
     public List<CostItemType> getCostItemTypes() {
         return costItemTypes;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public static EnumScene getScene(int value) {
