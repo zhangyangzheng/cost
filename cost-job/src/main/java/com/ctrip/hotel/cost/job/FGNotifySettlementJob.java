@@ -85,7 +85,7 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     }
   }
 
-  final int maxExeCount = 8;
+  final int maxExeCount = 800000;
 
   @Autowired OrderAuditFgMqRepository orderAuditFgMqRepository;
 
