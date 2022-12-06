@@ -8,12 +8,7 @@ import com.ctrip.hotel.cost.domain.element.CommonPrice;
  * @description
  * @date 2022-11-10 17:08
  */
-public interface PromotionCostPrice extends CommonPrice {
-    /**
-     * 统一后可以封装 public final int createSettlementType () { }
-     * @return 承担方
-     */
-    PromotionEnum createSettlementType();
+public interface PromotionCostPrice extends PromotionPrice, CommonPrice {
 
     Factor cost();
 }

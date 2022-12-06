@@ -19,7 +19,7 @@ import java.util.List;
  * @date 2022-11-09 20:10
  */
 @Data
-public class PromotionCostPriceFgOrderInfo implements PromotionCostPrice {
+public class PromotionCostBuyoutDiscountPriceFgOrderInfo implements PromotionCostPrice {
     private BigDecimal costDiscountAmount;
     private Integer quantity;
     private Calendar effectDate;
@@ -100,7 +100,7 @@ public class PromotionCostPriceFgOrderInfo implements PromotionCostPrice {
                 .fundType(this.fundType)
                 .settlementType(this.settlementType)
                 .build();
-        if (PromotionEnum.C_TRIP.equals(createSettlementTypeForFG(promotionInfo))) {
+        if (PromotionEnum.C_TRIP.equals(createSettlementTypeForFG(promotionInfo)) || discountDtype != 8) {
             return new Factor("days", BigDecimal.ZERO);
         }
 

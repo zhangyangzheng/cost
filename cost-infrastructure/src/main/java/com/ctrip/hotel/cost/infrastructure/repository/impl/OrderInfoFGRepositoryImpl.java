@@ -7,8 +7,9 @@ import com.ctrip.hotel.cost.domain.element.bid.BidPriceFgOrderInfo;
 import com.ctrip.hotel.cost.domain.element.commission.AdjustCommissionPriceOrderInfo;
 import com.ctrip.hotel.cost.domain.element.price.PriceAmountFgInfo;
 import com.ctrip.hotel.cost.domain.element.price.PriceCostFgInfo;
-import com.ctrip.hotel.cost.domain.element.promotion.PromotionCostPriceFgOrderInfo;
-import com.ctrip.hotel.cost.domain.element.promotion.PromotionSellingPriceFgOrderInfo;
+import com.ctrip.hotel.cost.domain.element.promotion.*;
+import com.ctrip.hotel.cost.domain.element.promotion.cashBack.PromotionCostCashBackPriceFgOrderInfo;
+import com.ctrip.hotel.cost.domain.element.promotion.cashBack.PromotionSellingCashBackPriceFgOrderInfo;
 import com.ctrip.hotel.cost.domain.element.room.fg.RoomCostPriceFgOrderInfo;
 import com.ctrip.hotel.cost.domain.element.room.fg.RoomSellingPriceFgOrderInfo;
 import com.ctrip.hotel.cost.domain.element.techfee.ZeroCommissionFeePriceOrderInfo;
@@ -75,13 +76,22 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
                     promotionPriceBuild(order.getPromotionDailyInfoList(), order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo())
             );
             dataCenter.setTripPromotionSellingPriceFgOrderInfos(
-                    promotionPriceBuild(order.getPromotionDailyInfoList(), order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo())
+                    promotionTripPriceBuild(order.getPromotionDailyInfoList(), order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo())
+            );
+            dataCenter.setPromotionSellingCashBackPriceFgOrderInfos(
+                    promotionCashBackPriceBuild(order.getPromotionDailyInfoList(), order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo())
             );
             dataCenter.setPromotionCostPriceFgOrderInfos(
                     promotionCostBuild(order.getPromotionDailyInfoList(), order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo())
             );
+            dataCenter.setTripPromotionCostPriceFgOrderInfos(
+                    promotionTripCostBuild(order.getPromotionDailyInfoList(), order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo())
+            );
             dataCenter.setBuyoutDiscountPromotionCostPriceFgOrderInfos(
-                    promotionCostBuild(order.getPromotionDailyInfoList(), order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo())
+                    promotionBuyoutDiscountPriceBuild(order.getPromotionDailyInfoList(), order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo())
+            );
+            dataCenter.setPromotionCostCashBackPriceFgOrderInfos(
+                    promotionCashBackCostBuild(order.getPromotionDailyInfoList(), order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo())
             );
             dataCenter.setPriceAmountFgInfo(new PriceAmountFgInfo());
             dataCenter.setPriceCostFgInfo(new PriceCostFgInfo());
@@ -154,7 +164,6 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
                 .map(promotion -> OrderAuditRoomDataPOMapper.INSTANCE.auditOrderToPromotion(promotion, auditRoomInfo))
                 .collect(Collectors.toList());
     }
-
     private List<PromotionCostPriceFgOrderInfo> promotionCostBuild(List<PromotionDailyInfo> promotionDailyInfoList, AuditRoomBasicInfo auditRoomInfo) {
         if (CollectionUtils.isEmpty(promotionDailyInfoList)) {
             return Collections.emptyList();
@@ -163,6 +172,56 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
                 .stream()
                 .filter(Objects::nonNull)
                 .map(promotion -> OrderAuditRoomDataPOMapper.INSTANCE.auditOrderToPromotionCost(promotion, auditRoomInfo))
+                .collect(Collectors.toList());
+    }
+    private List<TripPromotionSellingPriceFgOrderInfo> promotionTripPriceBuild(List<PromotionDailyInfo> promotionDailyInfoList, AuditRoomBasicInfo auditRoomInfo) {
+        if (CollectionUtils.isEmpty(promotionDailyInfoList)) {
+            return Collections.emptyList();
+        }
+        return promotionDailyInfoList
+                .stream()
+                .filter(Objects::nonNull)
+                .map(promotion -> OrderAuditRoomDataPOMapper.INSTANCE.auditOrderToTripPromotion(promotion, auditRoomInfo))
+                .collect(Collectors.toList());
+    }
+    private List<TripPromotionCostPriceFgOrderInfo> promotionTripCostBuild(List<PromotionDailyInfo> promotionDailyInfoList, AuditRoomBasicInfo auditRoomInfo) {
+        if (CollectionUtils.isEmpty(promotionDailyInfoList)) {
+            return Collections.emptyList();
+        }
+        return promotionDailyInfoList
+                .stream()
+                .filter(Objects::nonNull)
+                .map(promotion -> OrderAuditRoomDataPOMapper.INSTANCE.auditOrderToTripPromotionCost(promotion, auditRoomInfo))
+                .collect(Collectors.toList());
+    }
+    private List<PromotionCostCashBackPriceFgOrderInfo> promotionCashBackCostBuild(List<PromotionDailyInfo> promotionDailyInfoList, AuditRoomBasicInfo auditRoomInfo) {
+        if (CollectionUtils.isEmpty(promotionDailyInfoList)) {
+            return Collections.emptyList();
+        }
+        return promotionDailyInfoList
+                .stream()
+                .filter(Objects::nonNull)
+                .map(promotion -> OrderAuditRoomDataPOMapper.INSTANCE.auditOrderToCashBackPromotionCost(promotion, auditRoomInfo))
+                .collect(Collectors.toList());
+    }
+    private List<PromotionSellingCashBackPriceFgOrderInfo> promotionCashBackPriceBuild(List<PromotionDailyInfo> promotionDailyInfoList, AuditRoomBasicInfo auditRoomInfo) {
+        if (CollectionUtils.isEmpty(promotionDailyInfoList)) {
+            return Collections.emptyList();
+        }
+        return promotionDailyInfoList
+                .stream()
+                .filter(Objects::nonNull)
+                .map(promotion -> OrderAuditRoomDataPOMapper.INSTANCE.auditOrderToCashBackPromotion(promotion, auditRoomInfo))
+                .collect(Collectors.toList());
+    }
+    private List<PromotionCostBuyoutDiscountPriceFgOrderInfo> promotionBuyoutDiscountPriceBuild(List<PromotionDailyInfo> promotionDailyInfoList, AuditRoomBasicInfo auditRoomInfo) {
+        if (CollectionUtils.isEmpty(promotionDailyInfoList)) {
+            return Collections.emptyList();
+        }
+        return promotionDailyInfoList
+                .stream()
+                .filter(Objects::nonNull)
+                .map(promotion -> OrderAuditRoomDataPOMapper.INSTANCE.auditOrderToBuyoutDiscountPromotion(promotion, auditRoomInfo))
                 .collect(Collectors.toList());
     }
 

@@ -8,11 +8,15 @@ package com.ctrip.hotel.cost.domain.scene;
 public enum CostItemType {
     // 以下，现付的契约和订单的契约，很多字段命名不一样。现付单独写一份
     BID_PRICE_FG("bidPrice", "bidCostEffort*orgCost*days*quantity", "formula.bidPriceFg"),
+
     PROMOTION_SELLING_PRICE_FG("promotionSellingPrice", "amount*days*quantity", "formula.promotionSellingPriceFg"),
     PROMOTION_COST_PRICE_FG("promotionCostPrice", "costDiscountAmount*days*quantity", "formula.promotionCostPriceFg"),
     TRIP_PROMOTION_SELLING_PRICE_FG("tripPromotionSellingPrice", "amount*days*quantity", "formula.tripPromotionSellingPriceFg"),// 携程承担？
     TRIP_PROMOTION_COST_PRICE_FG("tripPromotionCostPrice", "costDiscountAmount*days*quantity", "formula.tripPromotionCostPriceFg"),
     BUYOUT_DISCOUNT_PROMOTION_COST_PRICE_FG("buyoutDiscountPromotionCostPrice", "costDiscountAmount*days*quantity", "formula.buyoutDiscountPromotionCostPrice"),// 非携程，买断折扣？
+    CASH_BACK_PROMOTION_SELLING_PRICE_FG("cashBackPromotionSellingPrice", "amount*days*quantity", "formula.cashBackPromotionSellingPrice"),
+    CASH_BACK_PROMOTION_COST_PRICE_FG("cashBackPromotionCostPrice", "costDiscountAmount*days*quantity", "formula.cashBackPromotionCostPrice"),
+
     ROOM_SELLING_PRICE_FG("roomSellingPrice", "amount*days*quantity", "formula.roomSellingPriceFg"),
     ROOM_COST_PRICE_FG("roomCostPrice", "cost*days*quantity", "formula.roomCostPriceFg"),
 

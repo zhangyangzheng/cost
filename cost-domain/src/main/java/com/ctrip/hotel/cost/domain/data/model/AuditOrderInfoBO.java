@@ -49,6 +49,9 @@ public class AuditOrderInfoBO {
     private BigDecimal hotelPromotionAmount;
     private BigDecimal hotelPromotionCost;
     private BigDecimal buyoutDiscountAmount;//(促销)买断折扣金额 > 0 ? ~ : null
+    // to 审核
+    private BigDecimal promotionCashBackAmount;
+    private BigDecimal promotionCashBackCost;
 
     public List<PromotionDailyInfo> getPromotionDailyInfoList() {
         if (CollectionUtils.isEmpty(promotionDailyInfoList)) {

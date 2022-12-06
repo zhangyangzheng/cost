@@ -62,7 +62,9 @@ public class CostSupporter {
             e.getAuditOrderInfoBO().setTripPromotionCost(e.getTripPromotionCost() == null ? null : e.getTripPromotionCost().total());
             e.getAuditOrderInfoBO().setHotelPromotionAmount(e.getPriceAmountFg() == null ? null : e.getTripPromotionSelling().total());
             e.getAuditOrderInfoBO().setHotelPromotionCost(e.getPromotionCost() == null ? null : e.getTripPromotionSelling().total());
-            e.getAuditOrderInfoBO().setBuyoutDiscountAmount(e.getBuyoutDiscountPromotionCost() == null ? null : e.getBuyoutDiscountPromotionCost().total());
+            e.getAuditOrderInfoBO().setBuyoutDiscountAmount(e.getPromotionCostBuyoutDiscount() == null ? null : e.getPromotionCostBuyoutDiscount().total());
+            e.getAuditOrderInfoBO().setPromotionCashBackAmount(e.getPromotionSellingCashBack() == null ? null : e.getPromotionSellingCashBack().total());
+            e.getAuditOrderInfoBO().setPromotionCashBackCost(e.getPromotionCostCashBack() == null ? null : e.getPromotionCostCashBack().total());
             e.getAuditOrderInfoBO().setQuantity(
                     BigDecimal.valueOf(
                             DateHelper.getDiffDays(

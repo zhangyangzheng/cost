@@ -3,8 +3,9 @@ package com.ctrip.hotel.cost.infrastructure.mapper;
 import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
 import com.ctrip.hotel.cost.domain.element.bid.BidPriceFgOrderInfo;
 import com.ctrip.hotel.cost.domain.element.commission.AdjustCommissionPriceOrderInfo;
-import com.ctrip.hotel.cost.domain.element.promotion.PromotionCostPriceFgOrderInfo;
-import com.ctrip.hotel.cost.domain.element.promotion.PromotionSellingPriceFgOrderInfo;
+import com.ctrip.hotel.cost.domain.element.promotion.*;
+import com.ctrip.hotel.cost.domain.element.promotion.cashBack.PromotionCostCashBackPriceFgOrderInfo;
+import com.ctrip.hotel.cost.domain.element.promotion.cashBack.PromotionSellingCashBackPriceFgOrderInfo;
 import com.ctrip.hotel.cost.domain.element.room.fg.RoomCostPriceFgOrderInfo;
 import com.ctrip.hotel.cost.domain.element.room.fg.RoomSellingPriceFgOrderInfo;
 import com.ctrip.hotel.cost.domain.element.techfee.ZeroCommissionFeePriceOrderInfo;
@@ -31,6 +32,11 @@ public interface OrderAuditRoomDataPOMapper {
 
     PromotionSellingPriceFgOrderInfo auditOrderToPromotion(PromotionDailyInfo promotionInfo, AuditRoomBasicInfo roomBasicInfo);
     PromotionCostPriceFgOrderInfo auditOrderToPromotionCost(PromotionDailyInfo promotionInfo, AuditRoomBasicInfo roomBasicInfo);
+    TripPromotionSellingPriceFgOrderInfo auditOrderToTripPromotion(PromotionDailyInfo promotionInfo, AuditRoomBasicInfo roomBasicInfo);
+    TripPromotionCostPriceFgOrderInfo auditOrderToTripPromotionCost(PromotionDailyInfo promotionInfo, AuditRoomBasicInfo roomBasicInfo);
+    PromotionCostCashBackPriceFgOrderInfo auditOrderToCashBackPromotionCost(PromotionDailyInfo promotionInfo, AuditRoomBasicInfo roomBasicInfo);
+    PromotionSellingCashBackPriceFgOrderInfo auditOrderToCashBackPromotion(PromotionDailyInfo promotionInfo, AuditRoomBasicInfo roomBasicInfo);
+    PromotionCostBuyoutDiscountPriceFgOrderInfo auditOrderToBuyoutDiscountPromotion(PromotionDailyInfo promotionInfo, AuditRoomBasicInfo roomBasicInfo);
 
     AdjustCommissionPriceOrderInfo auditOrderToAdjustCommission(AuditRoomOtherInfo auditRoomOtherInfo, HotelBasicInfo hotelBasicInfo);
 

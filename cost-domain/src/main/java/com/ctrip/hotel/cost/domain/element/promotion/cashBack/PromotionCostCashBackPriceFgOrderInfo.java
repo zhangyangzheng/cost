@@ -1,6 +1,7 @@
-package com.ctrip.hotel.cost.domain.element.promotion;
+package com.ctrip.hotel.cost.domain.element.promotion.cashBack;
 
 import com.ctrip.hotel.cost.domain.core.Factor;
+import com.ctrip.hotel.cost.domain.element.promotion.PromotionCostPrice;
 import com.ctrip.hotel.cost.domain.scene.CostItemType;
 import hotel.settlement.common.DateHelper;
 import hotel.settlement.common.QConfigHelper;
@@ -16,10 +17,10 @@ import java.util.List;
 /**
  * @author yangzhengzhang
  * @description
- * @date 2022-11-09 20:10
+ * @date 2022-12-06 15:10
  */
 @Data
-public class PromotionCostPriceFgOrderInfo implements PromotionCostPrice {
+public class PromotionCostCashBackPriceFgOrderInfo implements PromotionCostPrice {
     private BigDecimal costDiscountAmount;
     private Integer quantity;
     private Calendar effectDate;
@@ -42,41 +43,6 @@ public class PromotionCostPriceFgOrderInfo implements PromotionCostPrice {
     // 计算结果
     private BigDecimal result;
 
-//    @Override
-//    public PromotionEnum createSettlementTypeForFG() {
-//        if (fundId != null && fundId > 0 && fundType != -1) {
-//            if (discountDtype != 5 && costType > 0 && settlementType == 1) {
-//                this.setRuleGroup(PromotionEnum.HOTEL.getValue());// todo 确认是不是计算这个字段抛给结算？？？
-//                return PromotionEnum.HOTEL;
-//            } else {
-//                this.setRuleGroup(PromotionEnum.C_TRIP.getValue());
-//                return PromotionEnum.C_TRIP;
-//            }
-//        }
-//        // todo 以下是老逻辑，待下线
-//        // 酒店承担促销金额
-//        // 权益类促销（DiscountDtype = 7） 计入总金额 不计入每日促销金额
-//        // 酒店承担（CostType > 0）
-//        // 虚拟资金池(CashPoolID > 0 and CashType = 1 )
-//        // 非  优惠类型为返现，发单、开票、抛结算不剔除返现金额（优惠金额）（DiscountDtype = 5）
-//        // 非  真实资金池(CashPoolID > 0 and CashType != 1 )
-//        // 非  集团促销（CashType = 2 )
-//        // 非  商家券（CashType = 5 )
-//        // 非  星球号优惠券（CashType = 6 )
-//        if (discountDtype != 5
-//                && costType > 0
-//                && cashType != 2
-//                && cashType != 5
-//                && cashType != 6
-//                && !(cashPoolID > 0 && cashType != 1)) {
-//            this.setRuleGroup(PromotionEnum.HOTEL.getValue());
-//            return PromotionEnum.HOTEL;
-//        } else {
-//            this.setRuleGroup(PromotionEnum.C_TRIP.getValue());
-//            return PromotionEnum.C_TRIP;
-//        }
-//    }
-
     @Override
     public Factor cost() {
         return new Factor("costDiscountAmount", this.getCostDiscountAmount());
@@ -90,17 +56,7 @@ public class PromotionCostPriceFgOrderInfo implements PromotionCostPrice {
      */
     @Override
     public Factor days() {
-        AbstractPromotion.SettlementType promotionInfo = AbstractPromotion.SettlementType
-                .builder()
-                .costType(this.costType)
-                .cashType(this.cashType)
-                .cashPoolID(this.cashPoolID)
-                .discountDtype(this.discountDtype)
-                .fundId(this.fundId)
-                .fundType(this.fundType)
-                .settlementType(this.settlementType)
-                .build();
-        if (PromotionEnum.C_TRIP.equals(createSettlementTypeForFG(promotionInfo))) {
+        if (discountDtype != 5) {
             return new Factor("days", BigDecimal.ZERO);
         }
 
@@ -126,7 +82,7 @@ public class PromotionCostPriceFgOrderInfo implements PromotionCostPrice {
 
     @Override
     public String costItemName() {
-        return CostItemType.PROMOTION_COST_PRICE_FG.getCostItemName();
+        return CostItemType.CASH_BACK_PROMOTION_COST_PRICE_FG.getCostItemName();
     }
 
     @Override
@@ -141,7 +97,7 @@ public class PromotionCostPriceFgOrderInfo implements PromotionCostPrice {
 
     @Override
     public String formula() {
-        return QConfigHelper.getSwitchConfigByKey(CostItemType.PROMOTION_COST_PRICE_FG.getFormulaQConfigKey(), CostItemType.PROMOTION_COST_PRICE_FG.getFormula());
+        return QConfigHelper.getSwitchConfigByKey(CostItemType.CASH_BACK_PROMOTION_COST_PRICE_FG.getFormulaQConfigKey(), CostItemType.PROMOTION_COST_PRICE_FG.getFormula());
     }
 
     @Override
