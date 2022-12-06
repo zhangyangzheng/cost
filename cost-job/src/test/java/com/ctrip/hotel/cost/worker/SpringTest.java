@@ -6,6 +6,7 @@ import com.ctrip.hotel.cost.application.handler.HandlerApi;
 import com.ctrip.hotel.cost.common.ThreadLocalCostHolder;
 import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
 import com.ctrip.hotel.cost.infrastructure.client.AuditClient;
+import com.ctrip.hotel.cost.infrastructure.client.CompareClient;
 import com.ctrip.hotel.cost.infrastructure.client.SettlementClient;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementApplyListUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementCancelListUsedBo;
@@ -25,6 +26,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import soa.ctrip.com.hotel.order.checkin.audit.v2.getOrderAuditRoomData.OrderAuditRoomData;
 import soa.ctrip.com.hotel.vendor.settlement.v1.settlementdata.SettlementPayData;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,6 +54,9 @@ public class SpringTest {
 
   @Autowired
   AuditMqProducer auditMqProducer;
+
+  @Resource(name = "FGNotifySettleCompare")
+  CompareClient compareClient;
 
   @Test
   public void auditOrderFgCollectPrice() {
@@ -211,6 +216,16 @@ public class SpringTest {
       throw new RuntimeException(e);
     }
     int i = 0;
+  }
+
+
+  @Test
+  public void compareTest() throws Exception {
+    SettlementApplyListUsedBo settlementApplyListUsedBo = new SettlementApplyListUsedBo();
+    settlementApplyListUsedBo.setOrderId(" sss");
+    settlementApplyListUsedBo.setSettlementId(1l);
+    settlementApplyListUsedBo.setOutSettlementNo(" 122 ");
+    compareClient.addComparing("asd", "test", settlementApplyListUsedBo, false);
   }
 
 }

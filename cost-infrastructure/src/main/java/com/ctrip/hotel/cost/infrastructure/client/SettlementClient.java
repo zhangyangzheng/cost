@@ -24,14 +24,15 @@ import soa.ctrip.com.hotel.vendor.settlement.v1.settlementdata.SettlementPayData
 import soa.ctrip.com.hotel.vendor.settlement.v1.settlementdata.SettlementPayDataReceiveRequestType;
 import soa.ctrip.com.hotel.vendor.settlement.v1.settlementdata.SettlementPayDataReceiveResponseType;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class SettlementClient {
 
-  @Autowired
-  CompareHbaseClient compareHbaseClient;
+  @Resource(name = "FGNotifySettleCompare")
+  CompareClient compareClient;
 
   @Autowired SoaHelper soaHelper;
 
@@ -46,7 +47,7 @@ public class SettlementClient {
 
     boolean isThrow = BooleanUtils.toBoolean(settlementPayDataReceiveDto.getIsThrow());
     if (!isThrow) {
-      compareHbaseClient.addComparing(
+      compareClient.addComparing(
           settlementPayDataReceiveDto.getReferenceId(),
           "settlementPayDataReceive",
           settlementPayDataReceiveDto.getSettlementPayData(),
@@ -104,7 +105,7 @@ public class SettlementClient {
     boolean isThrow = BooleanUtils.toBoolean(settlementApplyListDto.getIsThrow());
 
     if (!isThrow) {
-      compareHbaseClient.addComparing(
+      compareClient.addComparing(
           settlementApplyListDto.getReferenceId(),
           "settlementApplyList",
           settlementApplyListDto.getSettleDataRequest(),
@@ -139,7 +140,7 @@ public class SettlementClient {
     boolean isThrow = BooleanUtils.toBoolean(cancelOrderDto.getIsThrow());
 
     if (!isThrow) {
-      compareHbaseClient.addComparing(
+      compareClient.addComparing(
           cancelOrderDto.getReferenceId(),
           "cancelorder",
           cancelOrderDto.getCancelOrderRequest(),
@@ -182,7 +183,7 @@ public class SettlementClient {
     boolean isThrow = BooleanUtils.toBoolean(settlementCancelListDto.getIsThrow());
 
     if (!isThrow) {
-      compareHbaseClient.addComparing(
+      compareClient.addComparing(
           settlementCancelListDto.getReferenceId(),
           "settlementCancelList",
           settlementCancelListDto.getCancelSettleData(),
