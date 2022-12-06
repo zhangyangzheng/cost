@@ -7,6 +7,7 @@ import hotel.settlement.common.LogHelper;
 import hotel.settlement.common.json.JsonUtils;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.SettleCallbackInfoTiDBGen;
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import qunar.tc.qmq.Message;
@@ -42,7 +43,7 @@ public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgM
     Long settlementId = LongHelper.getNullableLong(message.getStringProperty("settlementId"));
     Long orderInfoId = LongHelper.getNullableLong(message.getStringProperty("orderInfoId"));
     Long hwpSettlementId = LongHelper.getNullableLong(message.getStringProperty("hwpSettlementId"));
-    String pushWalletPay = message.getStringProperty("pushWalletPay");
+    String pushWalletPay = BooleanUtils.toBoolean(message.getStringProperty("pushWalletPay")) ? "T" : "F";
     String pushReferenceId = message.getStringProperty("pushReferenceId");
     String hwpReferenceId = message.getStringProperty("hwpReferenceId");
 
@@ -69,7 +70,7 @@ public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgM
               Long.parseLong(Optional.ofNullable(message.getStringProperty("orderId")).orElse("-1"));
       Long fgId =
               Long.parseLong(Optional.ofNullable(message.getStringProperty("fgId")).orElse("-1"));
-      Integer businessType = Integer.parseInt(Optional.ofNullable(message.getStringProperty("businessType")).orElse("-1"));
+      Integer businessType = Integer.parseInt(Optional.ofNullable(message.getStringProperty("businessType")).orElse("0"));
       String opType = message.getStringProperty("opType");
       String isThrow = message.getStringProperty("isThrow");
       String referenceId = message.getStringProperty("referenceId");
@@ -88,10 +89,8 @@ public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgM
   }
 
   @Override
-  protected boolean legalCheck(OrderAuditFgMqTiDBGen item) throws Exception {
-    if ((item.getOrderId() != -1L
-            || item.getFgId() != -1L)
-            && item.getBusinessType() != -1
+  protected boolean legalCheck(OrderAuditFgMqTiDBGen item) {
+    if (item.getOrderId() != -1L
             && item.getOpType() != null
             && item.getIsThrow() != null
             && item.getReferenceId() != null) {
