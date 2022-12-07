@@ -54,7 +54,7 @@
 			<dependency>
 				<groupId>com.ctrip.soa.hotel.settlement.api</groupId>
 				<artifactId>hotel-settlement-api-client-v2</artifactId>
-				<version>1.2.26-SNAPSHOT</version>
+				<version>1.2.27</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

@@ -60,7 +60,7 @@ public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgM
 
   @Override
   protected Integer getSliceIndex(Object... values) {
-    return Objects.hash(values) % sliceCount;
+    return Math.abs(Objects.hash(values)) % sliceCount;
   }
 
   @Override
