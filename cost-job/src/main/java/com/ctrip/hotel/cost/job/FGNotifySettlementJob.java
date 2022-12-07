@@ -6,6 +6,7 @@ import com.ctrip.hotel.cost.domain.data.model.OrderAuditFgMqBO;
 import com.ctrip.hotel.cost.domain.data.model.SettlementCallBackInfo;
 import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepository;
 import com.ctrip.hotel.cost.infrastructure.repository.SettleCallbackInfoRepository;
+import com.ctrip.hotel.cost.infrastructure.util.I18NMessageUtil;
 import hotel.settlement.common.ListHelper;
 import hotel.settlement.common.LogHelper;
 import hotel.settlement.common.LongHelper;
@@ -158,7 +159,7 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
         .forEach(
             job -> {
               job.setJobStatus("T");
-              job.setRemark("已经有成功执行的删除单 或 有删除单且没有成功抛出的创建修改单");
+              job.setRemark(I18NMessageUtil.getMessage("FGNotifySettlementJob.Remark.3"));
             });
     orderAuditFgMqRepository.batchUpdate(jobList);
   }
@@ -192,12 +193,15 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
       if ("D".equals(job.getOpType())) {
         // 不会发生取不到的情况
         List<OrderAuditFgMqTiDBGen> identityJobList = identifyJobListMap.get(identity);
-        identityJobList.stream().forEach(p -> p.setRemark("删除单抛成功 所有单置为成功"));
+        identityJobList.stream()
+            .forEach(
+                p -> p.setRemark(I18NMessageUtil.getMessage("FGNotifySettlementJob.Remark.4")));
         allSuccessJobList.addAll(identityJobList);
       } else {
         // 不会发生取不到的情况
         WJobMergeItem wJobMergeItem = identifyWJobMergeItemMap.get(identity);
-        wJobMergeItem.setFollowersRemark("主单抛成功 副单跟随成功");
+        wJobMergeItem.setFollowersRemark(
+            I18NMessageUtil.getMessage("FGNotifySettlementJob.Remark.2"));
         // 主单和副单同生共死
         allSuccessJobList.add(wJobMergeItem.leader);
         allSuccessJobList.addAll(wJobMergeItem.followers);
@@ -219,7 +223,8 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
       Identify identity = new Identify(job.getOrderId(), job.getFgId());
       // 不会发生取不到的情况
       WJobMergeItem wJobMergeItem = identifyWJobMergeItemMap.get(identity);
-      wJobMergeItem.setFollowersRemark("主单抛失败 副单跟随处理");
+      wJobMergeItem.setFollowersRemark(
+          I18NMessageUtil.getMessage("FGNotifySettlementJob.Remark.1"));
       // 主单和副单同生共死
       allFailJobList.add(wJobMergeItem.leader);
       allFailJobList.addAll(wJobMergeItem.followers);
@@ -242,15 +247,18 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     return identifySet;
   }
 
-  protected AuditOrderFgReqDTO getAuditOrderFgReqDTO(OrderAuditFgMqTiDBGen orderAuditFgMqTiDBGen, SettleCallbackInfoTiDBGen settleCallbackInfoTiDBGen){
+  protected AuditOrderFgReqDTO getAuditOrderFgReqDTO(
+      OrderAuditFgMqTiDBGen orderAuditFgMqTiDBGen,
+      SettleCallbackInfoTiDBGen settleCallbackInfoTiDBGen) {
     OrderAuditFgMqBO orderAuditFgMqBO =
-            BeanHelper.convert(orderAuditFgMqTiDBGen, OrderAuditFgMqBO.class);
+        BeanHelper.convert(orderAuditFgMqTiDBGen, OrderAuditFgMqBO.class);
     SettlementCallBackInfo settlementCallBackInfo =
-            BeanHelper.convert(settleCallbackInfoTiDBGen, SettlementCallBackInfo.class);
-    settlementCallBackInfo.setPushWalletPay(BooleanUtils.toBooleanObject(settleCallbackInfoTiDBGen.getPushWalletPay()));
+        BeanHelper.convert(settleCallbackInfoTiDBGen, SettlementCallBackInfo.class);
+    settlementCallBackInfo.setPushWalletPay(
+        BooleanUtils.toBooleanObject(settleCallbackInfoTiDBGen.getPushWalletPay()));
 
     AuditOrderFgReqDTO auditOrderFgReqDTO =
-            new AuditOrderFgReqDTO(orderAuditFgMqBO, settlementCallBackInfo);
+        new AuditOrderFgReqDTO(orderAuditFgMqBO, settlementCallBackInfo);
 
     return auditOrderFgReqDTO;
   }
@@ -272,7 +280,8 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
         throw new Exception("settleCallbackInfo missing");
       }
 
-      AuditOrderFgReqDTO auditOrderFgReqDTO = getAuditOrderFgReqDTO(orderAuditFgMqTiDBGen, settleCallbackInfoTiDBGen);
+      AuditOrderFgReqDTO auditOrderFgReqDTO =
+          getAuditOrderFgReqDTO(orderAuditFgMqTiDBGen, settleCallbackInfoTiDBGen);
 
       auditOrderFgReqDTOList.add(auditOrderFgReqDTO);
     }
@@ -281,8 +290,12 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
 
   @Override
   protected List<OrderAuditFgMqTiDBGen> getPending(List<Integer> sliceIndexList) throws Exception {
-    Integer minBetween = Integer.parseInt(QConfigHelper.getSwitchConfigByKey("fgNotifySettlementJobMinuteBetween", "0"));
-    Integer count = Integer.parseInt(QConfigHelper.getSwitchConfigByKey("fgNotifySettlementJobBatchSize", "100"));
+    Integer minBetween =
+        Integer.parseInt(
+            QConfigHelper.getSwitchConfigByKey("fgNotifySettlementJobMinuteBetween", "0"));
+    Integer count =
+        Integer.parseInt(
+            QConfigHelper.getSwitchConfigByKey("fgNotifySettlementJobBatchSize", "100"));
     List<OrderAuditFgMqTiDBGen> pendingJobs =
         orderAuditFgMqRepository.getPendingJobs(sliceIndexList, minBetween, count);
     return pendingJobs;

@@ -9,6 +9,7 @@ import com.ctrip.hotel.cost.infrastructure.model.dto.CancelOrderDto;
 import com.ctrip.hotel.cost.infrastructure.model.dto.SettlementApplyListDto;
 import com.ctrip.hotel.cost.infrastructure.model.dto.SettlementCancelListDto;
 import com.ctrip.hotel.cost.infrastructure.model.dto.SettlementPayDataReceiveDto;
+import com.ctrip.hotel.cost.infrastructure.util.I18NMessageUtil;
 import com.ctrip.soa.hotel.settlement.api.CancelDataItem;
 import com.ctrip.soa.hotel.settlement.api.CancelSettleData;
 import com.ctrip.soa.hotel.settlement.api.DataItem;
@@ -306,13 +307,13 @@ public class SettlementRepositoryImpl implements SettlementRepository {
         Item.setDataKey("Room");
         Item.setDataValue(
                 auditRoomBasicInfo.getRoom() == null ? "" : auditRoomBasicInfo.getRoom().toString());
-        Item.setDataDesc("房型代码");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.1"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("RoomNo");
         Item.setDataValue(auditRoomBasicInfo.getRoomNo() == null ? "" : auditRoomBasicInfo.getRoomNo());
-        Item.setDataDesc("房间号");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.2"));
         requestData.getDataItems().add(Item);
 
         if (ConvertHelper.getLong(auditOrderInfoBO.getCusOrderId()) > 0) {
@@ -327,7 +328,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
         Item.setDataKey("CheckInType");
         Item.setDataValue(
                 auditRoomBasicInfo.getCheckInType() == null ? "" : auditRoomBasicInfo.getCheckInType());
-        Item.setDataDesc("入住审核");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.3"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
@@ -338,7 +339,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                         : DateHelper.formatDate(
                         new Timestamp(orderBasicInfo.getEta().getTimeInMillis()),
                         DateHelper.SIMIPLE_DATE_FORMAT_STR));
-        Item.setDataDesc("入住时间");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.4"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
@@ -349,7 +350,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                         : DateHelper.formatDate(
                         new Timestamp(orderBasicInfo.getEtd().getTimeInMillis()),
                         DateHelper.SIMIPLE_DATE_FORMAT_STR));
-        Item.setDataDesc("离店时间");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.5"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
@@ -358,7 +359,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                 auditRoomOtherInfo.getAdjustCommissionType() == null
                         ? ""
                         : auditRoomOtherInfo.getAdjustCommissionType().toString());
-        Item.setDataDesc("CommissionType    0 正常订单，1 NS付卖价收佣金，2 酒店扣款，3 NoShow收酒店佣金，4 赔款订单，5 应收调整订单");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.6"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
@@ -367,7 +368,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                 auditOrderInfoBO.getPriceAmount() == null
                         ? ""
                         : auditOrderInfoBO.getPriceAmount().toString());
-        Item.setDataDesc("订单面价");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.7"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
@@ -376,41 +377,41 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                 auditOrderInfoBO.getCostAmount() == null
                         ? ""
                         : auditOrderInfoBO.getCostAmount().toString());
-        Item.setDataDesc("订单底价");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.8"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("RMBExchangeRate");
         Item.setDataValue(
                 orderBasicInfo.getExchange() == null ? "" : orderBasicInfo.getExchange().toString());
-        Item.setDataDesc("人民币汇率");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.9"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("ClientName");
         Item.setDataValue(
                 auditRoomBasicInfo.getClientName() == null ? "" : auditRoomBasicInfo.getClientName());
-        Item.setDataDesc("入住者");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.10"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("Remarks");
         Item.setDataValue("");
-        Item.setDataDesc("备注");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.11"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("HtlConfirmNo");
         Item.setDataValue(
                 auditRoomBasicInfo.getHtlConfirmNo() == null ? "" : auditRoomBasicInfo.getHtlConfirmNo());
-        Item.setDataDesc("确认号");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.12"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("RoomName");
         Item.setDataValue(
                 auditRoomBasicInfo.getRoomName() == null ? "" : auditRoomBasicInfo.getRoomName());
-        Item.setDataDesc("房型名称");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.13"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
@@ -421,55 +422,55 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                         : DateHelper.formatDate(
                         new Timestamp(auditRoomBasicInfo.getRealETD().getTimeInMillis()),
                         DateHelper.SIMIPLE_DATE_FORMAT_STR));
-        Item.setDataDesc("审核实际离店日期");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.14"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("HotelInfo");
         Item.setDataValue(
                 auditRoomBasicInfo.getHotelInfo() == null ? "" : auditRoomBasicInfo.getHotelInfo());
-        Item.setDataDesc("宾馆信息");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.15"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("Guarantee");
         Item.setDataValue(guaranteeInfo.getGuarantee() == null ? "" : guaranteeInfo.getGuarantee());
-        Item.setDataDesc("是否担保(G首日/F)");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.16"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("GuaranteeWay");
         Item.setDataValue(
                 guaranteeInfo.getGuaranteeWay() == null ? "" : guaranteeInfo.getGuaranteeWay());
-        Item.setDataDesc("担保类型C信用卡担保，E积分担保");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.17"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("NewFGID");
         Item.setDataValue(
                 auditRoomBasicInfo.getNewFGID() == null ? "" : auditRoomBasicInfo.getNewFGID().toString());
-        Item.setDataDesc("延住后对应房间的FGID(FGID > 0 存在延住）");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.18"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("IsRoomDelay");
         Item.setDataValue(
                 auditRoomBasicInfo.getIsRoomDelay() == null ? "" : auditRoomBasicInfo.getIsRoomDelay());
-        Item.setDataDesc("是否为延住房间(R预定延住/A审核延住/F非延住)");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.19"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("Recheck");
         Item.setDataValue(
                 auditRoomBasicInfo.getRecheck() == null ? "" : auditRoomBasicInfo.getRecheck());
-        Item.setDataDesc("复审标记(T复审)");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.20"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("AllNeedGuarantee");
         Item.setDataValue(
                 guaranteeInfo.getAllNeedGuarantee() == null ? "" : guaranteeInfo.getAllNeedGuarantee());
-        Item.setDataDesc("担保类型(T全程/B峰时/F)");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.21"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
@@ -478,14 +479,14 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                 orderBasicInfo.getVendorChannelID() == null
                         ? ""
                         : orderBasicInfo.getVendorChannelID().toString());
-        Item.setDataDesc("集团酒店Code");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.22"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("ModifyOperateType");
         Item.setDataValue(
                 auditRoomBasicInfo.getOperateType() == null ? "" : auditRoomBasicInfo.getOperateType());
-        Item.setDataDesc("修改类型");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.23"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
@@ -494,7 +495,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                 auditRoomBasicInfo.getSubOperateType() == null
                         ? ""
                         : auditRoomBasicInfo.getSubOperateType());
-        Item.setDataDesc("修改子类型");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.24"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
@@ -505,21 +506,21 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                         : DateHelper.formatDate(
                         new Timestamp(auditRoomBasicInfo.getOperateTime().getTimeInMillis()),
                         DateHelper.SIMIPLE_DATE_FORMAT_STR));
-        Item.setDataDesc("操作时间");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.25"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("ModifyOperateEid");
         Item.setDataValue(
                 auditRoomBasicInfo.getOperator() == null ? "" : auditRoomBasicInfo.getOperator());
-        Item.setDataDesc("操作人");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.26"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("GroupOrderClass");
         Item.setDataValue(
                 orderBasicInfo.getGroupOrderClass() == null ? "" : orderBasicInfo.getGroupOrderClass());
-        Item.setDataDesc("系统外订单属性");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.27"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
@@ -528,7 +529,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                 flashOrderInfo.getIsFlashOrder() == null
                         ? ""
                         : flashOrderInfo.getIsFlashOrder().toString());
-        Item.setDataDesc("是否闪住");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.28"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
@@ -537,14 +538,14 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                 auditRoomOtherInfo.getHotelConfirmStatus() == null
                         ? "0"
                         : auditRoomOtherInfo.getHotelConfirmStatus().toString());
-        Item.setDataDesc("酒店确认状态");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.29"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("OrderConfirmType");
         Item.setDataValue(
                 orderBasicInfo.getOrderConfirmType() == null ? "" : orderBasicInfo.getOrderConfirmType());
-        Item.setDataDesc("订单确认类型");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.30"));
         requestData.getDataItems().add(Item);
 
         // 是否为阶梯扣款
@@ -554,20 +555,20 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                 orderBasicInfo.getIsLadderDeductPolicy() == null
                         ? ""
                         : orderBasicInfo.getIsLadderDeductPolicy());
-        Item.setDataDesc("是否为阶梯扣款");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.31"));
         requestData.getDataItems().add(Item);
 
         if (auditOrderInfoBO.getBidPrice() != null) {
             Item = new DataItem();
             Item.setDataKey("BidFlag");
             Item.setDataValue("T");
-            Item.setDataDesc("是否为云梯订单");
+            Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.32"));
             requestData.getDataItems().add(Item);
 
             Item = new DataItem();
             Item.setDataKey("BidPrice");
             Item.setDataValue(auditOrderInfoBO.getBidPrice().toString());
-            Item.setDataDesc("云梯费用");
+            Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.33"));
             requestData.getDataItems().add(Item);
         }
 
@@ -584,7 +585,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                 hotelBasicInfo.getOperatMode() == null || !"S".equals(hotelBasicInfo.getOperatMode())
                         ? "F"
                         : "T");
-        Item.setDataDesc("是否闪结订单");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.34"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
@@ -593,7 +594,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                 auditRoomOtherInfo.getAdjustCommission() == null
                         ? "0"
                         : auditRoomOtherInfo.getAdjustCommission().toString());
-        Item.setDataDesc("应收调整金额");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.35"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
@@ -602,14 +603,14 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                 auditRoomOtherInfo.getAdjustCommissionType() == null
                         ? ""
                         : auditRoomOtherInfo.getAdjustCommissionType().toString());
-        Item.setDataDesc("应收调整类型");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.36"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("AdjustAmountRemark");
         Item.setDataValue(
                 auditRoomOtherInfo.getAdjustRemark() == null ? "" : auditRoomOtherInfo.getAdjustRemark());
-        Item.setDataDesc("应收调整原因");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.37"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
@@ -618,21 +619,21 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                 guaranteeInfo.getGuaranteeType() == null
                         ? ""
                         : guaranteeInfo.getGuaranteeType().toString());
-        Item.setDataDesc("担保类型");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.38"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("RoomNameEn");
         Item.setDataValue(
                 auditRoomBasicInfo.getRoomNameEN() == null ? "" : auditRoomBasicInfo.getRoomNameEN());
-        Item.setDataDesc("英文房型名称");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.39"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("HotelID");
         Item.setDataValue(
                 hotelBasicInfo.getHotel() == null ? "0" : hotelBasicInfo.getHotel().toString());
-        Item.setDataDesc("子酒店ID");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.40"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
@@ -641,7 +642,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                 auditRoomOtherInfo.getSettlementBatchID() == null
                         ? "0"
                         : auditRoomOtherInfo.getSettlementBatchID().toString());
-        Item.setDataDesc("批次ID");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.41"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
@@ -650,21 +651,21 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                 auditOrderInfoBO.getRoomAmount() == null
                         ? "0"
                         : auditOrderInfoBO.getRoomAmount().toString());
-        Item.setDataDesc("我司面价");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.42"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("RoomCost");
         Item.setDataValue(
                 auditOrderInfoBO.getRoomCost() == null ? "0" : auditOrderInfoBO.getRoomCost().toString());
-        Item.setDataDesc("我司底价");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.43"));
         requestData.getDataItems().add(Item);
 
         if (orderBasicInfo.getCurrency() != null) {
             Item = new DataItem();
             Item.setDataKey("RoomCurrency");
             Item.setDataValue(orderBasicInfo.getCurrency() == null ? "" : orderBasicInfo.getCurrency());
-            Item.setDataDesc("我司币种");
+            Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.44"));
             requestData.getDataItems().add(Item);
         }
 
@@ -673,7 +674,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
             Item.setDataKey("BillsettleCurrency");
             Item.setDataValue(
                     auditRoomOtherInfo.getPayCurrency() == null ? "" : auditRoomOtherInfo.getPayCurrency());
-            Item.setDataDesc("账单结算币种");
+            Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.45"));
             requestData.getDataItems().add(Item);
         }
 
@@ -682,7 +683,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
             Item.setDataKey("BillHtlCurrency");
             Item.setDataValue(
                     auditRoomOtherInfo.getHtlCurrency() == null ? "" : auditRoomOtherInfo.getHtlCurrency());
-            Item.setDataDesc("账单酒店币种");
+            Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.46"));
             requestData.getDataItems().add(Item);
         }
 
@@ -692,7 +693,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                 auditRoomOtherInfo.getCounterFee() == null
                         ? "0"
                         : auditRoomOtherInfo.getCounterFee().toString());
-        Item.setDataDesc("手续费");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.47"));
         requestData.getDataItems().add(Item);
 
         if (auditRoomOtherInfo.getCounterFeeCurrency() != null) {
@@ -702,14 +703,14 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                     auditRoomOtherInfo.getCounterFeeCurrency() == null
                             ? ""
                             : auditRoomOtherInfo.getCounterFeeCurrency());
-            Item.setDataDesc("手续费币种");
+            Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.48"));
             requestData.getDataItems().add(Item);
         }
 
         Item = new DataItem();
         Item.setDataKey("PaidCommissionFlag");
         Item.setDataValue(DefaultValueHelper.getValue(flashOrderInfo.getIsFlashOrder()) ? "1" : "0");
-        Item.setDataDesc("收佣标识");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.49"));
         requestData.getDataItems().add(Item);
 
         if (orderBasicInfo.getConfirmIncomeTime() != null) {
@@ -721,7 +722,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                             : DateHelper.formatDate(
                             new Timestamp(orderBasicInfo.getConfirmIncomeTime().getTimeInMillis()),
                             DateHelper.SIMIPLE_DATE_FORMAT_STR));
-            Item.setDataDesc("收入确认时间");
+            Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.50"));
             requestData.getDataItems().add(Item);
         }
 
@@ -729,7 +730,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
             Item = new DataItem();
             Item.setDataKey("InsuranceFlag");
             Item.setDataValue(orderBasicInfo.getInsuranceSupportType().toString());
-            Item.setDataDesc("保险标识");
+            Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.51"));
             requestData.getDataItems().add(Item);
         }
 
@@ -746,26 +747,26 @@ public class SettlementRepositoryImpl implements SettlementRepository {
         Item.setDataKey("AllianceID");
         Item.setDataValue(
                 allianceInfo.getAllianceID() == null ? "" : allianceInfo.getAllianceID().toString());
-        Item.setDataDesc("分销ID");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.52"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("Allianceflag");
         Item.setDataValue(DefaultValueHelper.getValue(allianceInfo.getAllianceID()) > 0 ? "1" : "0");
-        Item.setDataDesc("分销标识");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.53"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("SID");
         Item.setDataValue(allianceInfo.getSID() == null ? "" : allianceInfo.getSID().toString());
-        Item.setDataDesc("分销站点ID");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.54"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("AllianceOrderID");
         Item.setDataValue(
                 allianceInfo.getAllianceOrderID() == null ? "" : allianceInfo.getAllianceOrderID());
-        Item.setDataDesc("分销订单号");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.55"));
         requestData.getDataItems().add(Item);
 
         if (techFeeInfo.getZeroCommissionFeeRatio() != null
@@ -775,13 +776,13 @@ public class SettlementRepositoryImpl implements SettlementRepository {
             Item = new DataItem();
             Item.setDataKey("ZeroCommissionAmount");
             Item.setDataValue(zeroCommissionAmount.toString());
-            Item.setDataDesc("零佣技术服务费");
+            Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.56"));
             requestData.getDataItems().add(Item);
 
             Item = new DataItem();
             Item.setDataKey("ZeroCommissionDeductRate");
             Item.setDataValue(techFeeInfo.getZeroCommissionFeeRatio().toString());
-            Item.setDataDesc("零佣技术服务费比例");
+            Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.57"));
             requestData.getDataItems().add(Item);
         }
 
@@ -791,7 +792,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                 outTimeDeductInfo.getOutTimeDeductValue() == null
                         ? ""
                         : outTimeDeductInfo.getOutTimeDeductValue().toString());
-        Item.setDataDesc("过时扣款类型对应的值");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.58"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
@@ -800,7 +801,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                 outTimeDeductInfo.getOutTimeDeductType() == null
                         ? ""
                         : outTimeDeductInfo.getOutTimeDeductType().toString());
-        Item.setDataDesc("过时扣款类型");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.59"));
         requestData.getDataItems().add(Item);
 
         // 联合会员逻辑
@@ -866,7 +867,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
         DataItem Item = new DataItem();
         Item.setDataKey("RoomName");
         Item.setDataValue(DefaultValueHelper.getValue(auditRoomBasicInfo.getRoomName()));
-        Item.setDataDesc("房型名称");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.60"));
         requestData.getDataItems().add(Item);
 
         if (ConvertHelper.getLong(auditOrderInfoBO.getCusOrderId()) > 0) {
@@ -885,7 +886,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                         : DateHelper.formatDate(
                         new Timestamp(orderBasicInfo.getEta().getTimeInMillis()),
                         DateHelper.SIMIPLE_DATE_FORMAT_STR));
-        Item.setDataDesc("入住时间");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.61"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
@@ -896,13 +897,13 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                         : DateHelper.formatDate(
                         new Timestamp(orderBasicInfo.getEtd().getTimeInMillis()),
                         DateHelper.SIMIPLE_DATE_FORMAT_STR));
-        Item.setDataDesc("离店时间");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.62"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("ClientName");
         Item.setDataValue(DefaultValueHelper.getValue(auditRoomBasicInfo.getClientName()));
-        Item.setDataDesc("客人姓名");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.63"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
@@ -911,7 +912,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                 auditOrderInfoBO.getPriceAmount() == null
                         ? ""
                         : auditOrderInfoBO.getPriceAmount().toString());
-        Item.setDataDesc("面价");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.64"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
@@ -920,13 +921,13 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                 auditOrderInfoBO.getCostAmount() == null
                         ? ""
                         : auditOrderInfoBO.getCostAmount().toString());
-        Item.setDataDesc("底价");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.65"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("Remark");
         Item.setDataValue("");
-        Item.setDataDesc("备注");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.66"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
@@ -935,35 +936,35 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                 auditRoomOtherInfo.getOtherCost() == null
                         ? ""
                         : auditRoomOtherInfo.getOtherCost().toString());
-        Item.setDataDesc("其他金额");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.67"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("Room");
         Item.setDataValue(
                 auditRoomBasicInfo.getRoom() == null ? "" : auditRoomBasicInfo.getRoom().toString());
-        Item.setDataDesc("房型代码");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.68"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("HtlConfirmNo");
         Item.setDataValue(
                 auditRoomBasicInfo.getHtlConfirmNo() == null ? "" : auditRoomBasicInfo.getHtlConfirmNo());
-        Item.setDataDesc("确认号");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.69"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("Hotel");
         Item.setDataValue(
                 hotelBasicInfo.getHotel() == null ? "0" : hotelBasicInfo.getHotel().toString());
-        Item.setDataDesc("子酒店ID");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.70"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("OrderConfirmType");
         Item.setDataValue(
                 orderBasicInfo.getOrderConfirmType() == null ? "" : orderBasicInfo.getOrderConfirmType());
-        Item.setDataDesc("订单确认类型");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.71"));
         requestData.getDataItems().add(Item);
 
         if (orderBasicInfo.getConfirmIncomeTime() != null) {
@@ -973,7 +974,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                     DateHelper.formatDate(
                             new Timestamp(orderBasicInfo.getConfirmIncomeTime().getTimeInMillis()),
                             DateHelper.SIMIPLE_DATE_FORMAT_STR));
-            Item.setDataDesc("收入确认时间");
+            Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.72"));
             requestData.getDataItems().add(Item);
         }
 
@@ -981,7 +982,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
             Item = new DataItem();
             Item.setDataKey("InsuranceFlag");
             Item.setDataValue(orderBasicInfo.getInsuranceSupportType().toString());
-            Item.setDataDesc("保险标识");
+            Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.73"));
             requestData.getDataItems().add(Item);
         }
 
@@ -1002,13 +1003,13 @@ public class SettlementRepositoryImpl implements SettlementRepository {
             Item = new DataItem();
             Item.setDataKey("ZeroCommissionAmount");
             Item.setDataValue(zeroCommissionAmount.toString());
-            Item.setDataDesc("零佣技术服务费");
+            Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.74"));
             requestData.getDataItems().add(Item);
 
             Item = new DataItem();
             Item.setDataKey("ZeroCommissionDeductRate");
             Item.setDataValue(techFeeInfo.getZeroCommissionFeeRatio().toString());
-            Item.setDataDesc("零佣技术服务费比例");
+            Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.75"));
             requestData.getDataItems().add(Item);
         }
 
@@ -1018,7 +1019,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                 outTimeDeductInfo.getOutTimeDeductValue() == null
                         ? ""
                         : outTimeDeductInfo.getOutTimeDeductValue().toString());
-        Item.setDataDesc("过时扣款类型对应的值");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.76"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
@@ -1027,7 +1028,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                 outTimeDeductInfo.getOutTimeDeductType() == null
                         ? ""
                         : outTimeDeductInfo.getOutTimeDeductType().toString());
-        Item.setDataDesc("过时扣款类型");
+        Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.77"));
         requestData.getDataItems().add(Item);
 
         // 联合会员逻辑
