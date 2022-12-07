@@ -14,6 +14,7 @@ import com.ctrip.hotel.cost.infrastructure.model.bo.SettlementPayDataUsedBo;
 import com.ctrip.hotel.cost.infrastructure.model.dto.FgBackToAuditDto;
 import com.ctrip.hotel.cost.infrastructure.mq.AuditMqProducer;
 import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepository;
+import com.ctrip.hotel.cost.infrastructure.util.I18NMessageUtil;
 import com.ctrip.hotel.cost.job.FGNotifySettlementJob;
 import com.ctrip.soa.hotel.settlement.api.CancelSettleData;
 import com.ctrip.soa.hotel.settlement.api.SettleDataRequest;
@@ -57,6 +58,9 @@ public class SpringTest {
 
   @Resource(name = "FGNotifySettleCompare")
   CompareClient compareClient;
+
+  @Autowired
+  I18NMessageUtil messageUtil;
 
   @Test
   public void auditOrderFgCollectPrice() {
@@ -226,6 +230,13 @@ public class SpringTest {
     settlementApplyListUsedBo.setSettlementId(1l);
     settlementApplyListUsedBo.setOutSettlementNo(" 122 ");
     compareClient.addComparing("asd", "test", settlementApplyListUsedBo, false);
+  }
+
+  @Test
+  public void i18nMessageTest(){
+    String str =
+            I18NMessageUtil.getMessage("FGNotifySettlementJob.Remark.1");
+    System.out.println(str);
   }
 
 }
