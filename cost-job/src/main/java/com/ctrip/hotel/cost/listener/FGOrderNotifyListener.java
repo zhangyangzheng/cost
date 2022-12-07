@@ -14,7 +14,7 @@ public class FGOrderNotifyListener {
   @Autowired
   FGOrderNotifyConsumer fgOrderNotifyConsumer;
 
-  @QmqConsumer(prefix = "hotel.audit.auditnotifycost", consumerGroup = "100040760")
+  @QmqConsumer(prefix = "hotel.audit.auditnotifycost", consumerGroup = "100042902")
   public void onMessage(Message message) {
     LogHelper.logInfo("FGOrderNotifyListener", JsonUtils.beanToJson(message));
     try {

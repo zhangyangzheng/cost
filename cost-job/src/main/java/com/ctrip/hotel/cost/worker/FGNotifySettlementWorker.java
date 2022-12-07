@@ -21,7 +21,7 @@ public class FGNotifySettlementWorker {
 
     @Autowired FGNotifySettlementJob fgNotifySettlementJob;
 
-    @QSchedule("hotel.settlement.cost.fg.notifySettlement.job")
+    @QSchedule("hotel.settlement.cost.job.fg.notifySettlement")
     public void doMyWork(Parameter parameter) {
         int shards = parameter.shards();
         String sliceIndexes = parameter.getProperty(SLICE_INDEXES, String.class);
