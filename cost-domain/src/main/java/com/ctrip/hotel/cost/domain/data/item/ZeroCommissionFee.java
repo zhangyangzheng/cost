@@ -40,12 +40,19 @@ public class ZeroCommissionFee implements Item<ZeroCommissionFeePrice> {
 
     @Override
     public void countTotal() throws Exception {
+        if (zeroCommissionFeePrice == null) {
+            this.total = BigDecimal.ZERO;
+            return;
+        }
         zeroCommissionFeePrice.listener();
         this.total = zeroCommissionFeePrice.result();
     }
 
     @Override
     public String formula() {
+        if (zeroCommissionFeePrice == null) {
+            return null;
+        }
         return zeroCommissionFeePrice.formula();
     }
 

@@ -16,12 +16,12 @@ import java.util.stream.Collectors;
  * @date 2022-11-14 19:44
  */
 @Data
-public class BuyoutDiscountPromotionCost implements Item<PromotionCostPrice> {
+public class PromotionCostBuyoutDiscount implements Item<PromotionCostPrice> {
 
     private List<PromotionCostPrice> promotionCostPrices;
     private BigDecimal total;
 
-    public BuyoutDiscountPromotionCost(List<PromotionCostPrice> promotionCostPrices) {
+    public PromotionCostBuyoutDiscount(List<PromotionCostPrice> promotionCostPrices) {
         this.promotionCostPrices = promotionCostPrices;
     }
 

@@ -29,5 +29,7 @@ public class FgBackToAuditDto {
     BigDecimal promotionCostHotel;
     BigDecimal promotionAmountTrip;
     BigDecimal promotionCostTrip;
+    BigDecimal promotionCashBackAmount;
+    BigDecimal promotionCashBackCost;
 
 }

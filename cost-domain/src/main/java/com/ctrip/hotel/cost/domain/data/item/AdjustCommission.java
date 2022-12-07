@@ -41,12 +41,19 @@ public class AdjustCommission implements Item<AdjustCommissionPrice> {
 
     @Override
     public void countTotal() throws Exception {
+        if (adjustCommissionPrice == null) {
+            this.total = BigDecimal.ZERO;
+            return;
+        }
         adjustCommissionPrice.listener();
         this.total = adjustCommissionPrice.result();
     }
 
     @Override
     public String formula() {
+        if (adjustCommissionPrice == null) {
+            return null;
+        }
         return adjustCommissionPrice.formula();
     }
 

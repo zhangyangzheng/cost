@@ -21,7 +21,9 @@ public enum EnumScene {
                     CostItemType.AMOUNT_FG,
                     CostItemType.COST_FG,
                     CostItemType.ADJUST_COMMISSION_FG,
-                    CostItemType.ZERO_COMMISSION_FEE_PRICE_FG),
+                    CostItemType.ZERO_COMMISSION_FEE_PRICE_FG,
+                    CostItemType.CASH_BACK_PROMOTION_SELLING_PRICE_FG,
+                    CostItemType.CASH_BACK_PROMOTION_COST_PRICE_FG),
             "审核离店"
     ),
 

@@ -35,5 +35,7 @@ public interface AuditMapper {
     @Mapping(target = "promotionCostHotel", source = "auditOrderInfoBO.hotelPromotionCost")
     @Mapping(target = "promotionAmountTrip", source = "auditOrderInfoBO.tripPromotionAmount")
     @Mapping(target = "promotionCostTrip", source = "auditOrderInfoBO.tripPromotionCost")
+    @Mapping(target = "promotionCashBackAmount", source = "auditOrderInfoBO.promotionCashBackAmount")
+    @Mapping(target = "promotionCashBackCost", source = "auditOrderInfoBO.promotionCashBackCost")
     FgBackToAuditDto AuditOrderInfoBOToFgBackToAuditDto(AuditOrderInfoBO auditOrderInfoBO, OrderAuditFgMqBO orderAuditFgMqBO, SettlementCallBackInfo settlementCallBackInfo);
 }
