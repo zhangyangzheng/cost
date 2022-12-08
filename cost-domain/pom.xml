@@ -53,6 +53,10 @@
                     <artifactId>tomcat-embed-core</artifactId>
                     <groupId>org.apache.tomcat.embed</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>sso-client-new</artifactId>
+                    <groupId>com.ctrip.infosec</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 
