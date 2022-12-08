@@ -19,7 +19,7 @@ public class FgOrderCostViewResolver extends AbstractViewResolver<List<AuditOrde
     public List<AuditOrderInfoBO> resolveView() {
         // model provide all data
         List<AuditOrderInfoBO> bos = model.getFgAuditCostSuccessResult();
-        ThreadLocalCostHolder.allLinkTracingLog(JSON.toJSONString(bos), LogLevel.INFO);
+        ThreadLocalCostHolder.allLinkTracingLog("AuditOrderInfoBO=" + JSON.toJSONString(bos), LogLevel.INFO);
         return bos;
     }
 
