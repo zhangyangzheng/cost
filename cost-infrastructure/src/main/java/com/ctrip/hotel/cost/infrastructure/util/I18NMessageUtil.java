@@ -1,5 +1,6 @@
 package com.ctrip.hotel.cost.infrastructure.util;
 
+import hotel.settlement.common.LogHelper;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
@@ -17,7 +18,8 @@ public class I18NMessageUtil {
     try {
       return messageSource.getMessage(key, null, LocaleContextHolder.getLocale());
     } catch (Exception e) {
-      return "";
+      LogHelper.logError("I18NMessageUtil Error", e);
+      return "I18NMessageUtil Error";
     }
   }
 }
