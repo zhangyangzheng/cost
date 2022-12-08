@@ -1,5 +1,6 @@
 package com.ctrip.hotel.cost.domain.root;
 
+import com.ctrip.framework.clogging.domain.thrift.LogLevel;
 import com.ctrip.hotel.cost.common.ThreadLocalCostHolder;
 import com.ctrip.hotel.cost.domain.data.DataCenter;
 import com.ctrip.hotel.cost.domain.data.DataCenterFactory;
@@ -41,7 +42,8 @@ public class CostContext {
                 dataCenter.setSuccess(true);
             } catch (Exception e) {
                 // 一笔订单计费失败的异常，在此处理。计费失败被丢弃，外部重试
-                LogHelper.logError(this.getClass().getSimpleName(), e);// todo 优化日志
+                ThreadLocalCostHolder.allLinkTracingLog(e, LogLevel.ERROR);
+                LogHelper.logError(this.getClass().getSimpleName(), e);
             }
         }
     }

@@ -55,7 +55,7 @@ public class PromotionSellingCashBack implements Item<PromotionSellingPrice> {
 
     @Override
     public List<ItemParametersAndResultModel> parametersAndResult() {
-        if (CollectionUtils.isNotEmpty(promotionSellingPrices)) {
+        if (CollectionUtils.isEmpty(promotionSellingPrices)) {
             return Collections.emptyList();
         }
         return promotionSellingPrices.stream().map(e -> new ItemParametersAndResultModel(e.result(), e.computingParameter())).collect(Collectors.toList());

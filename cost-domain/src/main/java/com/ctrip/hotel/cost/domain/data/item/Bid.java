@@ -55,7 +55,7 @@ public class Bid implements Item<BidPrice> {
 
     @Override
     public List<ItemParametersAndResultModel> parametersAndResult() {
-        if (CollectionUtils.isNotEmpty(bidPrices)) {
+        if (CollectionUtils.isEmpty(bidPrices)) {
             return Collections.emptyList();
         }
         return bidPrices.stream().map(e -> new ItemParametersAndResultModel(e.result(), e.computingParameter())).collect(Collectors.toList());

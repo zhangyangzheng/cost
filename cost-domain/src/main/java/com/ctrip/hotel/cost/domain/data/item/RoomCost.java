@@ -55,7 +55,7 @@ public class RoomCost implements Item<RoomCostPrice> {
 
     @Override
     public List<ItemParametersAndResultModel> parametersAndResult() {
-        if (CollectionUtils.isNotEmpty(roomCostPrices)) {
+        if (CollectionUtils.isEmpty(roomCostPrices)) {
             return Collections.emptyList();
         }
         return roomCostPrices.stream().map(e -> new ItemParametersAndResultModel(e.result(), e.computingParameter())).collect(Collectors.toList());
