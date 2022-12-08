@@ -49,7 +49,7 @@ public class CompareClient {
   //    compareSettleDataCommonDao.insert(compareSettleDataCommonGen);
   //  }
 
-  protected void addCompareValueToHBase(String processedReferenceId, String compareJson)
+  private void addCompareValueToHBase(String processedReferenceId, String compareJson)
       throws Exception {
     HBaseSaveServiceRequestType request = new HBaseSaveServiceRequestType();
     request.setTableName(hBaseTableName);
@@ -73,7 +73,7 @@ public class CompareClient {
     }
   }
 
-  public void addComparing(
+  final public void addComparing(
       String referenceId, String serviceName, Object compareObj, boolean addCompareItem)
       throws Exception {
     String processedReferenceId = processReferenceId(referenceId, serviceName);
