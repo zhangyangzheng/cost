@@ -46,6 +46,8 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     }
   }
 
+
+
   // 合并后的Job对象 同生共死
   class WJobMergeItem {
     // 主单
@@ -58,19 +60,27 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
       this.followers = followers;
     }
 
+    public void setLeaderRemark(String remark) {
+      leader.setRemark(remark);
+    }
+
     public void setFollowersRemark(String remark) {
       followers.stream().forEach(job -> job.setRemark(remark));
     }
   }
 
+
+
   class Identify {
     Long orderId;
     Long fgId;
+
 
     public Identify(Long orderId, Long fgId) {
       this.orderId = orderId;
       this.fgId = fgId;
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -80,13 +90,12 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
       return Objects.equals(orderId, identify.orderId) && Objects.equals(fgId, identify.fgId);
     }
 
+
     @Override
     public int hashCode() {
       return Objects.hash(orderId, fgId);
     }
   }
-
-  final int maxExeCount = 800000;
 
   @Autowired OrderAuditFgMqRepository orderAuditFgMqRepository;
 
@@ -131,6 +140,8 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     return new Tuple<>(jobStatusStatistics, orderAuditFgMqTiDBGenList);
   }
 
+
+
   protected ProcessPendingJobMethod getProcessMethodByJobStatusStatistics(
       JobStatusStatistics jobStatusStatistics, OrderAuditFgMqTiDBGen tmpJob) {
     // 已经有成功执行的删除单 不管啥单子 都设置全部完成
@@ -154,6 +165,8 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     return ProcessPendingJobMethod.ThrowSettle;
   }
 
+
+
   protected void processDoneAllJobList(List<OrderAuditFgMqTiDBGen> jobList) throws Exception {
     jobList.stream()
         .forEach(
@@ -163,6 +176,8 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
             });
     orderAuditFgMqRepository.batchUpdate(jobList);
   }
+
+
 
   // 获取合并后的job 被合并的job 拼为一个对象返回
   protected WJobMergeItem getWJobMergeItem(List<OrderAuditFgMqTiDBGen> jobList) {
@@ -182,6 +197,8 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     return new WJobMergeItem(mergedJob, wJobList);
   }
 
+
+
   protected void processSuccessJobList(
       List<OrderAuditFgMqTiDBGen> successJobList,
       Map<Identify, WJobMergeItem> identifyWJobMergeItemMap,
@@ -193,13 +210,17 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
       if ("D".equals(job.getOpType())) {
         // 不会发生取不到的情况
         List<OrderAuditFgMqTiDBGen> identityJobList = identifyJobListMap.get(identity);
+        // 设置所有单remark
         identityJobList.stream()
             .forEach(
                 p -> p.setRemark(I18NMessageUtil.getMessage("FGNotifySettlementJob.Remark.4")));
+        // 覆盖主单remark
+        job.setRemark(I18NMessageUtil.getMessage("FGNotifySettlementJob.Remark.5"));
         allSuccessJobList.addAll(identityJobList);
       } else {
         // 不会发生取不到的情况
         WJobMergeItem wJobMergeItem = identifyWJobMergeItemMap.get(identity);
+        wJobMergeItem.setLeaderRemark(I18NMessageUtil.getMessage("FGNotifySettlementJob.Remark.5"));
         wJobMergeItem.setFollowersRemark(
             I18NMessageUtil.getMessage("FGNotifySettlementJob.Remark.2"));
         // 主单和副单同生共死
@@ -214,6 +235,8 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     orderAuditFgMqRepository.batchUpdate(allSuccessJobList);
   }
 
+
+
   protected void processFailJobList(
       List<OrderAuditFgMqTiDBGen> failJobList,
       Map<Identify, WJobMergeItem> identifyWJobMergeItemMap)
@@ -223,6 +246,7 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
       Identify identity = new Identify(job.getOrderId(), job.getFgId());
       // 不会发生取不到的情况
       WJobMergeItem wJobMergeItem = identifyWJobMergeItemMap.get(identity);
+      wJobMergeItem.setLeaderRemark(I18NMessageUtil.getMessage("FGNotifySettlementJob.Remark.6"));
       wJobMergeItem.setFollowersRemark(
           I18NMessageUtil.getMessage("FGNotifySettlementJob.Remark.1"));
       // 主单和副单同生共死
@@ -231,12 +255,16 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     }
     for (OrderAuditFgMqTiDBGen job : allFailJobList) {
       job.setExecCount(job.getExecCount() + 1);
-      if (job.getExecCount() > maxExeCount) {
+      if (job.getExecCount()
+          > Integer.parseInt(
+              QConfigHelper.getSwitchConfigByKey("fgNotifySettlementJobMaxExeCount", "5"))) {
         job.setJobStatus("F");
       }
     }
     orderAuditFgMqRepository.batchUpdate(allFailJobList);
   }
+
+
 
   protected Set<Identify> getPendingIdentify(List<Integer> sliceIndexList) throws Exception {
     List<OrderAuditFgMqTiDBGen> pendingJobs = getPending(sliceIndexList);
@@ -246,6 +274,8 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
             .collect(Collectors.toSet());
     return identifySet;
   }
+
+
 
   protected AuditOrderFgReqDTO getAuditOrderFgReqDTO(
       OrderAuditFgMqTiDBGen orderAuditFgMqTiDBGen,
@@ -262,6 +292,8 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
 
     return auditOrderFgReqDTO;
   }
+
+
 
   protected List<AuditOrderFgReqDTO> getAuditOrderFgReqDTOList(
       List<OrderAuditFgMqTiDBGen> orderAuditFgMqTiDBGenList) throws Exception {
@@ -288,6 +320,8 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     return auditOrderFgReqDTOList;
   }
 
+
+
   @Override
   protected List<OrderAuditFgMqTiDBGen> getPending(List<Integer> sliceIndexList) throws Exception {
     Integer minBetween =
@@ -300,6 +334,8 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
         orderAuditFgMqRepository.getPendingJobs(sliceIndexList, minBetween, count);
     return pendingJobs;
   }
+
+
 
   @Override
   public void execute(List<Integer> sliceIndexList) throws Exception {
