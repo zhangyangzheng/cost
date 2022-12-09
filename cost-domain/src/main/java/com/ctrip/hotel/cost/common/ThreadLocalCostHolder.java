@@ -37,10 +37,20 @@ public class ThreadLocalCostHolder {
                 LogHelper.logInfo(ThreadLocalCostHolder.getTTL().get().getLinkTracing(), (String) t, ThreadLocalCostHolder.getTTL().get().getTags());
                 break;
             case WARN:
-                LogHelper.logWarn(ThreadLocalCostHolder.getTTL().get().getLinkTracing(), (Throwable) t, ThreadLocalCostHolder.getTTL().get().getTags());
+                if (t instanceof Throwable) {
+                    LogHelper.logWarn(ThreadLocalCostHolder.getTTL().get().getLinkTracing(), (Throwable) t, ThreadLocalCostHolder.getTTL().get().getTags());
+                }
+                if (t instanceof String) {
+                    LogHelper.logWarn(ThreadLocalCostHolder.getTTL().get().getLinkTracing(), (String) t, ThreadLocalCostHolder.getTTL().get().getTags());
+                }
                 break;
             case ERROR:
-                LogHelper.logError(ThreadLocalCostHolder.getTTL().get().getLinkTracing(), (Throwable) t, ThreadLocalCostHolder.getTTL().get().getTags());
+                if (t instanceof Throwable) {
+                    LogHelper.logError(ThreadLocalCostHolder.getTTL().get().getLinkTracing(), (Throwable) t, ThreadLocalCostHolder.getTTL().get().getTags());
+                }
+                if (t instanceof String) {
+                    LogHelper.logError(ThreadLocalCostHolder.getTTL().get().getLinkTracing(), (String) t, ThreadLocalCostHolder.getTTL().get().getTags());
+                }
                 break;
         }
     }

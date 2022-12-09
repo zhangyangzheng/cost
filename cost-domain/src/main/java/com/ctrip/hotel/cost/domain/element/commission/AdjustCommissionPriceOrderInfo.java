@@ -36,7 +36,11 @@ public class AdjustCommissionPriceOrderInfo implements AdjustCommissionPrice {
 
     @Override
     public Factor days() {
-        return new Factor("days", BigDecimal.ONE);
+        if (operatMode.equals("S")) { // 闪结，如果有调整服务费，计算调整服务费差额
+            return new Factor("days", BigDecimal.ONE);
+        } else {
+            return new Factor("days", BigDecimal.ZERO);
+        }
     }
 
     @Override
@@ -71,7 +75,7 @@ public class AdjustCommissionPriceOrderInfo implements AdjustCommissionPrice {
         fs.add(days());
         fs.add(quantity());
         if (this.supplier != null && this.supplier.get() != null) {
-            for (Map.Entry<String, BigDecimal> entry : this.supplier.get().entrySet()) {// todo 优化
+            for (Map.Entry<String, BigDecimal> entry : this.supplier.get().entrySet()) {
                 fs.add(new Factor(entry.getKey(), entry.getValue()));
             }
         }

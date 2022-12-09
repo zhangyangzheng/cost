@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * @author yangzhengzhang
- * @description todo 链式计算过渡到等级计算，之后完善到图计算
+ * @description
  * @date 2022-11-14 19:27
  */
 public interface Item<T extends MeasurementCenter> {

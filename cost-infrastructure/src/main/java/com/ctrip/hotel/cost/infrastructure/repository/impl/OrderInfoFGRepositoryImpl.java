@@ -1,5 +1,7 @@
 package com.ctrip.hotel.cost.infrastructure.repository.impl;
 
+import com.ctrip.framework.clogging.domain.thrift.LogLevel;
+import com.ctrip.hotel.cost.common.ThreadLocalCostHolder;
 import com.ctrip.hotel.cost.domain.data.DataCenter;
 import com.ctrip.hotel.cost.domain.data.OrderInfoFGRepository;
 import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
@@ -15,7 +17,6 @@ import com.ctrip.hotel.cost.domain.element.room.fg.RoomSellingPriceFgOrderInfo;
 import com.ctrip.hotel.cost.domain.element.techfee.ZeroCommissionFeePriceOrderInfo;
 import com.ctrip.hotel.cost.infrastructure.client.AuditClient;
 import com.ctrip.hotel.cost.infrastructure.mapper.OrderAuditRoomDataPOMapper;
-import hotel.settlement.common.LogHelper;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -44,7 +45,7 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
     }
 
     /**
-     * todo 数据项需要支持扩展
+     * 数据项可以做成类型扩展
      *
      * @param dataIds
      * @return
@@ -104,7 +105,7 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
             // 增加数据项
 
         } catch (Exception e) {
-            LogHelper.logError(this.getClass().getSimpleName(), e);// todo 优化日志，这里的异常属于数据检查异常
+            ThreadLocalCostHolder.allLinkTracingLog(e, LogLevel.ERROR);
             return null;
         }
         return dataCenter;
@@ -127,7 +128,7 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
         }
         return bidOrderInfoList
                 .stream()
-                .filter(bid -> Objects.nonNull(bid) && bid.getBidPayType() != 1) // BidPayType must not null
+                .filter(Objects::nonNull)
                 .map(bid -> OrderAuditRoomDataPOMapper.INSTANCE.auditOrderToBid(bid, auditRoomInfo))
                 .collect(Collectors.toList());
     }
@@ -228,7 +229,6 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
     private AdjustCommissionPriceOrderInfo adjustCommissionBuild(AuditRoomOtherInfo auditRoomOtherInfo, HotelBasicInfo hotelBasicInfo) {
         if (hotelBasicInfo != null
                 && hotelBasicInfo.getOperatMode() != null
-                && hotelBasicInfo.getOperatMode().equals("S") // 闪结，如果有调整服务费，计算调整服务费差额
                 && auditRoomOtherInfo != null
                 && auditRoomOtherInfo.getAdjustCommission() != null
         ) {
@@ -244,7 +244,7 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
         return null;
     }
 
-    // todo 增加检查项
+    // 增加检查项
     private Boolean orderCheckPass(OrderAuditRoomData order) {
         return !orderCheckFail(order);
     }
@@ -271,7 +271,7 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
         stringBuilder.append("order.auditRoomInfoList.auditRoomBasicInfo.realETD is null/");
         stringBuilder.append("order.auditRoomInfoList.auditRoomBasicInfo.fgid is null/");
         stringBuilder.append("order.hotelBasicInfo is null/");
-        LogHelper.logError("auditOrderFg", stringBuilder.toString());
+        ThreadLocalCostHolder.allLinkTracingLog(stringBuilder.toString(), LogLevel.ERROR);
         return b;
     }
 

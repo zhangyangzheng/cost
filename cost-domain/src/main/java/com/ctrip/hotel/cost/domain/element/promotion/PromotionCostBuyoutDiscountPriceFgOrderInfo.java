@@ -42,41 +42,6 @@ public class PromotionCostBuyoutDiscountPriceFgOrderInfo implements PromotionCos
     // 计算结果
     private BigDecimal result;
 
-//    @Override
-//    public PromotionEnum createSettlementTypeForFG() {
-//        if (fundId != null && fundId > 0 && fundType != -1) {
-//            if (discountDtype != 5 && costType > 0 && settlementType == 1) {
-//                this.setRuleGroup(PromotionEnum.HOTEL.getValue());// todo 确认是不是计算这个字段抛给结算？？？
-//                return PromotionEnum.HOTEL;
-//            } else {
-//                this.setRuleGroup(PromotionEnum.C_TRIP.getValue());
-//                return PromotionEnum.C_TRIP;
-//            }
-//        }
-//        // todo 以下是老逻辑，待下线
-//        // 酒店承担促销金额
-//        // 权益类促销（DiscountDtype = 7） 计入总金额 不计入每日促销金额
-//        // 酒店承担（CostType > 0）
-//        // 虚拟资金池(CashPoolID > 0 and CashType = 1 )
-//        // 非  优惠类型为返现，发单、开票、抛结算不剔除返现金额（优惠金额）（DiscountDtype = 5）
-//        // 非  真实资金池(CashPoolID > 0 and CashType != 1 )
-//        // 非  集团促销（CashType = 2 )
-//        // 非  商家券（CashType = 5 )
-//        // 非  星球号优惠券（CashType = 6 )
-//        if (discountDtype != 5
-//                && costType > 0
-//                && cashType != 2
-//                && cashType != 5
-//                && cashType != 6
-//                && !(cashPoolID > 0 && cashType != 1)) {
-//            this.setRuleGroup(PromotionEnum.HOTEL.getValue());
-//            return PromotionEnum.HOTEL;
-//        } else {
-//            this.setRuleGroup(PromotionEnum.C_TRIP.getValue());
-//            return PromotionEnum.C_TRIP;
-//        }
-//    }
-
     @Override
     public Factor cost() {
         return new Factor("costDiscountAmount", this.getCostDiscountAmount());

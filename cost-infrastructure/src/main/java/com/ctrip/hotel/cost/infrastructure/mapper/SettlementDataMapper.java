@@ -43,7 +43,7 @@ public interface SettlementDataMapper {
      * 源属性为null，目标属性会被赋予特定的默认值。
      * List被赋予ArrayList，Map被赋予HashMap，数组就是空数组，String是“”，基本类型或包装类是0或false，对象是空的构造方法。
      */
-    @Mapping(target = "quantity", defaultValue = "0")// todo 需要计算
+    @Mapping(target = "quantity", defaultValue = "0")// 需要计算
     @Mapping(target = "bidFlag", expression = "java( auditOrderInfoBO.getBidPrice() != null ? new String(\"T\") : null )")
     @Mapping(target = "settlementid", source = "auditOrderInfoBO.settlementCallBackInfo.settlementId")
     @Mapping(target = "clientOrderId", source = "cusOrderId", defaultValue = "")
@@ -154,7 +154,7 @@ public interface SettlementDataMapper {
      * @param auditOrderInfoBO
      * @return
      */
-//    @Mapping(target = "quantity", defaultValue = "0")// todo 需要计算
+//    @Mapping(target = "quantity", defaultValue = "0")// 需要计算
     @Mapping(target = "id", expression = "java( Integer.valueOf(0) )")
     @Mapping(target = "merchantId", expression = "java( Integer.valueOf(6) )")
 //    @Mapping(target = "settlementItemName", expression = "java( SettlementItemName.FGHotel.getShowName() )")
@@ -177,7 +177,7 @@ public interface SettlementDataMapper {
             "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid() > 0 ? " +
             "new String(\"FG-\").concat(auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString()) : " +
             "new String(\"FM-\").concat(auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString()) " +
-            ")")// todo
+            ")")
 
     @Mapping(target = "settlementPromotionDetailLists", source = "promotionDailyInfoList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
     SettleDataRequest newOrderToSettlementApplyList(AuditOrderInfoBO auditOrderInfoBO);
