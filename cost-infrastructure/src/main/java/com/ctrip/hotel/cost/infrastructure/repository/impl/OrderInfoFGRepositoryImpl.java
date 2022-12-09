@@ -250,7 +250,7 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
     }
 
     private Boolean orderCheckFail(OrderAuditRoomData order) {
-        boolean b = order == null
+        boolean isFail = order == null
                 || order.getOrderId() == null
                 || order.getCusOrderId() == null
                 || order.getOrderBasicInfo() == null
@@ -259,20 +259,25 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
                 || CollectionUtils.isEmpty(order.getAuditRoomInfoList())
                 || auditRoomCheckFail(order.getAuditRoomInfoList())
                 || order.getHotelBasicInfo() == null;
-        StringBuilder stringBuilder = new StringBuilder("");
-        stringBuilder.append("getOrderAuditRoomData client error data is unpass");
-        stringBuilder.append("order is null/");
-        stringBuilder.append("order.cusOrderId is null/");
-        stringBuilder.append("order.orderBasicInfo is null/");
-        stringBuilder.append("order.orderBasicInfo.eta is null/");
-        stringBuilder.append("order.orderBasicInfo.hourRoom is null/");
-        stringBuilder.append("order.auditRoomInfoList is null/");
-        stringBuilder.append("order.auditRoomInfoList.auditRoomBasicInfo is null/");
-        stringBuilder.append("order.auditRoomInfoList.auditRoomBasicInfo.realETD is null/");
-        stringBuilder.append("order.auditRoomInfoList.auditRoomBasicInfo.fgid is null/");
-        stringBuilder.append("order.hotelBasicInfo is null/");
-        ThreadLocalCostHolder.allLinkTracingLog(stringBuilder.toString(), LogLevel.ERROR);
-        return b;
+        if (isFail) {
+            StringBuilder stringBuilder = new StringBuilder("");
+            stringBuilder.append("getOrderAuditRoomData client error data is unpass, possible:\n");
+            stringBuilder.append("order is null\n");
+            stringBuilder.append("order.cusOrderId is null\n");
+            stringBuilder.append("order.orderBasicInfo is null\n");
+            stringBuilder.append("order.orderBasicInfo.eta is null\n");
+            stringBuilder.append("order.orderBasicInfo.hourRoom is null\n");
+            stringBuilder.append("order.auditRoomInfoList is null\n");
+            stringBuilder.append("order.auditRoomInfoList.auditRoomBasicInfo is null\n");
+            stringBuilder.append("order.auditRoomInfoList.auditRoomBasicInfo.realETD is null\n");
+            stringBuilder.append("order.auditRoomInfoList.auditRoomBasicInfo.fgid is null\n");
+            stringBuilder.append("order.hotelBasicInfo is null\n");
+            if (order != null && order.getOrderId() != null) {
+                ThreadLocalCostHolder.getTTL().get().getTags().put("orderId", order.getOrderId().toString());
+            }
+            ThreadLocalCostHolder.allLinkTracingLog(stringBuilder.toString(), LogLevel.ERROR);
+        }
+        return isFail;
     }
 
     private Boolean auditRoomCheckFail(List<AuditRoomInfo> rooms) {
