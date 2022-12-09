@@ -1,6 +1,7 @@
 package com.ctrip.hotel.cost.infrastructure.repository.impl;
 
 import com.ctrip.framework.clogging.domain.thrift.LogLevel;
+import com.ctrip.hotel.cost.common.EnumLogTag;
 import com.ctrip.hotel.cost.common.ThreadLocalCostHolder;
 import com.ctrip.hotel.cost.domain.data.DataCenter;
 import com.ctrip.hotel.cost.domain.data.OrderInfoFGRepository;
@@ -273,7 +274,7 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
             stringBuilder.append("order.auditRoomInfoList.auditRoomBasicInfo.fgid is null\n");
             stringBuilder.append("order.hotelBasicInfo is null\n");
             if (order != null && order.getOrderId() != null) {
-                ThreadLocalCostHolder.getTTL().get().getTags().put("orderId", order.getOrderId().toString());
+                ThreadLocalCostHolder.getTTL().get().getTags().put(EnumLogTag.ORDER_ID.getValue(), order.getOrderId().toString());
             }
             ThreadLocalCostHolder.allLinkTracingLog(stringBuilder.toString(), LogLevel.ERROR);
         }

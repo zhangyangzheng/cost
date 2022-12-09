@@ -5,6 +5,7 @@ import com.ctrip.hotel.cost.application.model.CostDTO;
 import com.ctrip.hotel.cost.application.model.vo.AuditOrderFgReqDTO;
 import com.ctrip.hotel.cost.application.resolver.FgOrderCostViewResolver;
 import com.ctrip.hotel.cost.application.resolver.ViewResolver;
+import com.ctrip.hotel.cost.common.EnumLogTag;
 import com.ctrip.hotel.cost.common.ThreadLocalCostHolder;
 import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
 import com.ctrip.hotel.cost.domain.root.CostSupporter;
@@ -58,10 +59,10 @@ public class RequestHandler implements HandlerApi{
                 order.setOrderAuditFgMqBO(RequestBodyMapper.INSTANCE.fgReqToMqBo(reqCostMap.get(order.getOrderId().toString() + order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString()).getOrderAuditFgMqBO()));
                 order.setSettlementCallBackInfo(RequestBodyMapper.INSTANCE.fgReqToCallBackInfo(reqCostMap.get(order.getOrderId().toString() + order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString()).getSettlementCallBackInfo()));
 
-                ThreadLocalCostHolder.getTTL().get().getTags().put("orderId", order.getOrderAuditFgMqBO().getOrderId().toString());
-                ThreadLocalCostHolder.getTTL().get().getTags().put("fgId", order.getOrderAuditFgMqBO().getFgId().toString());
-                ThreadLocalCostHolder.getTTL().get().getTags().put("referenceId", order.getOrderAuditFgMqBO().getReferenceId());
-                ThreadLocalCostHolder.getTTL().get().getTags().put("businessType", order.getOrderAuditFgMqBO().getBusinessType().toString());
+                ThreadLocalCostHolder.getTTL().get().getTags().put(EnumLogTag.ORDER_ID.getValue(), order.getOrderAuditFgMqBO().getOrderId().toString());
+                ThreadLocalCostHolder.getTTL().get().getTags().put(EnumLogTag.FG_ID.getValue(), order.getOrderAuditFgMqBO().getFgId().toString());
+                ThreadLocalCostHolder.getTTL().get().getTags().put(EnumLogTag.REFERENCE_ID.getValue(), order.getOrderAuditFgMqBO().getReferenceId());
+                ThreadLocalCostHolder.getTTL().get().getTags().put(EnumLogTag.BUSINESS_TYPE.getValue(), order.getOrderAuditFgMqBO().getBusinessType().toString());
 
                 if (settlementService.callSettlementForFg(order)) {
                     successes.add(order.getOrderAuditFgMqBO().getReferenceId());
@@ -87,10 +88,10 @@ public class RequestHandler implements HandlerApi{
                 order.setOrderAuditFgMqBO(RequestBodyMapper.INSTANCE.fgReqToMqBo(reqCancelMap.get(order.getOrderId().toString() + order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString()).getOrderAuditFgMqBO()));
                 order.setSettlementCallBackInfo(RequestBodyMapper.INSTANCE.fgReqToCallBackInfo(reqCancelMap.get(order.getOrderId().toString() + order.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString()).getSettlementCallBackInfo()));
 
-                ThreadLocalCostHolder.getTTL().get().getTags().put("orderId", order.getOrderAuditFgMqBO().getOrderId().toString());
-                ThreadLocalCostHolder.getTTL().get().getTags().put("fgId", order.getOrderAuditFgMqBO().getFgId().toString());
-                ThreadLocalCostHolder.getTTL().get().getTags().put("referenceId", order.getOrderAuditFgMqBO().getReferenceId());
-                ThreadLocalCostHolder.getTTL().get().getTags().put("businessType", order.getOrderAuditFgMqBO().getBusinessType().toString());
+                ThreadLocalCostHolder.getTTL().get().getTags().put(EnumLogTag.ORDER_ID.getValue(), order.getOrderAuditFgMqBO().getOrderId().toString());
+                ThreadLocalCostHolder.getTTL().get().getTags().put(EnumLogTag.FG_ID.getValue(), order.getOrderAuditFgMqBO().getFgId().toString());
+                ThreadLocalCostHolder.getTTL().get().getTags().put(EnumLogTag.REFERENCE_ID.getValue(), order.getOrderAuditFgMqBO().getReferenceId());
+                ThreadLocalCostHolder.getTTL().get().getTags().put(EnumLogTag.BUSINESS_TYPE.getValue(), order.getOrderAuditFgMqBO().getBusinessType().toString());
 
                 if (settlementService.callCancelForFg(order)) {
                     successes.add(order.getOrderAuditFgMqBO().getReferenceId());
