@@ -60,8 +60,8 @@ public class CostSupporter {
             e.getAuditOrderInfoBO().setZeroCommissionAmount(e.getZeroCommissionFee() == null ? null : e.getZeroCommissionFee().total());
             e.getAuditOrderInfoBO().setTripPromotionAmount(e.getTripPromotionSelling() == null ? null : e.getTripPromotionSelling().total());
             e.getAuditOrderInfoBO().setTripPromotionCost(e.getTripPromotionCost() == null ? null : e.getTripPromotionCost().total());
-            e.getAuditOrderInfoBO().setHotelPromotionAmount(e.getPriceAmountFg() == null ? null : e.getTripPromotionSelling().total());
-            e.getAuditOrderInfoBO().setHotelPromotionCost(e.getPromotionCost() == null ? null : e.getTripPromotionSelling().total());
+            e.getAuditOrderInfoBO().setHotelPromotionAmount(e.getPromotionSelling() == null ? null : e.getPromotionSelling().total());
+            e.getAuditOrderInfoBO().setHotelPromotionCost(e.getPromotionCost() == null ? null : e.getPromotionCost().total());
             e.getAuditOrderInfoBO().setBuyoutDiscountAmount(e.getPromotionCostBuyoutDiscount() == null ? null : e.getPromotionCostBuyoutDiscount().total());
             e.getAuditOrderInfoBO().setPromotionCashBackAmount(e.getPromotionSellingCashBack() == null ? null : e.getPromotionSellingCashBack().total());
             e.getAuditOrderInfoBO().setPromotionCashBackCost(e.getPromotionCostCashBack() == null ? null : e.getPromotionCostCashBack().total());

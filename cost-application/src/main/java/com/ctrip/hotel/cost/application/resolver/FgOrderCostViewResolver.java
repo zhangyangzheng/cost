@@ -1,5 +1,8 @@
 package com.ctrip.hotel.cost.application.resolver;
 
+import com.alibaba.fastjson.JSON;
+import com.ctrip.framework.clogging.domain.thrift.LogLevel;
+import com.ctrip.hotel.cost.common.ThreadLocalCostHolder;
 import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
 import com.ctrip.hotel.cost.domain.root.CostSupporter;
 
@@ -15,7 +18,9 @@ public class FgOrderCostViewResolver extends AbstractViewResolver<List<AuditOrde
     @Override
     public List<AuditOrderInfoBO> resolveView() {
         // model provide all data
-        return model.getFgAuditCostSuccessResult();
+        List<AuditOrderInfoBO> bos = model.getFgAuditCostSuccessResult();
+        ThreadLocalCostHolder.allLinkTracingLog("AuditOrderInfoBO=" + JSON.toJSONString(bos), LogLevel.INFO);
+        return bos;
     }
 
     /**

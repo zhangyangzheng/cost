@@ -69,7 +69,7 @@ public class ZeroCommissionFeePriceOrderInfo implements ZeroCommissionFeePrice {
         fs.add(days());
         fs.add(quantity());
         if (this.supplier != null && this.supplier.get() != null) {
-            for (Map.Entry<String, BigDecimal> entry : this.supplier.get().entrySet()) {// todo 优化
+            for (Map.Entry<String, BigDecimal> entry : this.supplier.get().entrySet()) {
                 fs.add(new Factor(entry.getKey(), entry.getValue()));
             }
         }

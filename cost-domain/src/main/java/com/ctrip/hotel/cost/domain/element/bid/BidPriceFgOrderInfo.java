@@ -53,6 +53,9 @@ public class BidPriceFgOrderInfo extends AbstractElementFg implements BidPrice {
      */
     @Override
     public Factor days() {
+        if (bidPayType != null && bidPayType == 1) {
+            return new Factor("days", BigDecimal.ZERO);
+        }
         return new Factor("days", new BigDecimal(countDays()));
     }
 

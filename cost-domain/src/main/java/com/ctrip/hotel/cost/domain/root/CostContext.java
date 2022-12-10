@@ -1,5 +1,7 @@
 package com.ctrip.hotel.cost.domain.root;
 
+import com.ctrip.framework.clogging.domain.thrift.LogLevel;
+import com.ctrip.hotel.cost.common.EnumLogTag;
 import com.ctrip.hotel.cost.common.ThreadLocalCostHolder;
 import com.ctrip.hotel.cost.domain.data.DataCenter;
 import com.ctrip.hotel.cost.domain.data.DataCenterFactory;
@@ -33,15 +35,16 @@ public class CostContext {
         }
         for (DataCenter dataCenter : this.getDataCenters()) {
             try {
-                ThreadLocalCostHolder.getTTL().get().getTags().put("orderId", dataCenter.getAuditOrderInfoBO().getOrderId().toString());
-                ThreadLocalCostHolder.getTTL().get().getTags().put("fgId", dataCenter.getAuditOrderInfoBO().getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString());
-                ThreadLocalCostHolder.getTTL().get().getTags().put("businessType", scene.getSceneCode().toString());
+                ThreadLocalCostHolder.getTTL().get().getTags().put(EnumLogTag.ORDER_ID.getValue(), dataCenter.getAuditOrderInfoBO().getOrderId().toString());
+                ThreadLocalCostHolder.getTTL().get().getTags().put(EnumLogTag.FG_ID.getValue(), dataCenter.getAuditOrderInfoBO().getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString());
+                ThreadLocalCostHolder.getTTL().get().getTags().put(EnumLogTag.BUSINESS_TYPE.getValue(), scene.getSceneCode().toString());
 
                 dataCenter.compute(this.getScene().getCostItemTypes());
                 dataCenter.setSuccess(true);
             } catch (Exception e) {
                 // 一笔订单计费失败的异常，在此处理。计费失败被丢弃，外部重试
-                LogHelper.logError(this.getClass().getSimpleName(), e);// todo 优化日志
+                ThreadLocalCostHolder.allLinkTracingLog(e, LogLevel.ERROR);
+                LogHelper.logError(this.getClass().getSimpleName(), e);
             }
         }
     }
