@@ -5,6 +5,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.Locale;
+
 @Component
 public class I18NMessageUtil {
 
@@ -16,7 +18,7 @@ public class I18NMessageUtil {
 
   public static final String getMessage(String key) {
     try {
-      return messageSource.getMessage(key, null, LocaleContextHolder.getLocale());
+      return messageSource.getMessage(key, null, key, Locale.CHINA);
     } catch (Exception e) {
       LogHelper.logError("I18NMessageUtil Error", e);
       return "I18NMessageUtil Error";
