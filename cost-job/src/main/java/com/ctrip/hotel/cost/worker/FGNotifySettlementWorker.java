@@ -1,5 +1,6 @@
 package com.ctrip.hotel.cost.worker;
 
+import com.ctrip.hotel.cost.job.BaseNotifySettlementJob;
 import com.ctrip.hotel.cost.job.FGNotifySettlementJob;
 import hotel.settlement.common.LogHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +20,8 @@ public class FGNotifySettlementWorker {
     static final String SLICE_INDEXES = "sliceIndexes";
     static final String COMMA = ",";
 
-    @Autowired FGNotifySettlementJob fgNotifySettlementJob;
+    @Autowired
+    BaseNotifySettlementJob fgNotifySettlementJob;
 
     @QSchedule("hotel.settlement.cost.job.fg.notifySettlement")
     public void doMyWork(Parameter parameter) {

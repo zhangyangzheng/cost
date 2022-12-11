@@ -1,5 +1,6 @@
 package com.ctrip.hotel.cost.listener;
 
+import com.ctrip.hotel.cost.consumer.BaseOrderNotifyConsumer;
 import com.ctrip.hotel.cost.consumer.FGOrderNotifyConsumer;
 import hotel.settlement.common.LogHelper;
 import hotel.settlement.common.json.JsonUtils;
@@ -12,7 +13,7 @@ import qunar.tc.qmq.consumer.annotation.QmqConsumer;
 public class FGOrderNotifyListener {
 
   @Autowired
-  FGOrderNotifyConsumer fgOrderNotifyConsumer;
+  BaseOrderNotifyConsumer fgOrderNotifyConsumer;
 
   @QmqConsumer(prefix = "hotel.audit.auditnotifycost", consumerGroup = "100042902")
   public void onMessage(Message message) {
