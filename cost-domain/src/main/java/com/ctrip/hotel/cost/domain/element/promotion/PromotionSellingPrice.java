@@ -10,6 +10,8 @@ import com.ctrip.hotel.cost.domain.element.CommonPrice;
  */
 public interface PromotionSellingPrice extends PromotionPrice, CommonPrice {
 
+    Long promotionDailyInfoID();
+
     Factor price();
 
 }

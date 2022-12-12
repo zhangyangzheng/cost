@@ -61,6 +61,11 @@ public class PromotionSellingPriceFgOrderInfo extends AbstractPromotionFg implem
 //    }
 
     @Override
+    public Long promotionDailyInfoID() {
+        return this.getPromotionDailyInfoID();
+    }
+
+    @Override
     public Factor price() {
         return new Factor("amount", this.getAmount());
     }

@@ -38,7 +38,6 @@ public class RoomSellingPriceFgOrderInfo extends AbstractElementFg implements Ro
     @Override
     public Calendar orderBeginDate() {
         return orderETA;
-//        return this.getEta();
     }
 
     @Override
@@ -49,7 +48,6 @@ public class RoomSellingPriceFgOrderInfo extends AbstractElementFg implements Ro
     @Override
     public Calendar elementBeginDate() {
         return eTA;
-//        return this.getETA();
     }
 
     @Override

@@ -22,7 +22,7 @@ public class Bid implements Item<BidPrice> {
     private BigDecimal total;
 
     public Bid(List<BidPrice> bidPrices) {
-        this.bidPrices = bidPrices;
+        this.bidPrices = bidPrices.stream().filter(e -> !e.days().getValue().equals(BigDecimal.ZERO)).collect(Collectors.toList());
     }
 
     @Override

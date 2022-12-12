@@ -22,7 +22,7 @@ public class TripPromotionCost implements Item<PromotionCostPrice> {
     private BigDecimal total;
 
     public TripPromotionCost(List<PromotionCostPrice> promotionCostPrices) {
-        this.promotionCostPrices = promotionCostPrices;
+        this.promotionCostPrices = promotionCostPrices.stream().filter(e -> !e.days().getValue().equals(BigDecimal.ZERO)).collect(Collectors.toList());
     }
 
     @Override

@@ -11,6 +11,9 @@ import java.util.Calendar;
  */
 @Data
 public abstract class AbstractPromotionFg {
+    // 促销主键
+    public Long promotionDailyInfoID;
+
     // 修改房型：房型修改，促销项失效
     public Integer auditRoom;// 审核房型id
     public Integer orderRoom;// 订单预定房型id
