@@ -2,6 +2,7 @@ package com.ctrip.hotel.cost.domain.root;
 
 import com.ctrip.hotel.cost.domain.data.DataCenter;
 import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
+import com.ctrip.hotel.cost.domain.element.promotion.PromotionSellingPrice;
 import com.ctrip.hotel.cost.domain.scene.Scene;
 import com.ctrip.hotel.cost.domain.scene.SceneFactory;
 import hotel.settlement.common.DateHelper;
@@ -50,7 +51,14 @@ public class CostSupporter {
         if (CollectionUtils.isEmpty(costContext.getDataCenters())) {
             return Collections.emptyList();
         }
+
         return costContext.getDataCenters().stream().filter(DataCenter::getSuccess).map(e -> {
+            // 结算只要满足条件的“酒店承担”促销
+            List<Long> promotionIDs = e.getPromotionSelling().getPromotionSellingPrices().stream().map(PromotionSellingPrice::promotionDailyInfoID).collect(Collectors.toList());
+            e.getAuditOrderInfoBO().setPromotionDailyInfoList(
+                    e.getAuditOrderInfoBO().getPromotionDailyInfoList().stream().filter(p -> promotionIDs.contains(p.getPromotionDailyInfoID())).collect(Collectors.toList())
+            );
+
             e.getAuditOrderInfoBO().setAdjustAmount(e.getAdjustCommission() == null ? null : e.getAdjustCommission().total());
             e.getAuditOrderInfoBO().setPriceAmount(e.getPriceAmountFg() == null ? null : e.getPriceAmountFg().total());
             e.getAuditOrderInfoBO().setCostAmount(e.getPriceCostFg() == null ? null : e.getPriceCostFg().total());

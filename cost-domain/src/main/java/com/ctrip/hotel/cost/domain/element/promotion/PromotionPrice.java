@@ -25,7 +25,7 @@ public interface PromotionPrice {
     }
 
     /**
-     * 统一后可以封装 public final int createSettlementType () { }
+     * 统一后可以封装 public final PromotionEnum createSettlementType () { }
      * @return 承担方
      */
     default PromotionEnum createSettlementTypeForFG(AbstractPromotion.SettlementType promotionInfo) {
