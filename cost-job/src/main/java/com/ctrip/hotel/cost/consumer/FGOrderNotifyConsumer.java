@@ -3,6 +3,8 @@ package com.ctrip.hotel.cost.consumer;
 import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepository;
 import com.ctrip.hotel.cost.infrastructure.repository.SettleCallbackInfoRepository;
 import com.ctrip.hotel.cost.common.LongHelper;
+import com.ctrip.platform.dal.dao.annotation.DalTransactional;
+import com.ctrip.platform.dal.dao.annotation.EnableDalTransaction;
 import hotel.settlement.common.LogHelper;
 import hotel.settlement.common.json.JsonUtils;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
@@ -64,28 +66,24 @@ public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgM
   }
 
   @Override
-  protected OrderAuditFgMqTiDBGen convertTo(Message message) throws Exception {
-    try {
-      Long orderId =
-              Long.parseLong(Optional.ofNullable(message.getStringProperty("orderId")).orElse("-1"));
-      Long fgId =
-              Long.parseLong(Optional.ofNullable(message.getStringProperty("fgId")).orElse("-1"));
-      Integer businessType = Integer.parseInt(Optional.ofNullable(message.getStringProperty("businessType")).orElse("0"));
-      String opType = message.getStringProperty("opType");
-      String isThrow = message.getStringProperty("isThrow");
-      String referenceId = message.getStringProperty("referenceId");
-      OrderAuditFgMqTiDBGen orderAuditFgMqTiDBGen = new OrderAuditFgMqTiDBGen();
-      orderAuditFgMqTiDBGen.setOrderId(orderId);
-      orderAuditFgMqTiDBGen.setFgId(fgId);
-      orderAuditFgMqTiDBGen.setBusinessType(businessType);
-      orderAuditFgMqTiDBGen.setOpType(opType);
-      orderAuditFgMqTiDBGen.setIsThrow(isThrow);
-      orderAuditFgMqTiDBGen.setReferenceId(referenceId);
-      orderAuditFgMqTiDBGen.setSliceIndex(getSliceIndex(orderId, fgId));
-      return orderAuditFgMqTiDBGen;
-    } catch (Exception e) {
-      throw new Exception("property is null or parse error");
-    }
+  protected OrderAuditFgMqTiDBGen convertTo(Message message) {
+    Long orderId =
+            Long.parseLong(Optional.ofNullable(message.getStringProperty("orderId")).orElse("-1"));
+    Long fgId =
+            Long.parseLong(Optional.ofNullable(message.getStringProperty("fgId")).orElse("-1"));
+    Integer businessType = Integer.parseInt(Optional.ofNullable(message.getStringProperty("businessType")).orElse("0"));
+    String opType = message.getStringProperty("opType");
+    String isThrow = message.getStringProperty("isThrow");
+    String referenceId = message.getStringProperty("referenceId");
+    OrderAuditFgMqTiDBGen orderAuditFgMqTiDBGen = new OrderAuditFgMqTiDBGen();
+    orderAuditFgMqTiDBGen.setOrderId(orderId);
+    orderAuditFgMqTiDBGen.setFgId(fgId);
+    orderAuditFgMqTiDBGen.setBusinessType(businessType);
+    orderAuditFgMqTiDBGen.setOpType(opType);
+    orderAuditFgMqTiDBGen.setIsThrow(isThrow);
+    orderAuditFgMqTiDBGen.setReferenceId(referenceId);
+    orderAuditFgMqTiDBGen.setSliceIndex(getSliceIndex(orderId, fgId));
+    return orderAuditFgMqTiDBGen;
   }
 
   @Override
@@ -113,12 +111,13 @@ public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgM
   }
 
   @Override
+  @DalTransactional(logicDbName = "htlcalculatefeetidb_dalcluster")
   public void insertInto(Message message) throws Exception {
     OrderAuditFgMqTiDBGen orderAuditFgMqTiDBGen = convertTo(message);
     if (!legalCheck(orderAuditFgMqTiDBGen)) {
       String jsonStr = JsonUtils.beanToJson(orderAuditFgMqTiDBGen);
       LogHelper.logError("FGOrderNotifyListener", "message not legal:" + jsonStr);
-      orderAuditFgMqTiDBGen.setJobStatus("F");
+      orderAuditFgMqTiDBGen.setJobStatus("I");
     }
     SettleCallbackInfoTiDBGen settleCallbackInfoTiDBGen = getSettleCallbackInfo(message);
     orderAuditFgMqRepository.insert(orderAuditFgMqTiDBGen);
