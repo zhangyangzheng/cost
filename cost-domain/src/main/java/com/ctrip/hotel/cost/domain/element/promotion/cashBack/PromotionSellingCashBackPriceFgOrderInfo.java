@@ -1,6 +1,7 @@
 package com.ctrip.hotel.cost.domain.element.promotion.cashBack;
 
 import com.ctrip.hotel.cost.domain.core.Factor;
+import com.ctrip.hotel.cost.domain.element.promotion.AbstractPromotionFg;
 import com.ctrip.hotel.cost.domain.element.promotion.PromotionSellingPrice;
 import com.ctrip.hotel.cost.domain.scene.CostItemType;
 import hotel.settlement.common.DateHelper;
@@ -13,6 +14,7 @@ import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author yangzhengzhang
@@ -20,25 +22,11 @@ import java.util.List;
  * @date 2022-12-06 15:10
  */
 @Data
-public class PromotionSellingCashBackPriceFgOrderInfo implements PromotionSellingPrice {
+public class PromotionSellingCashBackPriceFgOrderInfo extends AbstractPromotionFg implements PromotionSellingPrice {
 
     private BigDecimal amount;
     private Integer quantity;
     private Calendar effectDate;
-
-    // 承担方
-    private Integer costType;// 老逻辑待下线
-    private Integer cashType;// 老逻辑待下线
-    private Integer cashPoolID;// 老逻辑待下线
-    private Integer discountDtype;// 老逻辑待下线
-    private Long fundId;
-    private Integer fundType;
-    private Integer settlementType;
-
-    // 订单属性
-    private Calendar eta;
-    private Calendar realETD;
-    private Integer hourAdjuest;
 
     // 计算结果
     private BigDecimal result;
@@ -56,7 +44,7 @@ public class PromotionSellingCashBackPriceFgOrderInfo implements PromotionSellin
      */
     @Override
     public Factor days() {
-        if (discountDtype != 5) {
+        if (!Objects.equals(auditRoom, orderRoom) || discountDtype != 5) {
             return new Factor("days", BigDecimal.ZERO);
         }
 

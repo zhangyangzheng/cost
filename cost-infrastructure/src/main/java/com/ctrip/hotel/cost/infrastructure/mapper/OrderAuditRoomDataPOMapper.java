@@ -30,13 +30,34 @@ public interface OrderAuditRoomDataPOMapper {
     @Mapping(target = "orderETA", source = "roomBasicInfo.eta")
     RoomCostPriceFgOrderInfo auditOrderToRoomCost(OrderPriceInfo orderPriceInfo, AuditRoomBasicInfo roomBasicInfo);
 
-    PromotionSellingPriceFgOrderInfo auditOrderToPromotion(PromotionDailyInfo promotionInfo, AuditRoomBasicInfo roomBasicInfo);
-    PromotionCostPriceFgOrderInfo auditOrderToPromotionCost(PromotionDailyInfo promotionInfo, AuditRoomBasicInfo roomBasicInfo);
-    TripPromotionSellingPriceFgOrderInfo auditOrderToTripPromotion(PromotionDailyInfo promotionInfo, AuditRoomBasicInfo roomBasicInfo);
-    TripPromotionCostPriceFgOrderInfo auditOrderToTripPromotionCost(PromotionDailyInfo promotionInfo, AuditRoomBasicInfo roomBasicInfo);
-    PromotionCostCashBackPriceFgOrderInfo auditOrderToCashBackPromotionCost(PromotionDailyInfo promotionInfo, AuditRoomBasicInfo roomBasicInfo);
-    PromotionSellingCashBackPriceFgOrderInfo auditOrderToCashBackPromotion(PromotionDailyInfo promotionInfo, AuditRoomBasicInfo roomBasicInfo);
-    PromotionCostBuyoutDiscountPriceFgOrderInfo auditOrderToBuyoutDiscountPromotion(PromotionDailyInfo promotionInfo, AuditRoomBasicInfo roomBasicInfo);
+    @Mapping(target = "auditRoom", source = "roomBasicInfo.room")
+    @Mapping(target = "orderRoom", source = "orderBasicInfo.room")
+    @Mapping(target = "eta", source = "roomBasicInfo.eta")
+    PromotionSellingPriceFgOrderInfo auditOrderToPromotion(PromotionDailyInfo promotionInfo, AuditRoomBasicInfo roomBasicInfo, OrderBasicInfo orderBasicInfo);
+    @Mapping(target = "auditRoom", source = "roomBasicInfo.room")
+    @Mapping(target = "orderRoom", source = "orderBasicInfo.room")
+    @Mapping(target = "eta", source = "roomBasicInfo.eta")
+    PromotionCostPriceFgOrderInfo auditOrderToPromotionCost(PromotionDailyInfo promotionInfo, AuditRoomBasicInfo roomBasicInfo, OrderBasicInfo orderBasicInfo);
+    @Mapping(target = "auditRoom", source = "roomBasicInfo.room")
+    @Mapping(target = "orderRoom", source = "orderBasicInfo.room")
+    @Mapping(target = "eta", source = "roomBasicInfo.eta")
+    TripPromotionSellingPriceFgOrderInfo auditOrderToTripPromotion(PromotionDailyInfo promotionInfo, AuditRoomBasicInfo roomBasicInfo, OrderBasicInfo orderBasicInfo);
+    @Mapping(target = "auditRoom", source = "roomBasicInfo.room")
+    @Mapping(target = "orderRoom", source = "orderBasicInfo.room")
+    @Mapping(target = "eta", source = "roomBasicInfo.eta")
+    TripPromotionCostPriceFgOrderInfo auditOrderToTripPromotionCost(PromotionDailyInfo promotionInfo, AuditRoomBasicInfo roomBasicInfo, OrderBasicInfo orderBasicInfo);
+    @Mapping(target = "auditRoom", source = "roomBasicInfo.room")
+    @Mapping(target = "orderRoom", source = "orderBasicInfo.room")
+    @Mapping(target = "eta", source = "roomBasicInfo.eta")
+    PromotionCostCashBackPriceFgOrderInfo auditOrderToCashBackPromotionCost(PromotionDailyInfo promotionInfo, AuditRoomBasicInfo roomBasicInfo, OrderBasicInfo orderBasicInfo);
+    @Mapping(target = "auditRoom", source = "roomBasicInfo.room")
+    @Mapping(target = "orderRoom", source = "orderBasicInfo.room")
+    @Mapping(target = "eta", source = "roomBasicInfo.eta")
+    PromotionSellingCashBackPriceFgOrderInfo auditOrderToCashBackPromotion(PromotionDailyInfo promotionInfo, AuditRoomBasicInfo roomBasicInfo, OrderBasicInfo orderBasicInfo);
+    @Mapping(target = "auditRoom", source = "roomBasicInfo.room")
+    @Mapping(target = "orderRoom", source = "orderBasicInfo.room")
+    @Mapping(target = "eta", source = "roomBasicInfo.eta")
+    PromotionCostBuyoutDiscountPriceFgOrderInfo auditOrderToBuyoutDiscountPromotion(PromotionDailyInfo promotionInfo, AuditRoomBasicInfo roomBasicInfo, OrderBasicInfo orderBasicInfo);
 
     AdjustCommissionPriceOrderInfo auditOrderToAdjustCommission(AuditRoomOtherInfo auditRoomOtherInfo, HotelBasicInfo hotelBasicInfo);
 

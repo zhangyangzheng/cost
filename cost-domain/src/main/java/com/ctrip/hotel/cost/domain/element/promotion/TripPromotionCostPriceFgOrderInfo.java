@@ -12,6 +12,7 @@ import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author yangzhengzhang
@@ -19,25 +20,10 @@ import java.util.List;
  * @date 2022-11-09 20:10
  */
 @Data
-public class TripPromotionCostPriceFgOrderInfo implements PromotionCostPrice {
+public class TripPromotionCostPriceFgOrderInfo extends AbstractPromotionFg implements PromotionCostPrice {
     private BigDecimal costDiscountAmount;
     private Integer quantity;
     private Calendar effectDate;
-
-    // 承担方
-    private Integer costType;// 老逻辑待下线
-    private Integer cashType;// 老逻辑待下线
-    private Integer cashPoolID;// 老逻辑待下线
-    private Integer discountDtype;// 老逻辑待下线
-    private Long fundId;
-    private Integer fundType;
-    private Integer settlementType;
-    private Integer ruleGroup;
-
-    // 订单属性
-    private Calendar eta;
-    private Calendar realETD;
-    private Integer hourAdjuest;
 
     // 计算结果
     private BigDecimal result;
@@ -65,7 +51,7 @@ public class TripPromotionCostPriceFgOrderInfo implements PromotionCostPrice {
                 .fundType(this.fundType)
                 .settlementType(this.settlementType)
                 .build();
-        if (PromotionEnum.HOTEL.equals(createSettlementTypeForFG(promotionInfo))) {
+        if (!Objects.equals(auditRoom, orderRoom) || PromotionEnum.HOTEL.equals(createSettlementTypeForFG(promotionInfo))) {
             return new Factor("days", BigDecimal.ZERO);
         }
 
