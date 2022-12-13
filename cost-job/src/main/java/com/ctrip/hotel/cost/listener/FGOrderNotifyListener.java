@@ -17,25 +17,36 @@ public class FGOrderNotifyListener {
 
   @Autowired BaseOrderNotifyConsumer fgOrderNotifyConsumer;
 
+  private boolean isError(Exception e){
+    Throwable cause = e.getCause();
+    if (cause instanceof MySQLIntegrityConstraintViolationException) {
+      MySQLIntegrityConstraintViolationException mySQLIntegrityConstraintViolationException =
+              (MySQLIntegrityConstraintViolationException) cause;
+      String sqlState = mySQLIntegrityConstraintViolationException.getSQLState();
+      if (StringUtils.equals(sqlState, "23000")) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   private void processMessage(Message message) {
     LogHelper.logInfo("FGOrderNotifyListener", JsonUtils.beanToJson(message));
     try {
       fgOrderNotifyConsumer.insertInto(message);
     } catch (Exception e) {
-      Throwable cause = e.getCause();
-      if (cause instanceof MySQLIntegrityConstraintViolationException) {
-        MySQLIntegrityConstraintViolationException mySQLIntegrityConstraintViolationException =
-            (MySQLIntegrityConstraintViolationException) cause;
-        String sqlState = mySQLIntegrityConstraintViolationException.getSQLState();
-        if (StringUtils.equals(sqlState, "23000")) {
-          return;
-        }
-      }
-      LogHelper.logError(
-          "FGOrderNotifyListener",
-          String.format(
+      boolean isError = isError(e);
+      String logMessage = String.format(
               "insert into order_audit_fg_mq fail messageId : %s reason : %s",
-              message.getMessageId(), e.getMessage()));
+              message.getMessageId(), e.getMessage());
+      if(isError){
+        LogHelper.logError(
+            "FGOrderNotifyListener", logMessage);
+      }
+      else{
+        LogHelper.logWarn(
+                "FGOrderNotifyListener", logMessage);
+      }
     }
   }
 
