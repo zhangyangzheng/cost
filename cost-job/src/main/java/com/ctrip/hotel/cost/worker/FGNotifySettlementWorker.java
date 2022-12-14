@@ -1,13 +1,13 @@
 package com.ctrip.hotel.cost.worker;
 
 import com.ctrip.hotel.cost.job.BaseNotifySettlementJob;
-import com.ctrip.hotel.cost.job.FGNotifySettlementJob;
+import com.dianping.cat.annotation.CatTrace;
 import hotel.settlement.common.LogHelper;
+import hotel.settlement.common.entity.CatBizTypeConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import qunar.tc.qschedule.config.QSchedule;
-
 import qunar.tc.schedule.Parameter;
 
 import java.util.Arrays;
@@ -24,6 +24,7 @@ public class FGNotifySettlementWorker {
     BaseNotifySettlementJob fgNotifySettlementJob;
 
     @QSchedule("hotel.settlement.cost.job.fg.notifySettlement")
+    @CatTrace(type = CatBizTypeConstant.BIZ_QSCHEDULE_EXECUTE + ".Cost", name = "AuditOrderFg")
     public void doMyWork(Parameter parameter) {
         int shards = parameter.shards();
         String sliceIndexes = parameter.getProperty(SLICE_INDEXES, String.class);

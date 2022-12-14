@@ -1,10 +1,10 @@
 package com.ctrip.hotel.cost.listener;
 
-import com.ctrip.hotel.cost.common.StringHelper;
 import com.ctrip.hotel.cost.consumer.BaseOrderNotifyConsumer;
-import com.ctrip.hotel.cost.consumer.FGOrderNotifyConsumer;
+import com.dianping.cat.annotation.CatTrace;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 import hotel.settlement.common.LogHelper;
+import hotel.settlement.common.entity.CatBizTypeConstant;
 import hotel.settlement.common.json.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +30,7 @@ public class FGOrderNotifyListener {
     return true;
   }
 
+  @CatTrace(type = CatBizTypeConstant.BIZ_QMQ_ACCEPT + ".Cost", name = "AuditOrderFg")
   private void processMessage(Message message) {
     LogHelper.logInfo("FGOrderNotifyListener", JsonUtils.beanToJson(message));
     try {

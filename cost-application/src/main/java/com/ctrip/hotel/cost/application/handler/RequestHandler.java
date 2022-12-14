@@ -12,7 +12,9 @@ import com.ctrip.hotel.cost.domain.root.CostSupporter;
 import com.ctrip.hotel.cost.domain.scene.EnumScene;
 import com.ctrip.hotel.cost.domain.settlement.EnumOrderOpType;
 import com.ctrip.hotel.cost.domain.settlement.SettlementService;
+import com.dianping.cat.annotation.CatTrace;
 import hotel.settlement.common.LogHelper;
+import hotel.settlement.common.entity.CatBizTypeConstant;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,6 +41,7 @@ public class RequestHandler implements HandlerApi{
      * @param request
      * @return 【现付审核离店订单】发起计费，返回计费成功的fgId，计费失败的fgId由job发起重试
      */
+    @CatTrace(type = CatBizTypeConstant.BIZ_SOA_PROCESS + ".Cost", name = "AuditOrderFg")
     @Override
     public List<String> auditOrderFg(List<AuditOrderFgReqDTO> request) {
         if (CollectionUtils.isEmpty(request)) {
