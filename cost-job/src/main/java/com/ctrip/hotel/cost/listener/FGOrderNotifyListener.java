@@ -50,7 +50,7 @@ public class FGOrderNotifyListener {
   }
 
   @QmqConsumer(prefix = "hotel.audit.auditnotifycost", consumerGroup = "100042902")
-  @CatTrace(type = CatBizTypeConstant.BIZ_QMQ_ACCEPT + ".Cost", name = "AuditOrderFg")
+  @CatTrace(type = CatBizTypeConstant.BIZ_QMQ_ACCEPT + ".Cost", name = "hotel.audit.auditnotifycost")
   public void onMessage(Message message) {
     processMessage(message);
   }
