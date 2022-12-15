@@ -30,17 +30,15 @@ public class FGOrderNotifyListener {
     return true;
   }
 
-  @CatTrace(type = CatBizTypeConstant.BIZ_QMQ_ACCEPT + ".Cost", name = "AuditOrderFg")
   private void processMessage(Message message) {
     LogHelper.logInfo("FGOrderNotifyListener", JsonUtils.beanToJson(message));
     try {
       fgOrderNotifyConsumer.insertInto(message);
     } catch (Exception e) {
-      boolean isError = isError(e);
       String logMessage = String.format(
               "insert into order_audit_fg_mq fail messageId : %s reason : %s",
               message.getMessageId(), e.getMessage());
-      if(isError){
+      if(isError(e)){
         LogHelper.logError(
             "FGOrderNotifyListener", logMessage);
       }
@@ -52,6 +50,7 @@ public class FGOrderNotifyListener {
   }
 
   @QmqConsumer(prefix = "hotel.audit.auditnotifycost", consumerGroup = "100042902")
+  @CatTrace(type = CatBizTypeConstant.BIZ_QMQ_ACCEPT + ".Cost", name = "AuditOrderFg")
   public void onMessage(Message message) {
     processMessage(message);
   }
