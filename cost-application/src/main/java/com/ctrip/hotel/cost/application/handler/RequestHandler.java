@@ -1,5 +1,7 @@
 package com.ctrip.hotel.cost.application.handler;
 
+import com.alibaba.fastjson.JSON;
+import com.ctrip.framework.clogging.domain.thrift.LogLevel;
 import com.ctrip.hotel.cost.application.model.AuditOrderFgCostDTO;
 import com.ctrip.hotel.cost.application.model.CostDTO;
 import com.ctrip.hotel.cost.application.model.vo.AuditOrderFgReqDTO;
@@ -52,6 +54,7 @@ public class RequestHandler implements HandlerApi{
         try {
             // set TransThreadLocal
             ThreadLocalCostHolder.setThreadLocalCostContext("auditOrderFg");
+            ThreadLocalCostHolder.allLinkTracingLog(JSON.toJSONString(request), LogLevel.INFO);
 
             List<AuditOrderFgReqDTO> costList = request.stream().filter(e -> !e.getOrderAuditFgMqBO().getOpType().equals(EnumOrderOpType.CANCEL.getName())).collect(Collectors.toList());
             // 计费+抛单
