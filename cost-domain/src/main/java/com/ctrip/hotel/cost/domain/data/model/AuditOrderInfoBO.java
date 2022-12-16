@@ -53,6 +53,25 @@ public class AuditOrderInfoBO {
     private BigDecimal promotionCashBackAmount;
     private BigDecimal promotionCashBackCost;
 
+    private BigDecimal getNullIfZero(BigDecimal decimal){
+        if(decimal == null || decimal.compareTo(BigDecimal.ZERO) == 0){
+            return null;
+        }
+        return decimal;
+    }
+
+    public BigDecimal getBidPrice() {
+        return getNullIfZero(bidPrice);
+    }
+
+    public BigDecimal getZeroCommissionAmount() {
+        return getNullIfZero(zeroCommissionAmount);
+    }
+
+    public BigDecimal getBuyoutDiscountAmount() {
+        return getNullIfZero(buyoutDiscountAmount);
+    }
+
     public List<PromotionDailyInfo> getPromotionDailyInfoList() {
         if (CollectionUtils.isEmpty(promotionDailyInfoList)) {
             return Collections.emptyList();

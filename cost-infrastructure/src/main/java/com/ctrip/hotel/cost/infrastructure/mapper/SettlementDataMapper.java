@@ -164,7 +164,7 @@ public interface SettlementDataMapper {
 //    @Mapping(target = "channelType", expression = "java( ChannelType.FGID.name() )")
 
     @Mapping(target = "settlementId", source = "auditOrderInfoBO.settlementCallBackInfo.settlementId")// todo 修改单传这个，取消单不传
-    @Mapping(target = "orderId", source = "cusOrderId", defaultValue = "")
+    @Mapping(target = "orderId", source = "orderId", defaultValue = "")
     @Mapping(target = "currency", source = "auditOrderInfoBO.orderBasicInfo.currency", defaultValue = "")
     @Mapping(target = "orderDate", source = "auditOrderInfoBO.orderBasicInfo.orderDate")
 
