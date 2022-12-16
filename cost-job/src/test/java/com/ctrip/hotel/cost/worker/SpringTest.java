@@ -237,4 +237,23 @@ public class SpringTest {
     System.out.println(str);
   }
 
+
+  @Test
+  public void getWJobMergeItemTest(){
+    OrderAuditFgMqTiDBGen orderAuditFgMqTiDBGenC = new OrderAuditFgMqTiDBGen();
+    OrderAuditFgMqTiDBGen orderAuditFgMqTiDBGenU = new OrderAuditFgMqTiDBGen();
+    OrderAuditFgMqTiDBGen orderAuditFgMqTiDBGenD = new OrderAuditFgMqTiDBGen();
+    orderAuditFgMqTiDBGenC.setJobStatus("W");
+    orderAuditFgMqTiDBGenU.setJobStatus("W");
+    orderAuditFgMqTiDBGenD.setJobStatus("W");
+    orderAuditFgMqTiDBGenC.setOpType("C");
+    orderAuditFgMqTiDBGenU.setOpType("U");
+    orderAuditFgMqTiDBGenD.setOpType("D");
+    List<OrderAuditFgMqTiDBGen> jobList = new ArrayList<>();
+    jobList.add(orderAuditFgMqTiDBGenC);
+    jobList.add(orderAuditFgMqTiDBGenU);
+    jobList.add(orderAuditFgMqTiDBGenD);
+    fgNotifySettlementJob.getWJobMergeItem(jobList);
+  }
+
 }
