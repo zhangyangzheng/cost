@@ -308,9 +308,6 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
       String referenceId = orderAuditFgMqTiDBGen.getReferenceId();
       SettleCallbackInfoTiDBGen settleCallbackInfoTiDBGen =
           referenceIdSettleCallbackInfoMap.get(referenceId);
-      if (settleCallbackInfoTiDBGen == null) {
-        throw new Exception("settleCallbackInfo missing");
-      }
 
       AuditOrderFgReqDTO auditOrderFgReqDTO =
           getAuditOrderFgReqDTO(orderAuditFgMqTiDBGen, settleCallbackInfoTiDBGen);
