@@ -10,6 +10,7 @@ import com.ctrip.hotel.cost.model.dto.SettlementApplyListDto;
 import com.ctrip.hotel.cost.model.dto.SettlementCancelListDto;
 import com.ctrip.hotel.cost.model.dto.SettlementPayDataReceiveDto;
 import com.ctrip.hotel.cost.util.I18NMessageUtil;
+import com.ctrip.hotel.cost.repository.SettlementRepository;
 import com.ctrip.soa.hotel.settlement.api.CancelDataItem;
 import com.ctrip.soa.hotel.settlement.api.CancelSettleData;
 import com.ctrip.soa.hotel.settlement.api.DataItem;
@@ -22,7 +23,6 @@ import hotel.settlement.common.helpers.DefaultValueHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import com.ctrip.hotel.cost.repository.SettlementRepository;
 import soa.ctrip.com.hotel.vendor.settlement.v1.Hotelorderchannel;
 import soa.ctrip.com.hotel.vendor.settlement.v1.cancelorder.CancelorderRequesttype;
 import soa.ctrip.com.hotel.vendor.settlement.v1.settlementdata.SettlementPayData;
@@ -648,16 +648,16 @@ public class SettlementRepositoryImpl implements SettlementRepository {
         Item = new DataItem();
         Item.setDataKey("RoomAmount");
         Item.setDataValue(
-                auditOrderInfoBO.getRoomAmount() == null
+                auditOrderInfoBO.getPriceAmount() == null
                         ? "0"
-                        : auditOrderInfoBO.getRoomAmount().toString());
+                        : auditOrderInfoBO.getPriceAmount().toString());
         Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.42"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("RoomCost");
         Item.setDataValue(
-                auditOrderInfoBO.getRoomCost() == null ? "0" : auditOrderInfoBO.getRoomCost().toString());
+                auditOrderInfoBO.getCostAmount() == null ? "0" : auditOrderInfoBO.getCostAmount().toString());
         Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.43"));
         requestData.getDataItems().add(Item);
 
