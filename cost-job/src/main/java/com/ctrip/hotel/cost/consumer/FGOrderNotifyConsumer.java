@@ -1,10 +1,9 @@
 package com.ctrip.hotel.cost.consumer;
 
-import com.ctrip.hotel.cost.infrastructure.repository.OrderAuditFgMqRepository;
-import com.ctrip.hotel.cost.infrastructure.repository.SettleCallbackInfoRepository;
+import com.ctrip.hotel.cost.repository.OrderAuditFgMqRepository;
+import com.ctrip.hotel.cost.repository.SettleCallbackInfoRepository;
 import com.ctrip.hotel.cost.common.LongHelper;
 import com.ctrip.platform.dal.dao.annotation.DalTransactional;
-import com.ctrip.platform.dal.dao.annotation.EnableDalTransaction;
 import hotel.settlement.common.LogHelper;
 import hotel.settlement.common.json.JsonUtils;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
@@ -33,10 +32,9 @@ public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgM
 
   @Autowired OrderAuditFgMqRepository orderAuditFgMqRepository;
 
-  @Autowired
-  SettleCallbackInfoRepository settleCallbackInfoRepository;
+  @Autowired SettleCallbackInfoRepository settleCallbackInfoRepository;
 
-  protected SettleCallbackInfoTiDBGen getSettleCallbackInfo(Message message){
+  protected SettleCallbackInfoTiDBGen getSettleCallbackInfo(Message message) {
     SettleCallbackInfoTiDBGen settleCallbackInfoTiDBGen = new SettleCallbackInfoTiDBGen();
 
     // 幂等字段
@@ -45,7 +43,8 @@ public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgM
     Long settlementId = LongHelper.getNullableLong(message.getStringProperty("settlementId"));
     Long orderInfoId = LongHelper.getNullableLong(message.getStringProperty("orderInfoId"));
     Long hwpSettlementId = LongHelper.getNullableLong(message.getStringProperty("hwpSettlementId"));
-    String pushWalletPay = BooleanUtils.toBoolean(message.getStringProperty("pushWalletPay")) ? "T" : "F";
+    String pushWalletPay =
+        BooleanUtils.toBoolean(message.getStringProperty("pushWalletPay")) ? "T" : "F";
     String pushReferenceId = message.getStringProperty("pushReferenceId");
     String hwpReferenceId = message.getStringProperty("hwpReferenceId");
 
@@ -68,10 +67,11 @@ public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgM
   @Override
   protected OrderAuditFgMqTiDBGen convertTo(Message message) {
     Long orderId =
-            Long.parseLong(Optional.ofNullable(message.getStringProperty("orderId")).orElse("-1"));
-    Long fgId =
-            Long.parseLong(Optional.ofNullable(message.getStringProperty("fgId")).orElse("-1"));
-    Integer businessType = Integer.parseInt(Optional.ofNullable(message.getStringProperty("businessType")).orElse("0"));
+        Long.parseLong(Optional.ofNullable(message.getStringProperty("orderId")).orElse("-1"));
+    Long fgId = Long.parseLong(Optional.ofNullable(message.getStringProperty("fgId")).orElse("-1"));
+    Integer businessType =
+        Integer.parseInt(
+            Optional.ofNullable(message.getStringProperty("businessType")).orElse("0"));
     String opType = message.getStringProperty("opType");
     String isThrow = message.getStringProperty("isThrow");
     String referenceId = message.getStringProperty("referenceId");
@@ -89,13 +89,13 @@ public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgM
   @Override
   protected boolean legalCheck(OrderAuditFgMqTiDBGen item) {
     if (item.getOrderId() != -1L
-            && item.getOpType() != null
-            && item.getIsThrow() != null
-            && item.getReferenceId() != null) {
+        && item.getOpType() != null
+        && item.getIsThrow() != null
+        && item.getReferenceId() != null) {
       // 业务类型 操作类型 OrderId检查
       if (isInLegalArr(item.getBusinessType(), businessTypeArr)
-              && isInLegalArr(item.getOpType(), opTypeArr)
-              && isInLegalArr(item.getIsThrow(), isThrowArr)) {
+          && isInLegalArr(item.getOpType(), opTypeArr)
+          && isInLegalArr(item.getIsThrow(), isThrowArr)) {
         // 如果业务类型不为ns 需要校验fgId是否有效
         if (item.getBusinessType() == 0) {
           if (item.getFgId() > 0) {
