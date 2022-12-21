@@ -345,10 +345,10 @@ public class SettlementRepositoryImpl implements SettlementRepository {
         Item = new DataItem();
         Item.setDataKey("ETD");
         Item.setDataValue(
-                orderBasicInfo.getEtd() == null
+                auditRoomBasicInfo.getRealETD() == null
                         ? ""
                         : DateHelper.formatDate(
-                        new Timestamp(orderBasicInfo.getEtd().getTimeInMillis()),
+                        new Timestamp(auditRoomBasicInfo.getRealETD().getTimeInMillis()),
                         DateHelper.SIMIPLE_DATE_FORMAT_STR));
         Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.5"));
         requestData.getDataItems().add(Item);
@@ -892,10 +892,10 @@ public class SettlementRepositoryImpl implements SettlementRepository {
         Item = new DataItem();
         Item.setDataKey("EndDate");
         Item.setDataValue(
-                orderBasicInfo.getEtd() == null
+                auditRoomBasicInfo.getRealETD() == null
                         ? ""
                         : DateHelper.formatDate(
-                        new Timestamp(orderBasicInfo.getEtd().getTimeInMillis()),
+                        new Timestamp(auditRoomBasicInfo.getRealETD().getTimeInMillis()),
                         DateHelper.SIMIPLE_DATE_FORMAT_STR));
         Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.62"));
         requestData.getDataItems().add(Item);
