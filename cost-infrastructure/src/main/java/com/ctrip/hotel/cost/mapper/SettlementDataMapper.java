@@ -107,8 +107,8 @@ public interface SettlementDataMapper {
             ")")
     @Mapping(target = "commissionType", expression = "java( " +
             "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo() != null " +
-            "&& auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getAdjustCommissionType() != null " +
-            "? auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getAdjustCommissionType() : 0" +
+            "&& auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getAdjustCommissionType() == null " +
+            "? 0 : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getAdjustCommissionType()" +
             ")")
     @Mapping(target = "hotelConfirmStatus", expression = "java( " +
             "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo() != null " +
