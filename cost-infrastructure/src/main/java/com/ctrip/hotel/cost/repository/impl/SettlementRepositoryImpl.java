@@ -356,9 +356,9 @@ public class SettlementRepositoryImpl implements SettlementRepository {
         Item = new DataItem();
         Item.setDataKey("CommissionType");
         Item.setDataValue(
-                auditRoomOtherInfo.getAdjustCommissionType() == null
-                        ? ""
-                        : auditRoomOtherInfo.getAdjustCommissionType().toString());
+                auditRoomOtherInfo != null && auditRoomOtherInfo.getAdjustCommissionType() != null
+                        ? auditRoomOtherInfo.getAdjustCommissionType().toString()
+                        : "0");
         Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.6"));
         requestData.getDataItems().add(Item);
 
