@@ -934,7 +934,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
         Item.setDataKey("OtherCost");
         Item.setDataValue(
                 auditRoomOtherInfo.getOtherCost() == null
-                        ? ""
+                        ? "0"
                         : auditRoomOtherInfo.getOtherCost().toString());
         Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.67"));
         requestData.getDataItems().add(Item);

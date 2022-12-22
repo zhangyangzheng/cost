@@ -29,7 +29,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(value = {LogHelper.class, I18NMessageUtil.class, SpringUtil.class, QConfigHelper.class,
         LoggerFactory.class})
-public class CostUnitTestBase {
+public class CostJobUnitTestBase {
 
   @Before
   public void prepare() throws Exception {
