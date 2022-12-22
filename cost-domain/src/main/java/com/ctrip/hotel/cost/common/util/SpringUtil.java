@@ -1,4 +1,4 @@
-package com.ctrip.hotel.cost.util;
+package com.ctrip.hotel.cost.common.util;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

@@ -6,7 +6,7 @@ import com.ctrip.hotel.cost.domain.data.model.OrderAuditFgMqBO;
 import com.ctrip.hotel.cost.domain.data.model.SettlementCallBackInfo;
 import com.ctrip.hotel.cost.repository.OrderAuditFgMqRepository;
 import com.ctrip.hotel.cost.repository.SettleCallbackInfoRepository;
-import com.ctrip.hotel.cost.util.I18NMessageUtil;
+import com.ctrip.hotel.cost.common.util.I18NMessageUtil;
 import hotel.settlement.common.ListHelper;
 import hotel.settlement.common.LogHelper;
 import hotel.settlement.common.QConfigHelper;

@@ -1,4 +1,4 @@
-package com.ctrip.hotel.cost.util;
+package com.ctrip.hotel.cost.common.util;
 
 import hotel.settlement.common.LogHelper;
 import org.springframework.context.MessageSource;

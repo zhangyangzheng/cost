@@ -13,7 +13,7 @@ import com.ctrip.hotel.cost.model.bo.SettlementPayDataUsedBo;
 import com.ctrip.hotel.cost.model.dto.FgBackToAuditDto;
 import com.ctrip.hotel.cost.mq.AuditMqProducer;
 import com.ctrip.hotel.cost.repository.OrderAuditFgMqRepository;
-import com.ctrip.hotel.cost.util.I18NMessageUtil;
+import com.ctrip.hotel.cost.common.util.I18NMessageUtil;
 import com.ctrip.hotel.cost.job.FGNotifySettlementJob;
 import com.ctrip.soa.hotel.settlement.api.CancelSettleData;
 import com.ctrip.soa.hotel.settlement.api.SettleDataRequest;

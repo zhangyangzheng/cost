@@ -2,6 +2,7 @@ package com.ctrip.hotel.cost.domain.settlement;
 
 import com.ctrip.framework.clogging.domain.thrift.LogLevel;
 import com.ctrip.hotel.cost.common.ThreadLocalCostHolder;
+import com.ctrip.hotel.cost.common.util.I18NMessageUtil;
 import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
 import com.ctrip.hotel.cost.repository.AuditRepository;
 import hotel.settlement.common.QConfigHelper;
@@ -70,7 +71,7 @@ public class SettlementService {
                         && configCanPush()
                     ) {// 闪住 && 付面，只抛606
                         auditOrderInfoBO.getSettlementCallBackInfo().setPushWalletPay(true);
-                        auditOrderInfoBO.setRemarks("闪住付面仅抛606");
+                        auditOrderInfoBO.setRemarks(I18NMessageUtil.getMessage("SettlementService.remark.1"));
                         Long hwpSettlementId = settlementRepository.callSettlementApplyListHWP(auditOrderInfoBO);
                         auditOrderInfoBO.getSettlementCallBackInfo().setHwpSettlementId(hwpSettlementId);
                         auditOrderInfoBO.getSettlementCallBackInfo().setHwpReferenceId(auditOrderInfoBO.getOrderAuditFgMqBO().getReferenceId());

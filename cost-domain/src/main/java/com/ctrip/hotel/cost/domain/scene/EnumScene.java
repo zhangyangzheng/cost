@@ -1,5 +1,7 @@
 package com.ctrip.hotel.cost.domain.scene;
 
+import com.ctrip.hotel.cost.common.util.I18NMessageUtil;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,7 +26,7 @@ public enum EnumScene {
                     CostItemType.ZERO_COMMISSION_FEE_PRICE_FG,
                     CostItemType.CASH_BACK_PROMOTION_SELLING_PRICE_FG,
                     CostItemType.CASH_BACK_PROMOTION_COST_PRICE_FG),
-            "审核离店"
+            I18NMessageUtil.getMessage("EnumScene.name.1")
     ),
 
     ;

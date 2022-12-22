@@ -9,7 +9,7 @@ import com.ctrip.hotel.cost.model.dto.CancelOrderDto;
 import com.ctrip.hotel.cost.model.dto.SettlementApplyListDto;
 import com.ctrip.hotel.cost.model.dto.SettlementCancelListDto;
 import com.ctrip.hotel.cost.model.dto.SettlementPayDataReceiveDto;
-import com.ctrip.hotel.cost.util.I18NMessageUtil;
+import com.ctrip.hotel.cost.common.util.I18NMessageUtil;
 import com.ctrip.hotel.cost.repository.SettlementRepository;
 import com.ctrip.soa.hotel.settlement.api.CancelDataItem;
 import com.ctrip.soa.hotel.settlement.api.CancelSettleData;
@@ -158,10 +158,10 @@ public class SettlementRepositoryImpl implements SettlementRepository {
         }
         List<CancelDataItem> list = new ArrayList<>();
         if (auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getOperateType() != null) {
-            list.add(new CancelDataItem("ModifyOperateType", auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getOperateType(), "修改类型"));
-            list.add(new CancelDataItem("ModifyOperateSubType", auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getSubOperateType(), "修改子类型"));
-            list.add(new CancelDataItem("ModifyOperateDateTime", DateHelper.format(auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getOperateTime(), DateHelper.SIMIPLE_DATE_FORMAT_STR), "操作时间"));
-            list.add(new CancelDataItem("ModifyOperateEid", auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getOperator(), "操作人"));
+            list.add(new CancelDataItem("ModifyOperateType", auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getOperateType(), I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.23")));
+            list.add(new CancelDataItem("ModifyOperateSubType", auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getSubOperateType(), I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.24")));
+            list.add(new CancelDataItem("ModifyOperateDateTime", DateHelper.format(auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getOperateTime(), DateHelper.SIMIPLE_DATE_FORMAT_STR), I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.25")));
+            list.add(new CancelDataItem("ModifyOperateEid", auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getOperator(), I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.26")));
         }
         request.setDataItems(list);
         SettlementCancelListDto dto = new SettlementCancelListDto();
@@ -600,9 +600,9 @@ public class SettlementRepositoryImpl implements SettlementRepository {
         Item = new DataItem();
         Item.setDataKey("AdjustAmountType");
         Item.setDataValue(
-                auditRoomOtherInfo.getAdjustCommissionType() == null
-                        ? ""
-                        : auditRoomOtherInfo.getAdjustCommissionType().toString());
+                auditRoomOtherInfo != null && auditRoomOtherInfo.getAdjustCommissionType() != null
+                        ? auditRoomOtherInfo.getAdjustCommissionType().toString()
+                        : "0");
         Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.36"));
         requestData.getDataItems().add(Item);
 

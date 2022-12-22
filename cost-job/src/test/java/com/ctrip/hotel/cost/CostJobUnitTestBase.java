@@ -1,8 +1,8 @@
 package com.ctrip.hotel.cost;
 
 
-import com.ctrip.hotel.cost.util.I18NMessageUtil;
-import com.ctrip.hotel.cost.util.SpringUtil;
+import com.ctrip.hotel.cost.common.util.I18NMessageUtil;
+import com.ctrip.hotel.cost.common.util.SpringUtil;
 import hotel.settlement.common.LogHelper;
 import hotel.settlement.common.QConfigHelper;
 import org.junit.Before;
