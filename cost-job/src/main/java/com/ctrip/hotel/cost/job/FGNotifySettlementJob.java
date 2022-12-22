@@ -184,7 +184,7 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
   public WJobMergeItem getWJobMergeItem(List<OrderAuditFgMqTiDBGen> jobList) {
     List<OrderAuditFgMqTiDBGen> wJobList =
         jobList.stream()
-            .filter(p -> "W".equals(p.getJobStatus()))
+            .filter(p -> JobStatus.Pending.getValue().equals(p.getJobStatus()))
             .map(p -> BeanHelper.convert(p, OrderAuditFgMqTiDBGen.class))
             .sorted(
                 (o1, o2) -> opTypePriority.get(o2.getOpType()) - opTypePriority.get(o1.getOpType()))
