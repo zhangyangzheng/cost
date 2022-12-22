@@ -1,5 +1,6 @@
 package com.ctrip.hotel.cost.consumer;
 
+import com.ctrip.hotel.cost.model.JobStatus;
 import com.ctrip.hotel.cost.repository.OrderAuditFgMqRepository;
 import com.ctrip.hotel.cost.repository.SettleCallbackInfoRepository;
 import com.ctrip.hotel.cost.common.LongHelper;
@@ -22,7 +23,7 @@ public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgM
   final int sliceCount = 32;
 
   // 业务类型 抛结算：0 noshow自动付：1 noshow返佣：2
-  final Integer[] businessTypeArr = new Integer[] {0, 1, 2};
+  final Integer[] businessTypeArr = new Integer[] {0}; //目前仅支持抛结算
 
   // 操作类型 创建：C 修改：U 删除：D
   final String[] opTypeArr = new String[] {"C", "U", "D"};
@@ -117,7 +118,7 @@ public class FGOrderNotifyConsumer extends BaseOrderNotifyConsumer<OrderAuditFgM
     if (!legalCheck(orderAuditFgMqTiDBGen)) {
       String jsonStr = JsonUtils.beanToJson(orderAuditFgMqTiDBGen);
       LogHelper.logError("FGOrderNotifyListener", "message not legal:" + jsonStr);
-      orderAuditFgMqTiDBGen.setJobStatus("I");
+      orderAuditFgMqTiDBGen.setJobStatus(JobStatus.Invalid.getValue());
     }
     SettleCallbackInfoTiDBGen settleCallbackInfoTiDBGen = getSettleCallbackInfo(message);
     orderAuditFgMqRepository.insert(orderAuditFgMqTiDBGen);

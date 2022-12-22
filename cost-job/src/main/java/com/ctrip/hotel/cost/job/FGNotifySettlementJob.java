@@ -4,6 +4,7 @@ import com.ctrip.hotel.cost.application.handler.HandlerApi;
 import com.ctrip.hotel.cost.application.model.vo.AuditOrderFgReqDTO;
 import com.ctrip.hotel.cost.domain.data.model.OrderAuditFgMqBO;
 import com.ctrip.hotel.cost.domain.data.model.SettlementCallBackInfo;
+import com.ctrip.hotel.cost.model.JobStatus;
 import com.ctrip.hotel.cost.repository.OrderAuditFgMqRepository;
 import com.ctrip.hotel.cost.repository.SettleCallbackInfoRepository;
 import com.ctrip.hotel.cost.common.util.I18NMessageUtil;
@@ -113,25 +114,25 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     JobStatusStatistics jobStatusStatistics = new JobStatusStatistics();
     if (!ListHelper.isEmpty(orderAuditFgMqTiDBGenList)) {
       for (OrderAuditFgMqTiDBGen orderAuditFgMqTiDBGen : orderAuditFgMqTiDBGenList) {
-        String jobStatus = orderAuditFgMqTiDBGen.getJobStatus();
+        JobStatus jobStatus = JobStatus.getJobStatus(orderAuditFgMqTiDBGen.getJobStatus());
         String opType = orderAuditFgMqTiDBGen.getOpType();
-        if ("W".equals(jobStatus) && "C".equals(opType)) {
+        if (JobStatus.Pending.equals(jobStatus) && "C".equals(opType)) {
           jobStatusStatistics.wCreateCount++;
-        } else if ("W".equals(jobStatus) && "U".equals(opType)) {
+        } else if (JobStatus.Pending.equals(jobStatus) && "U".equals(opType)) {
           jobStatusStatistics.wUpdateCount++;
-        } else if ("W".equals(jobStatus) && "D".equals(opType)) {
+        } else if (JobStatus.Pending.equals(jobStatus) && "D".equals(opType)) {
           jobStatusStatistics.wDeleteCount++;
-        } else if ("T".equals(jobStatus) && "C".equals(opType)) {
+        } else if (JobStatus.Success.equals(jobStatus) && "C".equals(opType)) {
           jobStatusStatistics.tCreateCount++;
-        } else if ("T".equals(jobStatus) && "U".equals(opType)) {
+        } else if (JobStatus.Success.equals(jobStatus) && "U".equals(opType)) {
           jobStatusStatistics.tUpdateCount++;
-        } else if ("T".equals(jobStatus) && "D".equals(opType)) {
+        } else if (JobStatus.Success.equals(jobStatus) && "D".equals(opType)) {
           jobStatusStatistics.tDeleteCount++;
-        } else if ("F".equals(jobStatus) && "C".equals(opType)) {
+        } else if (JobStatus.Fail.equals(jobStatus) && "C".equals(opType)) {
           jobStatusStatistics.fCreateCount++;
-        } else if ("F".equals(jobStatus) && "U".equals(opType)) {
+        } else if (JobStatus.Fail.equals(jobStatus) && "U".equals(opType)) {
           jobStatusStatistics.fUpdateCount++;
-        } else if ("F".equals(jobStatus) && "D".equals(opType)) {
+        } else if (JobStatus.Fail.equals(jobStatus) && "D".equals(opType)) {
           jobStatusStatistics.fDeleteCount++;
         } else {
           LogHelper.logError(
@@ -173,7 +174,7 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     jobList.stream()
         .forEach(
             job -> {
-              job.setJobStatus("T");
+              job.setJobStatus(JobStatus.Success.getValue());
               job.setRemark(I18NMessageUtil.getMessage("FGNotifySettlementJob.Remark.3"));
             });
     orderAuditFgMqRepository.batchUpdate(jobList);
@@ -223,7 +224,7 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     }
     for (OrderAuditFgMqTiDBGen job : allSuccessJobList) {
       job.setExecCount(job.getExecCount() + 1);
-      job.setJobStatus("T");
+      job.setJobStatus(JobStatus.Success.getValue());
     }
     orderAuditFgMqRepository.batchUpdate(allSuccessJobList);
   }
@@ -251,7 +252,7 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
       if (job.getExecCount()
           > Integer.parseInt(
               QConfigHelper.getSwitchConfigByKey("fgNotifySettlementJobMaxExeCount", "5"))) {
-        job.setJobStatus("F");
+        job.setJobStatus(JobStatus.Fail.getValue());
       }
     }
     orderAuditFgMqRepository.batchUpdate(allFailJobList);
