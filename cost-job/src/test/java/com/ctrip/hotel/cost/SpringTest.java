@@ -7,6 +7,7 @@ import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
 import com.ctrip.hotel.cost.client.AuditClient;
 import com.ctrip.hotel.cost.client.CompareClient;
 import com.ctrip.hotel.cost.client.SettlementClient;
+import com.ctrip.hotel.cost.model.JobStatus;
 import com.ctrip.hotel.cost.model.bo.SettlementApplyListUsedBo;
 import com.ctrip.hotel.cost.model.bo.SettlementCancelListUsedBo;
 import com.ctrip.hotel.cost.model.bo.SettlementPayDataUsedBo;
@@ -255,6 +256,15 @@ public class SpringTest {
     jobList.add(orderAuditFgMqTiDBGenU);
     jobList.add(orderAuditFgMqTiDBGenD);
     fgNotifySettlementJob.getWJobMergeItem(jobList);
+  }
+
+  @Test
+  public void jobStatusTest(){
+    JobStatus jobStatus = JobStatus.getJobStatus("I");
+    System.out.println(
+            jobStatus.equals(JobStatus.Pending));
+    System.out.println(
+            jobStatus.equals(JobStatus.Invalid));
   }
 
 }
