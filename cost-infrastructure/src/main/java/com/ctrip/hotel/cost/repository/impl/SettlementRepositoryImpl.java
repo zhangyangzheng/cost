@@ -1,24 +1,21 @@
 package com.ctrip.hotel.cost.repository.impl;
 
+import com.ctrip.hotel.cost.client.SettlementClient;
+import com.ctrip.hotel.cost.common.util.I18NMessageUtil;
 import com.ctrip.hotel.cost.domain.data.model.*;
 import com.ctrip.hotel.cost.domain.settlement.ChannelType;
 import com.ctrip.hotel.cost.domain.settlement.SettlementItemName;
-import com.ctrip.hotel.cost.client.SettlementClient;
 import com.ctrip.hotel.cost.mapper.SettlementDataMapper;
 import com.ctrip.hotel.cost.model.dto.CancelOrderDto;
 import com.ctrip.hotel.cost.model.dto.SettlementApplyListDto;
 import com.ctrip.hotel.cost.model.dto.SettlementCancelListDto;
 import com.ctrip.hotel.cost.model.dto.SettlementPayDataReceiveDto;
-import com.ctrip.hotel.cost.common.util.I18NMessageUtil;
 import com.ctrip.hotel.cost.repository.SettlementRepository;
 import com.ctrip.soa.hotel.settlement.api.CancelDataItem;
 import com.ctrip.soa.hotel.settlement.api.CancelSettleData;
 import com.ctrip.soa.hotel.settlement.api.DataItem;
 import com.ctrip.soa.hotel.settlement.api.SettleDataRequest;
-import hotel.settlement.common.BigDecimalHelper;
-import hotel.settlement.common.ConvertHelper;
-import hotel.settlement.common.DateHelper;
-import hotel.settlement.common.QConfigHelper;
+import hotel.settlement.common.*;
 import hotel.settlement.common.helpers.DefaultValueHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -283,7 +280,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
         if (DefaultValueHelper.getValue(auditRoomBasicInfo.getFgid()) > 0) {
             requestData.setOutSettlementNo("FG-" + auditRoomBasicInfo.getFgid());
         } else {
-            new Exception("tmp stage fgId should greater than zero");
+            throw new Exception("tmp stage fgId should greater than zero");
         }
 
         requestData.setProductCode(
@@ -364,19 +361,45 @@ public class SettlementRepositoryImpl implements SettlementRepository {
 
         Item = new DataItem();
         Item.setDataKey("PriceAmount");
-        Item.setDataValue(
-                auditOrderInfoBO.getPriceAmount() == null
-                        ? ""
-                        : auditOrderInfoBO.getPriceAmount().toString());
+        if (auditOrderInfoBO.getOrderBasicInfo().getVendorChannelID() != null
+                && auditOrderInfoBO.getOrderBasicInfo().getVendorChannelID() > 0
+                && auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo() != null
+                && hotel.settlement.common.helpers.BigDecimalHelper.compareTo(
+                        auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getActualAmount(), auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getActualCost()
+                        ) > 0
+        ) {
+            Item.setDataValue(
+                    auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getActualAmount() == null
+                            ? ""
+                            : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getActualAmount().toString());
+        } else {
+            Item.setDataValue(
+                    auditOrderInfoBO.getPriceAmount() == null
+                            ? ""
+                            : auditOrderInfoBO.getPriceAmount().toString());
+        }
         Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.7"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("CostAmount");
-        Item.setDataValue(
-                auditOrderInfoBO.getCostAmount() == null
-                        ? ""
-                        : auditOrderInfoBO.getCostAmount().toString());
+        if (auditOrderInfoBO.getOrderBasicInfo().getVendorChannelID() != null
+                && auditOrderInfoBO.getOrderBasicInfo().getVendorChannelID() > 0
+                && auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo() != null
+                && hotel.settlement.common.helpers.BigDecimalHelper.compareTo(
+                auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getActualAmount(), auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getActualCost()
+        ) > 0
+        ) {
+            Item.setDataValue(
+                    auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getActualCost() == null
+                            ? ""
+                            : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getActualCost().toString());
+        } else {
+            Item.setDataValue(
+                    auditOrderInfoBO.getCostAmount() == null
+                            ? ""
+                            : auditOrderInfoBO.getCostAmount().toString());
+        }
         Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.8"));
         requestData.getDataItems().add(Item);
 
@@ -535,9 +558,9 @@ public class SettlementRepositoryImpl implements SettlementRepository {
         Item = new DataItem();
         Item.setDataKey("HotelConfirmStatus");
         Item.setDataValue(
-                auditRoomOtherInfo.getHotelConfirmStatus() == null
-                        ? "0"
-                        : auditRoomOtherInfo.getHotelConfirmStatus().toString());
+                auditRoomOtherInfo != null && auditRoomOtherInfo.getHotelConfirmStatus() != null
+                        ? auditRoomOtherInfo.getHotelConfirmStatus().toString()
+                        : "0");
         Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.29"));
         requestData.getDataItems().add(Item);
 
@@ -847,7 +870,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                             ? "HWP-" + String.valueOf(FGID)
                             : "RFD-" + String.valueOf(FGID));
         } else {
-            new Exception("tmp stage fgId should greater than zero");
+            throw new Exception("tmp stage fgId should greater than zero");
         }
 
         if ("U".equals(orderAuditFgMqBO.getOpType())) {
