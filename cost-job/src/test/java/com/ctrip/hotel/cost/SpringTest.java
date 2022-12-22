@@ -18,6 +18,7 @@ import com.ctrip.hotel.cost.job.FGNotifySettlementJob;
 import com.ctrip.soa.hotel.settlement.api.CancelSettleData;
 import com.ctrip.soa.hotel.settlement.api.SettleDataRequest;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = CostJobApplication.class) // 使用junit4进行测试
+@Ignore
 public class SpringTest {
 
   @Autowired
