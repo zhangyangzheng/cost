@@ -592,7 +592,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
         Item.setDataKey("AdjustAmount");
         Item.setDataValue(
                 auditRoomOtherInfo.getAdjustCommission() == null
-                        ? "0"
+                        ? "0.0000"
                         : auditRoomOtherInfo.getAdjustCommission().toString());
         Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.35"));
         requestData.getDataItems().add(Item);
@@ -934,7 +934,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
         Item.setDataKey("OtherCost");
         Item.setDataValue(
                 auditRoomOtherInfo.getOtherCost() == null
-                        ? "0"
+                        ? "0.0000"
                         : auditRoomOtherInfo.getOtherCost().toString());
         Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.67"));
         requestData.getDataItems().add(Item);
