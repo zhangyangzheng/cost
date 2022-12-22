@@ -22,11 +22,6 @@
             <artifactId>cost-domain</artifactId>
             <version>${project.version}</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.ctrip.hotel</groupId>-->
-<!--            <artifactId>cost-infrastructure</artifactId>-->
-<!--            <version>${project.version}</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
