@@ -614,9 +614,9 @@ public class SettlementRepositoryImpl implements SettlementRepository {
         Item = new DataItem();
         Item.setDataKey("AdjustAmount");
         Item.setDataValue(
-                auditRoomOtherInfo.getAdjustCommission() == null
-                        ? "0.0000"
-                        : auditRoomOtherInfo.getAdjustCommission().toString());
+                auditRoomOtherInfo != null && auditRoomOtherInfo.getAdjustCommission() != null
+                        ? auditRoomOtherInfo.getAdjustCommission().toString()
+                        : "0.0000");
         Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.35"));
         requestData.getDataItems().add(Item);
 
@@ -931,19 +931,45 @@ public class SettlementRepositoryImpl implements SettlementRepository {
 
         Item = new DataItem();
         Item.setDataKey("Amount");
-        Item.setDataValue(
-                auditOrderInfoBO.getPriceAmount() == null
-                        ? ""
-                        : auditOrderInfoBO.getPriceAmount().toString());
+        if (auditOrderInfoBO.getOrderBasicInfo().getVendorChannelID() != null
+                && auditOrderInfoBO.getOrderBasicInfo().getVendorChannelID() > 0
+                && auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo() != null
+                && hotel.settlement.common.helpers.BigDecimalHelper.compareTo(
+                auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getActualAmount(), auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getActualCost()
+        ) > 0
+        ) {
+            Item.setDataValue(
+                    auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getActualAmount() == null
+                            ? ""
+                            : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getActualAmount().toString());
+        } else {
+            Item.setDataValue(
+                    auditOrderInfoBO.getPriceAmount() == null
+                            ? ""
+                            : auditOrderInfoBO.getPriceAmount().toString());
+        }
         Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.64"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("Cost");
-        Item.setDataValue(
-                auditOrderInfoBO.getCostAmount() == null
-                        ? ""
-                        : auditOrderInfoBO.getCostAmount().toString());
+        if (auditOrderInfoBO.getOrderBasicInfo().getVendorChannelID() != null
+                && auditOrderInfoBO.getOrderBasicInfo().getVendorChannelID() > 0
+                && auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo() != null
+                && hotel.settlement.common.helpers.BigDecimalHelper.compareTo(
+                auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getActualAmount(), auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getActualCost()
+        ) > 0
+        ) {
+            Item.setDataValue(
+                    auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getActualCost() == null
+                            ? ""
+                            : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getActualCost().toString());
+        } else {
+            Item.setDataValue(
+                    auditOrderInfoBO.getCostAmount() == null
+                            ? ""
+                            : auditOrderInfoBO.getCostAmount().toString());
+        }
         Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.65"));
         requestData.getDataItems().add(Item);
 
