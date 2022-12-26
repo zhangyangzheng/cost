@@ -12,6 +12,7 @@ import hotel.settlement.common.ListHelper;
 import hotel.settlement.common.LogHelper;
 import hotel.settlement.common.QConfigHelper;
 import hotel.settlement.common.beans.BeanHelper;
+import hotel.settlement.common.json.JsonUtils;
 import hotel.settlement.common.tuples.Tuple;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.SettleCallbackInfoTiDBGen;
@@ -317,7 +318,7 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
   protected List<OrderAuditFgMqTiDBGen> getPending(List<Integer> sliceIndexList) throws Exception {
     Integer minBetween =
         Integer.parseInt(
-            QConfigHelper.getSwitchConfigByKey("fgNotifySettlementJobMinuteBetween", "-1"));
+            QConfigHelper.getSwitchConfigByKey("fgNotifySettlementJobMinuteBetween", "30"));
     Integer count =
         Integer.parseInt(
             QConfigHelper.getSwitchConfigByKey("fgNotifySettlementJobBatchSize", "100"));
@@ -371,11 +372,16 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
         throwSettleList.stream()
             .filter(p -> successReferenceIdSet.contains(p.getReferenceId()))
             .collect(Collectors.toList());
+
+    LogHelper.logInfo("FGNotifySettlementJobSuccess", JsonUtils.beanToJson(successJobList));
+
     // 失败列表
     List<OrderAuditFgMqTiDBGen> failJobList =
         throwSettleList.stream()
             .filter(p -> !successReferenceIdSet.contains(p.getReferenceId()))
             .collect(Collectors.toList());
+
+    LogHelper.logError("FGNotifySettlementJobFail", JsonUtils.beanToJson(failJobList));
 
     // 批量设置不需要处理的Job为执行成功
     processDoneAllJobList(setSuccessStatusList);

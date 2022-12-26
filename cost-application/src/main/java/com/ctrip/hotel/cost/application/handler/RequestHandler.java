@@ -109,6 +109,7 @@ public class RequestHandler implements HandlerApi{
             // clear threadlocal
             ThreadLocalCostHolder.getTTL().remove();
         }
+        LogHelper.logInfo("auditOrderFg", "success ids：" + JSON.toJSONString(successes));
         return successes;
     }
 
