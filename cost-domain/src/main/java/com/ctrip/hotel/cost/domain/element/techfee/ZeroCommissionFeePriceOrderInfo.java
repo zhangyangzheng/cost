@@ -44,7 +44,7 @@ public class ZeroCommissionFeePriceOrderInfo implements ZeroCommissionFeePrice {
 
     @Override
     public String costItemName() {
-        return CostItemType.ADJUST_COMMISSION_FG.getCostItemName();
+        return CostItemType.ZERO_COMMISSION_FEE_PRICE_FG.getCostItemName();
     }
 
     @Override
@@ -59,7 +59,7 @@ public class ZeroCommissionFeePriceOrderInfo implements ZeroCommissionFeePrice {
 
     @Override
     public String formula() {
-        return QConfigHelper.getSwitchConfigByKey(CostItemType.ADJUST_COMMISSION_FG.getFormulaQConfigKey(), CostItemType.ADJUST_COMMISSION_FG.getFormula());
+        return QConfigHelper.getSwitchConfigByKey(CostItemType.ZERO_COMMISSION_FEE_PRICE_FG.getFormulaQConfigKey(), CostItemType.ADJUST_COMMISSION_FG.getFormula());
     }
 
     @Override
