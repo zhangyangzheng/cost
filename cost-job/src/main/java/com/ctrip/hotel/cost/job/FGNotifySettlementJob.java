@@ -318,7 +318,7 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
   protected List<OrderAuditFgMqTiDBGen> getPending(List<Integer> sliceIndexList) throws Exception {
     Integer minBetween =
         Integer.parseInt(
-            QConfigHelper.getSwitchConfigByKey("fgNotifySettlementJobMinuteBetween", "-1"));
+            QConfigHelper.getSwitchConfigByKey("fgNotifySettlementJobMinuteBetween", "30"));
     Integer count =
         Integer.parseInt(
             QConfigHelper.getSwitchConfigByKey("fgNotifySettlementJobBatchSize", "100"));
