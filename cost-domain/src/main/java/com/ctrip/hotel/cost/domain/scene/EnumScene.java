@@ -26,7 +26,7 @@ public enum EnumScene {
                     CostItemType.ZERO_COMMISSION_FEE_PRICE_FG,
                     CostItemType.CASH_BACK_PROMOTION_SELLING_PRICE_FG,
                     CostItemType.CASH_BACK_PROMOTION_COST_PRICE_FG),
-            I18NMessageUtil.getMessage("EnumScene.name.1")
+            "audit normal mode"
     ),
 
     ;
