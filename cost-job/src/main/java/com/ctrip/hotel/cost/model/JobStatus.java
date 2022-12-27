@@ -4,10 +4,10 @@ import com.ctrip.hotel.cost.common.util.I18NMessageUtil;
 
 public enum JobStatus {
 
-    Pending("W", I18NMessageUtil.getMessage("JobStatus.desc.1")),
-    Success("T", I18NMessageUtil.getMessage("JobStatus.desc.2")),
-    Fail("F", I18NMessageUtil.getMessage("JobStatus.desc.3")),
-    Invalid("I", I18NMessageUtil.getMessage("JobStatus.desc.4"));
+    Pending("W", "To be executed"),
+    Success("T", "Successful execution"),
+    Fail("F", "Failed to execute"),
+    Invalid("I", "Invalid data");
 
     String value;
     String desc;
