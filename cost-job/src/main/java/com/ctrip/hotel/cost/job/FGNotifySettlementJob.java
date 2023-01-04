@@ -373,15 +373,17 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
             .filter(p -> successReferenceIdSet.contains(p.getReferenceId()))
             .collect(Collectors.toList());
 
-    LogHelper.logInfo("FGNotifySettlementJobSuccess", JsonUtils.beanToJson(successJobList));
-
     // 失败列表
     List<OrderAuditFgMqTiDBGen> failJobList =
         throwSettleList.stream()
             .filter(p -> !successReferenceIdSet.contains(p.getReferenceId()))
             .collect(Collectors.toList());
 
-    LogHelper.logError("FGNotifySettlementJobFail", JsonUtils.beanToJson(failJobList));
+    LogHelper.logInfo("FGNotifySettlementJobSuccess", JsonUtils.beanToJson(successJobList));
+
+    if (!ListHelper.isEmpty(failJobList)) {
+      LogHelper.logWarn("FGNotifySettlementJobFail", JsonUtils.beanToJson(failJobList));
+    }
 
     // 批量设置不需要处理的Job为执行成功
     processDoneAllJobList(setSuccessStatusList);

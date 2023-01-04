@@ -334,7 +334,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                 orderBasicInfo.getEta() == null
                         ? ""
                         : DateHelper.formatDate(
-                        new Timestamp(orderBasicInfo.getEta().getTimeInMillis()),
+                        new Timestamp(auditRoomBasicInfo.getEta().getTimeInMillis()),
                         DateHelper.SIMIPLE_DATE_FORMAT_STR));
         Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.4"));
         requestData.getDataItems().add(Item);
