@@ -150,6 +150,7 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
       Identify identify) throws Exception {
     List<OrderAuditFgMqTiDBGen> orderAuditFgMqTiDBGenList =
         orderAuditFgMqRepository.getJobsByOrderIdAndFgId(identify.orderId, identify.fgId);
+    LogHelper.logInfo("FGNotifySettlementJobGetIdentifyAllJobs", JsonUtils.beanToJson(orderAuditFgMqTiDBGenList));
     JobStatusStatistics jobStatusStatistics = getJobStatusStatistics(orderAuditFgMqTiDBGenList);
     return new Tuple<>(jobStatusStatistics, orderAuditFgMqTiDBGenList);
   }
@@ -178,6 +179,15 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
               job.setJobStatus(JobStatus.Success.getValue());
               job.setRemark(I18NMessageUtil.getMessage("FGNotifySettlementJob.Remark.3"));
             });
+    orderAuditFgMqRepository.batchUpdate(jobList);
+  }
+
+  protected void processDoNothingJobList(List<OrderAuditFgMqTiDBGen> jobList) throws Exception {
+    jobList.stream()
+            .forEach(
+                    job -> {
+                      job.setRemark(I18NMessageUtil.getMessage("FGNotifySettlementJob.Remark.7"));
+                    });
     orderAuditFgMqRepository.batchUpdate(jobList);
   }
 
@@ -263,6 +273,7 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
 
   protected Set<Identify> getPendingIdentify(List<Integer> sliceIndexList) throws Exception {
     List<OrderAuditFgMqTiDBGen> pendingJobs = getPending(sliceIndexList);
+    LogHelper.logInfo("FGNotifySettlementJobGetPendingJobs", JsonUtils.beanToJson(pendingJobs));
     Set<Identify> identifySet =
         pendingJobs.stream()
             .map(p -> new Identify(p.getOrderId(), p.getFgId()))
@@ -335,6 +346,8 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     List<OrderAuditFgMqTiDBGen> throwSettleList = new ArrayList<>();
     // 批量设置成功执行状态列表
     List<OrderAuditFgMqTiDBGen> setSuccessStatusList = new ArrayList<>();
+    // 等待列表
+    List<OrderAuditFgMqTiDBGen> doNothingList = new ArrayList<>();
     // 获取待执行的单子标识
     Set<Identify> identifySet = getPendingIdentify(sliceIndexList);
 
@@ -358,10 +371,18 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
         throwSettleList.add(leaderJob);
       } else if (processMethod.equals(ProcessPendingJobMethod.DoneAll)) {
         setSuccessStatusList.addAll(identityJobList);
+      } else if (processMethod.equals(ProcessPendingJobMethod.DoNothing)) {
+        doNothingList.addAll(identityJobList);
       }
     }
 
     List<AuditOrderFgReqDTO> throwSettleDtoList = getAuditOrderFgReqDTOList(throwSettleList);
+
+    LogHelper.logInfo("FGNotifySettlementJobThrowSettleDtoList", JsonUtils.beanToJson(throwSettleDtoList));
+
+    LogHelper.logInfo("FGNotifySettlementJobDoneAllList", JsonUtils.beanToJson(setSuccessStatusList));
+
+    LogHelper.logInfo("FGNotifySettlementJobDoNothingList", JsonUtils.beanToJson(doNothingList));
 
     List<String> successReferenceList = handlerApi.auditOrderFg(throwSettleDtoList);
 
@@ -387,6 +408,8 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
 
     // 批量设置不需要处理的Job为执行成功
     processDoneAllJobList(setSuccessStatusList);
+    // 批量设置 remark： 等待其他单到达后执行
+    processDoNothingJobList(doNothingList);
     // 处理成功列表
     processSuccessJobList(successJobList, identifyWJobMergeItemMap, identifyJobListMap);
     // 处理失败列表
