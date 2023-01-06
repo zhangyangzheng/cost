@@ -172,10 +172,24 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     return ProcessPendingJobMethod.ThrowSettle;
   }
 
+  // 获取合并后的job 被合并的job 拼为一个对象返回
+  public WJobMergeItem getWJobMergeItem(List<OrderAuditFgMqTiDBGen> jobList) {
+    List<OrderAuditFgMqTiDBGen> wJobList =
+            jobList.stream()
+                    .filter(p -> JobStatus.Pending.getValue().equals(p.getJobStatus()))
+                    .map(p -> BeanHelper.convert(p, OrderAuditFgMqTiDBGen.class))
+                    .sorted(
+                            (o1, o2) -> opTypePriority.get(o2.getOpType()) - opTypePriority.get(o1.getOpType()))
+                    .collect(Collectors.toList());
+    OrderAuditFgMqTiDBGen mergedJob = wJobList.remove(0);
+    return new WJobMergeItem(mergedJob, wJobList);
+  }
+
   protected void processDoneAllJobList(List<OrderAuditFgMqTiDBGen> jobList) throws Exception {
     jobList.stream()
         .forEach(
             job -> {
+              job.setExecCount(Optional.ofNullable(job.getExecCount()).orElse(0) + 1);
               job.setJobStatus(JobStatus.Success.getValue());
               job.setRemark(I18NMessageUtil.getMessage("FGNotifySettlementJob.Remark.3"));
             });
@@ -186,22 +200,10 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     jobList.stream()
             .forEach(
                     job -> {
+                      job.setExecCount(Optional.ofNullable(job.getExecCount()).orElse(0) + 1);
                       job.setRemark(I18NMessageUtil.getMessage("FGNotifySettlementJob.Remark.7"));
                     });
     orderAuditFgMqRepository.batchUpdate(jobList);
-  }
-
-  // 获取合并后的job 被合并的job 拼为一个对象返回
-  public WJobMergeItem getWJobMergeItem(List<OrderAuditFgMqTiDBGen> jobList) {
-    List<OrderAuditFgMqTiDBGen> wJobList =
-        jobList.stream()
-            .filter(p -> JobStatus.Pending.getValue().equals(p.getJobStatus()))
-            .map(p -> BeanHelper.convert(p, OrderAuditFgMqTiDBGen.class))
-            .sorted(
-                (o1, o2) -> opTypePriority.get(o2.getOpType()) - opTypePriority.get(o1.getOpType()))
-            .collect(Collectors.toList());
-    OrderAuditFgMqTiDBGen mergedJob = wJobList.remove(0);
-    return new WJobMergeItem(mergedJob, wJobList);
   }
 
   protected void processSuccessJobList(
