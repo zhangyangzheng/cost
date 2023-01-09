@@ -1,6 +1,4 @@
-package com.ctrip.hotel.cost.model;
-
-import com.ctrip.hotel.cost.common.util.I18NMessageUtil;
+package com.ctrip.hotel.cost.model.bizenum;
 
 public enum JobStatus {
 

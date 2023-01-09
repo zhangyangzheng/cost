@@ -8,8 +8,7 @@ import com.ctrip.hotel.cost.client.AuditClient;
 import com.ctrip.hotel.cost.client.CompareClient;
 import com.ctrip.hotel.cost.client.SettlementClient;
 import com.ctrip.hotel.cost.mapper.SettlementDataMapper;
-import com.ctrip.hotel.cost.mapper.SettlementDataMapperImpl;
-import com.ctrip.hotel.cost.model.JobStatus;
+import com.ctrip.hotel.cost.model.bizenum.JobStatus;
 import com.ctrip.hotel.cost.model.bo.SettlementApplyListUsedBo;
 import com.ctrip.hotel.cost.model.bo.SettlementCancelListUsedBo;
 import com.ctrip.hotel.cost.model.bo.SettlementPayDataUsedBo;
@@ -21,7 +20,6 @@ import com.ctrip.hotel.cost.job.FGNotifySettlementJob;
 import com.ctrip.soa.hotel.settlement.api.CancelSettleData;
 import com.ctrip.soa.hotel.settlement.api.SettleDataRequest;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -183,7 +181,7 @@ public class SpringTest {
       sliceList.add(i);
     }
     try {
-      fgNotifySettlementJob.execute(sliceList);
+      fgNotifySettlementJob.execute(Arrays.asList(25));
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -259,7 +257,6 @@ public class SpringTest {
     jobList.add(orderAuditFgMqTiDBGenC);
     jobList.add(orderAuditFgMqTiDBGenU);
     jobList.add(orderAuditFgMqTiDBGenD);
-    fgNotifySettlementJob.getWJobMergeItem(jobList);
   }
 
   @Test

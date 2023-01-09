@@ -1,4 +1,4 @@
-package com.ctrip.hotel.cost.model;
+package com.ctrip.hotel.cost.model.bizenum;
 
 import org.apache.commons.lang3.StringUtils;
 
