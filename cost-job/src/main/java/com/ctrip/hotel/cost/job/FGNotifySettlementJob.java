@@ -214,7 +214,7 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     List<OrderAuditFgMqTiDBGen> allSuccessJobList = new ArrayList<>();
     for (OrderAuditFgMqTiDBGen job : successJobList) {
       Identify identity = new Identify(job.getOrderId(), job.getFgId());
-      if ("D".equals(job.getOpType())) {
+      if (OpType.Delete.getValue().equals(job.getOpType())) {
         // 不会发生取不到的情况
         List<OrderAuditFgMqTiDBGen> identityJobList = identifyJobListMap.get(identity);
         // 设置所有单remark
