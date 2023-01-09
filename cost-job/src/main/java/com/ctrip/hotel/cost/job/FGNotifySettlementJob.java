@@ -157,7 +157,6 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     List<OrderAuditFgMqTiDBGen> orderAuditFgMqTiDBGenList =
             orderAuditFgMqRepository.getJobsByOrderIdAndFgId(identify.orderId, identify.fgId);
     List<FgOrderAuditMqDataBo> fgOrderAuditMqDataBoList = getFgOrderAuditMqDataBoList(orderAuditFgMqTiDBGenList);
-    LogHelper.logInfo("FGNotifySettlementJobGetIdentifyAllJobs", JsonUtils.beanToJson(fgOrderAuditMqDataBoList));
     return fgOrderAuditMqDataBoList;
   }
 

@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class FgThrowStrategy {
+public class FgThrowStrategy extends ThrowStrategy {
 
   static final Map<String, Integer> opTypePriority;
 
@@ -98,6 +98,7 @@ public class FgThrowStrategy {
     return wJobMergeItem;
   }
 
+  @Override
   public ProcessJobMethod getProcessMethod() {
     FgOrderAuditMqDataBo leaderJob = wJobMergeItem.leader;
     // 已经有成功执行的删除单 不管啥单子 都设置全部完成
