@@ -4,7 +4,7 @@ import com.ctrip.hotel.cost.application.handler.HandlerApi;
 import com.ctrip.hotel.cost.application.model.vo.AuditOrderFgReqDTO;
 import com.ctrip.hotel.cost.domain.data.model.OrderAuditFgMqBO;
 import com.ctrip.hotel.cost.domain.data.model.SettlementCallBackInfo;
-import com.ctrip.hotel.cost.model.JobStatus;
+import com.ctrip.hotel.cost.model.*;
 import com.ctrip.hotel.cost.repository.OrderAuditFgMqRepository;
 import com.ctrip.hotel.cost.repository.SettleCallbackInfoRepository;
 import com.ctrip.hotel.cost.common.util.I18NMessageUtil;
@@ -98,9 +98,9 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
 
   static {
     opTypePriority = new HashMap<>();
-    opTypePriority.put("D", 3);
-    opTypePriority.put("C", 2);
-    opTypePriority.put("U", 1);
+    opTypePriority.put(OpType.Delete.getValue(), 3);
+    opTypePriority.put(OpType.Create.getValue(), 2);
+    opTypePriority.put(OpType.Update.getValue(), 1);
   }
 
   @Autowired OrderAuditFgMqRepository orderAuditFgMqRepository;
@@ -117,23 +117,23 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
       for (OrderAuditFgMqTiDBGen orderAuditFgMqTiDBGen : orderAuditFgMqTiDBGenList) {
         JobStatus jobStatus = JobStatus.getJobStatus(orderAuditFgMqTiDBGen.getJobStatus());
         String opType = orderAuditFgMqTiDBGen.getOpType();
-        if (JobStatus.Pending.equals(jobStatus) && "C".equals(opType)) {
+        if (JobStatus.Pending.equals(jobStatus) && OpType.Create.getValue().equals(opType)) {
           jobStatusStatistics.wCreateCount++;
-        } else if (JobStatus.Pending.equals(jobStatus) && "U".equals(opType)) {
+        } else if (JobStatus.Pending.equals(jobStatus) && OpType.Update.getValue().equals(opType)) {
           jobStatusStatistics.wUpdateCount++;
-        } else if (JobStatus.Pending.equals(jobStatus) && "D".equals(opType)) {
+        } else if (JobStatus.Pending.equals(jobStatus) && OpType.Delete.getValue().equals(opType)) {
           jobStatusStatistics.wDeleteCount++;
-        } else if (JobStatus.Success.equals(jobStatus) && "C".equals(opType)) {
+        } else if (JobStatus.Success.equals(jobStatus) && OpType.Create.getValue().equals(opType)) {
           jobStatusStatistics.tCreateCount++;
-        } else if (JobStatus.Success.equals(jobStatus) && "U".equals(opType)) {
+        } else if (JobStatus.Success.equals(jobStatus) && OpType.Update.getValue().equals(opType)) {
           jobStatusStatistics.tUpdateCount++;
-        } else if (JobStatus.Success.equals(jobStatus) && "D".equals(opType)) {
+        } else if (JobStatus.Success.equals(jobStatus) && OpType.Delete.getValue().equals(opType)) {
           jobStatusStatistics.tDeleteCount++;
-        } else if (JobStatus.Fail.equals(jobStatus) && "C".equals(opType)) {
+        } else if (JobStatus.Fail.equals(jobStatus) && OpType.Create.getValue().equals(opType)) {
           jobStatusStatistics.fCreateCount++;
-        } else if (JobStatus.Fail.equals(jobStatus) && "U".equals(opType)) {
+        } else if (JobStatus.Fail.equals(jobStatus) && OpType.Update.getValue().equals(opType)) {
           jobStatusStatistics.fUpdateCount++;
-        } else if (JobStatus.Fail.equals(jobStatus) && "D".equals(opType)) {
+        } else if (JobStatus.Fail.equals(jobStatus) && OpType.Delete.getValue().equals(opType)) {
           jobStatusStatistics.fDeleteCount++;
         } else {
           LogHelper.logError(
@@ -161,11 +161,11 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
     // 或
     // 为删除单 没有已经成功抛出的创建单修改单 就设置全部成功
     if (jobStatusStatistics.tDeleteCount > 0
-        || ("D".equals(tmpJob.getOpType()) && jobStatusStatistics.getTCreateAndUpdateCount() == 0)) {
+        || (OpType.Delete.getValue().equals(tmpJob.getOpType()) && jobStatusStatistics.getTCreateAndUpdateCount() == 0)) {
       return ProcessPendingJobMethod.DoneAll;
     }
     // 为修改单 且创建单还没执行
-    if ("U".equals(tmpJob.getOpType()) && jobStatusStatistics.tCreateCount == 0) {
+    if (OpType.Update.getValue().equals(tmpJob.getOpType()) && jobStatusStatistics.tCreateCount == 0) {
       return ProcessPendingJobMethod.DoNothing;
     }
     // 其他情况抛结算

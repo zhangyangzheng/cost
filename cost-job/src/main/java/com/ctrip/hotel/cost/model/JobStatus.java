@@ -21,16 +21,8 @@ public enum JobStatus {
         return value;
     }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
-
     public String getDesc() {
         return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
     }
 
     public static JobStatus getJobStatus(String value){
