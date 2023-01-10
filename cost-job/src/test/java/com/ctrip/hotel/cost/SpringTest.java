@@ -285,15 +285,21 @@ public class SpringTest {
     auditOrderInfoBO.setOrderBasicInfo(orderBasicInfo);
     auditOrderInfoBO.setAuditRoomInfoList(Arrays.asList(auditRoomInfo));
 
+    OutTimeDeductInfo outTimeDeductInfo = new OutTimeDeductInfo();
+    auditOrderInfoBO.setOutTimeDeductInfo(outTimeDeductInfo);
+    auditOrderInfoBO.setGuaranteeInfo(new GuaranteeInfo());
+
+    auditOrderInfoBO.setFlashOrderInfo(new FlashOrderInfo());
+
     HotelBasicInfo hotelBasicInfo = new HotelBasicInfo();
     hotelBasicInfo.setOperatMode("S");
     auditOrderInfoBO.setHotelBasicInfo(hotelBasicInfo);
 
-    SettleDataRequest settleDataRequest = settlementDataMapper.newOrderToSettlementApplyList(auditOrderInfoBO);
+    // SettleDataRequest settleDataRequest = settlementDataMapper.newOrderToSettlementApplyList(auditOrderInfoBO);
 
     SettlementPayData settlementPayData = settlementDataMapper.newOrderToSettlementPayDataReceive(auditOrderInfoBO);
 
-   System.out.println(settleDataRequest);
+    System.out.println(settlementPayData);
   }
 
 }

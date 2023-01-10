@@ -132,7 +132,7 @@ public interface SettlementDataMapper {
     @Mapping(target = "guaranteeWay", expression = "java( DefaultValueHelper.getValue(auditOrderInfoBO.getGuaranteeInfo().getGuaranteeWay()) )")
     @Mapping(target = "allNeedGuarantee", expression = "java( DefaultValueHelper.getValue(auditOrderInfoBO.getGuaranteeInfo().getAllNeedGuarantee()) )")
     @Mapping(target = "walletPay", expression = "java( DefaultValueHelper.getValue(auditOrderInfoBO.getFlashOrderInfo().getIsFlashOrder()) )")
-    @Mapping(target = "outTimeDeductType", expression = "java( DefaultValueHelper.getValue(auditOrderInfoBO.getOutTimeDeductInfo().getOutTimeDeductType().toString()) )")
+    @Mapping(target = "outTimeDeductType", expression = "java( DefaultValueHelper.getValue(auditOrderInfoBO.getOutTimeDeductInfo().getOutTimeDeductType() == null ? \"\" : auditOrderInfoBO.getOutTimeDeductInfo().getOutTimeDeductType().toString()) )")
     @Mapping(target = "outTimeDeductValue", expression = "java( auditOrderInfoBO.getOutTimeDeductInfo().getOutTimeDeductValue() == null ? \"\" : auditOrderInfoBO.getOutTimeDeductInfo().getOutTimeDeductValue().toString() )")
     @Mapping(target = "zeroCommissionDeductRate", expression = "java( DefaultValueHelper.getValue(auditOrderInfoBO.getTechFeeInfo().getZeroCommissionFeeRatio()) )")
     @Mapping(target = "orderchannel", expression = "java( Hotelorderchannel.hfg )")
