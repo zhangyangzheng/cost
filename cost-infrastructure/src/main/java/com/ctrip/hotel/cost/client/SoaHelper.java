@@ -8,6 +8,7 @@ import com.dianping.cat.message.Transaction;
 import com.google.common.base.Stopwatch;
 import hotel.settlement.common.LogHelper;
 import hotel.settlement.common.QConfigHelper;
+import hotel.settlement.common.json.JsonUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
@@ -67,6 +68,8 @@ public class SoaHelper {
       try {
         LogHelper.logInfoES(
             requestType, watch.stop().elapsed(TimeUnit.MILLISECONDS), request, response);
+        ThreadLocalCostHolder.allLinkTracingLog(requestType + ":" + JsonUtils.beanToJson(request), LogLevel.INFO);
+        ThreadLocalCostHolder.allLinkTracingLog(requestType + ":" + JsonUtils.beanToJson(response), LogLevel.INFO);
       } catch (Exception ex) {
       }
       soaTransaction.complete();

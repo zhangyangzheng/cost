@@ -47,7 +47,6 @@ public interface SettlementDataMapper {
     @Mapping(target = "bidFlag", expression = "java( auditOrderInfoBO.getBidPrice() != null ? new String(\"T\") : null )")
     @Mapping(target = "settlementid", source = "auditOrderInfoBO.settlementCallBackInfo.settlementId")
     @Mapping(target = "clientOrderId", source = "cusOrderId", defaultValue = "")
-    @Mapping(target = "currency", source = "auditOrderInfoBO.orderBasicInfo.currency", defaultValue = "")
     @Mapping(target = "orderDate", source = "auditOrderInfoBO.orderBasicInfo.orderDate")
     @Mapping(target = "vendorChannelId", source = "auditOrderInfoBO.orderBasicInfo.vendorChannelID", defaultValue = "")
     @Mapping(target = "groupOrderClass", source = "auditOrderInfoBO.orderBasicInfo.groupOrderClass", defaultValue = "")
@@ -120,6 +119,12 @@ public interface SettlementDataMapper {
             "&& auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getSettlementBatchID() != null " +
             "? auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getSettlementBatchID().intValue() : 0" +
             ")")
+    @Mapping(target = "currency", expression =
+            "java((auditOrderInfoBO.getOrderBasicInfo().getVendorChannelID() != null " +
+                    "&& auditOrderInfoBO.getOrderBasicInfo().getVendorChannelID() > 0 " +
+                    "&& auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo() != null" +
+                    "&& auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getPayCurrency() != null) ? " +
+                    "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getPayCurrency() : auditOrderInfoBO.getOrderBasicInfo().getCurrency())")
     @Mapping(target = "hotelID", source = "auditOrderInfoBO.hotelBasicInfo.hotel", defaultValue = "0")
     @Mapping(target = "companyId", source = "auditOrderInfoBO.hotelBasicInfo.hotel", defaultValue = "")
     @Mapping(target = "isRapidSettlement", expression = "java( auditOrderInfoBO.getHotelBasicInfo().getOperatMode() == null || !auditOrderInfoBO.getHotelBasicInfo().getOperatMode().equals(\"S\") ? new String(\"F\") : new String(\"T\") )")
@@ -188,12 +193,22 @@ public interface SettlementDataMapper {
     @Mapping(target = "sourceId", expression = "java( new String(\"6\") )")
 //    @Mapping(target = "channelType", expression = "java( ChannelType.FGID.name() )")
 
-    @Mapping(target = "settlementId", source = "auditOrderInfoBO.settlementCallBackInfo.settlementId")// todo 修改单传这个，取消单不传
-    @Mapping(target = "orderId", source = "orderId", defaultValue = "")
-    @Mapping(target = "currency", source = "auditOrderInfoBO.orderBasicInfo.currency", defaultValue = "")
-    @Mapping(target = "orderDate", source = "auditOrderInfoBO.orderBasicInfo.orderDate")
-
-    @Mapping(target = "companyID", source = "auditOrderInfoBO.hotelBasicInfo.hotel", defaultValue = "")
+  @Mapping(
+      target = "settlementId",
+      source = "auditOrderInfoBO.settlementCallBackInfo.settlementId") // todo 修改单传这个，取消单不传
+  @Mapping(target = "orderId", source = "orderId", defaultValue = "")
+  @Mapping(
+      target = "currency", expression =
+          "java((auditOrderInfoBO.getOrderBasicInfo().getVendorChannelID() != null " +
+                  "&& auditOrderInfoBO.getOrderBasicInfo().getVendorChannelID() > 0 " +
+                  "&& auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo() != null" +
+                  "&& auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getPayCurrency() != null) ? " +
+                  "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getPayCurrency() : auditOrderInfoBO.getOrderBasicInfo().getCurrency())")
+  @Mapping(target = "orderDate", source = "auditOrderInfoBO.orderBasicInfo.orderDate")
+  @Mapping(
+      target = "companyID",
+      source = "auditOrderInfoBO.hotelBasicInfo.hotel",
+      defaultValue = "")
 
 //    @Mapping(target = "roomName", expression = "java( " +
 //            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getRoomName() == null ? new String(\"\") : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getRoomName() " +

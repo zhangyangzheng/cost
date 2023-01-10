@@ -3,11 +3,12 @@ package com.ctrip.hotel.cost;
 import com.alibaba.fastjson.JSON;
 import com.ctrip.hotel.cost.application.handler.HandlerApi;
 import com.ctrip.hotel.cost.common.ThreadLocalCostHolder;
-import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
+import com.ctrip.hotel.cost.domain.data.model.*;
 import com.ctrip.hotel.cost.client.AuditClient;
 import com.ctrip.hotel.cost.client.CompareClient;
 import com.ctrip.hotel.cost.client.SettlementClient;
-import com.ctrip.hotel.cost.model.JobStatus;
+import com.ctrip.hotel.cost.mapper.SettlementDataMapper;
+import com.ctrip.hotel.cost.model.bizenum.JobStatus;
 import com.ctrip.hotel.cost.model.bo.SettlementApplyListUsedBo;
 import com.ctrip.hotel.cost.model.bo.SettlementCancelListUsedBo;
 import com.ctrip.hotel.cost.model.bo.SettlementPayDataUsedBo;
@@ -64,6 +65,9 @@ public class SpringTest {
   @Autowired
   I18NMessageUtil messageUtil;
 
+  @Autowired
+  SettlementDataMapper settlementDataMapper;
+
   @Test
   public void auditOrderFgCollectPrice() {
     try {
@@ -82,7 +86,7 @@ public class SpringTest {
   @Test
   public void dalTest() throws Exception {
     List<OrderAuditFgMqTiDBGen> orderAuditFgMqList =
-            orderAuditFgMqRepository.getPendingJobs(Arrays.asList(1, 2), 30, 1);
+            orderAuditFgMqRepository.getPendingJobs(Arrays.asList(29), 30, 100);
     System.out.println(JSON.toJSONString(orderAuditFgMqList));
   }
 
@@ -255,7 +259,6 @@ public class SpringTest {
     jobList.add(orderAuditFgMqTiDBGenC);
     jobList.add(orderAuditFgMqTiDBGenU);
     jobList.add(orderAuditFgMqTiDBGenD);
-    fgNotifySettlementJob.getWJobMergeItem(jobList);
   }
 
   @Test
@@ -265,6 +268,40 @@ public class SpringTest {
             jobStatus.equals(JobStatus.Pending));
     System.out.println(
             jobStatus.equals(JobStatus.Invalid));
+  }
+
+
+  @Test
+  public void settlementDataMapperTest(){
+    AuditOrderInfoBO auditOrderInfoBO = new AuditOrderInfoBO();
+    OrderBasicInfo orderBasicInfo = new OrderBasicInfo();
+    AuditRoomInfo auditRoomInfo = new AuditRoomInfo();
+    AuditRoomOtherInfo auditRoomOtherInfo = new AuditRoomOtherInfo();
+    AuditRoomBasicInfo auditRoomBasicInfo = new AuditRoomBasicInfo();
+    auditRoomBasicInfo.setFgid(123231);
+    auditRoomOtherInfo.setPayCurrency("CAD");
+    auditRoomInfo.setAuditRoomOtherInfo(auditRoomOtherInfo);
+    auditRoomInfo.setAuditRoomBasicInfo(auditRoomBasicInfo);
+    orderBasicInfo.setCurrency("USD");
+    orderBasicInfo.setVendorChannelID(1);
+    auditOrderInfoBO.setOrderBasicInfo(orderBasicInfo);
+    auditOrderInfoBO.setAuditRoomInfoList(Arrays.asList(auditRoomInfo));
+
+    OutTimeDeductInfo outTimeDeductInfo = new OutTimeDeductInfo();
+    auditOrderInfoBO.setOutTimeDeductInfo(outTimeDeductInfo);
+    auditOrderInfoBO.setGuaranteeInfo(new GuaranteeInfo());
+
+    auditOrderInfoBO.setFlashOrderInfo(new FlashOrderInfo());
+
+    HotelBasicInfo hotelBasicInfo = new HotelBasicInfo();
+    hotelBasicInfo.setOperatMode("S");
+    auditOrderInfoBO.setHotelBasicInfo(hotelBasicInfo);
+
+    // SettleDataRequest settleDataRequest = settlementDataMapper.newOrderToSettlementApplyList(auditOrderInfoBO);
+
+    SettlementPayData settlementPayData = settlementDataMapper.newOrderToSettlementPayDataReceive(auditOrderInfoBO);
+
+    System.out.println(settlementPayData);
   }
 
 }

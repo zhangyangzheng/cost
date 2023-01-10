@@ -1,6 +1,6 @@
 package com.ctrip.hotel.cost.consumer;
 
-import com.ctrip.hotel.cost.model.JobStatus;
+import com.ctrip.hotel.cost.model.bizenum.JobStatus;
 import com.ctrip.hotel.cost.repository.OrderAuditFgMqRepository;
 import com.ctrip.hotel.cost.repository.SettleCallbackInfoRepository;
 import com.ctrip.hotel.cost.common.LongHelper;
