@@ -18,7 +18,6 @@ import com.ctrip.hotel.cost.domain.element.room.fg.RoomSellingPriceFgOrderInfo;
 import com.ctrip.hotel.cost.domain.element.techfee.ZeroCommissionFeePriceOrderInfo;
 import com.ctrip.hotel.cost.domain.scene.CostItemType;
 import lombok.Data;
-import org.apache.commons.collections.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

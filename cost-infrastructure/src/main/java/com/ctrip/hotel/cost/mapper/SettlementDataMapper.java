@@ -123,13 +123,38 @@ public interface SettlementDataMapper {
     @Mapping(target = "hotelID", source = "auditOrderInfoBO.hotelBasicInfo.hotel", defaultValue = "0")
     @Mapping(target = "companyId", source = "auditOrderInfoBO.hotelBasicInfo.hotel", defaultValue = "")
     @Mapping(target = "isRapidSettlement", expression = "java( auditOrderInfoBO.getHotelBasicInfo().getOperatMode() == null || !auditOrderInfoBO.getHotelBasicInfo().getOperatMode().equals(\"S\") ? new String(\"F\") : new String(\"T\") )")
-    @Mapping(target = "guarantee", expression = "java( DefaultValueHelper.getValue(auditOrderInfoBO.getGuaranteeInfo().getGuarantee()) )")
-    @Mapping(target = "guaranteeWay", expression = "java( DefaultValueHelper.getValue(auditOrderInfoBO.getGuaranteeInfo().getGuaranteeWay()) )")
-    @Mapping(target = "allNeedGuarantee", expression = "java( DefaultValueHelper.getValue(auditOrderInfoBO.getGuaranteeInfo().getAllNeedGuarantee()) )")
-    @Mapping(target = "walletPay", expression = "java( DefaultValueHelper.getValue(auditOrderInfoBO.getFlashOrderInfo().getIsFlashOrder()) )")
-    @Mapping(target = "outTimeDeductType", expression = "java( DefaultValueHelper.getValue(auditOrderInfoBO.getOutTimeDeductInfo().getOutTimeDeductType().toString()) )")
-    @Mapping(target = "outTimeDeductValue", expression = "java( auditOrderInfoBO.getOutTimeDeductInfo().getOutTimeDeductValue() == null ? \"\" : auditOrderInfoBO.getOutTimeDeductInfo().getOutTimeDeductValue().toString() )")
-    @Mapping(target = "zeroCommissionDeductRate", expression = "java( DefaultValueHelper.getValue(auditOrderInfoBO.getTechFeeInfo().getZeroCommissionFeeRatio()) )")
+    @Mapping(target = "guarantee", expression = "java( " +
+            "auditOrderInfoBO.getGuaranteeInfo() != null " +
+            "&& auditOrderInfoBO.getGuaranteeInfo().getGuarantee() != null " +
+            "? DefaultValueHelper.getValue(auditOrderInfoBO.getGuaranteeInfo().getGuarantee()) : \"\"" +
+            ")")
+    @Mapping(target = "guaranteeWay", expression = "java( " +
+            "auditOrderInfoBO.getGuaranteeInfo() != null " +
+            "&& auditOrderInfoBO.getGuaranteeInfo().getGuaranteeWay() != null " +
+            "? DefaultValueHelper.getValue(auditOrderInfoBO.getGuaranteeInfo().getGuaranteeWay()) : \"\"" +
+            ")")
+    @Mapping(target = "allNeedGuarantee", expression = "java( " +
+            "auditOrderInfoBO.getGuaranteeInfo() != null " +
+            "&& auditOrderInfoBO.getGuaranteeInfo().getAllNeedGuarantee() != null " +
+            "? DefaultValueHelper.getValue(auditOrderInfoBO.getGuaranteeInfo().getAllNeedGuarantee()) : \"\"" +
+            ")")
+    @Mapping(target = "walletPay", expression = "java( " +
+            "auditOrderInfoBO.getFlashOrderInfo() != null " +
+            "&& auditOrderInfoBO.getFlashOrderInfo().getIsFlashOrder() != null " +
+            "? DefaultValueHelper.getValue(auditOrderInfoBO.getFlashOrderInfo().getIsFlashOrder()) : false" +
+            ")")
+    @Mapping(target = "outTimeDeductType", expression = "java( " +
+            "auditOrderInfoBO.getOutTimeDeductInfo() != null " +
+            "&& auditOrderInfoBO.getOutTimeDeductInfo().getOutTimeDeductType() != null " +
+            "? DefaultValueHelper.getValue(auditOrderInfoBO.getOutTimeDeductInfo().getOutTimeDeductType().toString()) : \"\"" +
+            ")")
+    @Mapping(target = "outTimeDeductValue", expression = "java( " +
+            "auditOrderInfoBO.getOutTimeDeductInfo() == null || auditOrderInfoBO.getOutTimeDeductInfo().getOutTimeDeductValue() == null " +
+            "? \"\" : auditOrderInfoBO.getOutTimeDeductInfo().getOutTimeDeductValue().toString() )")
+    @Mapping(target = "zeroCommissionDeductRate", expression = "java( " +
+            "auditOrderInfoBO.getTechFeeInfo() != null " +
+            "&& auditOrderInfoBO.getTechFeeInfo().getZeroCommissionFeeRatio() != null " +
+            "? DefaultValueHelper.getValue(auditOrderInfoBO.getTechFeeInfo().getZeroCommissionFeeRatio()) : BigDecimal.ZERO)")
     @Mapping(target = "orderchannel", expression = "java( Hotelorderchannel.hfg )")
     @Mapping(target = "sourceId", expression = "java( new String(\"6\") )")
     @Mapping(target = "splitOrder", expression = "java( new String(\"T\") )")
