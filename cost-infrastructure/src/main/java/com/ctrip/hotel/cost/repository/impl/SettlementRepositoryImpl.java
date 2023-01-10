@@ -17,6 +17,7 @@ import com.ctrip.soa.hotel.settlement.api.DataItem;
 import com.ctrip.soa.hotel.settlement.api.SettleDataRequest;
 import hotel.settlement.common.*;
 import hotel.settlement.common.helpers.DefaultValueHelper;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -874,8 +875,9 @@ public class SettlementRepositoryImpl implements SettlementRepository {
         }
 
         if ("U".equals(orderAuditFgMqBO.getOpType())) {
-            requestData.setSettlementId(settlementCallBackInfo.getSettlementId());
-            if (DefaultValueHelper.getValue(requestData.getSettlementId()) <= 0) {
+            requestData.setSettlementId(settlementCallBackInfo.getHwpSettlementId());
+            if (DefaultValueHelper.getValue(requestData.getSettlementId()) <= 0 &&
+                    BooleanUtils.toBoolean(QConfigHelper.getSwitchConfigByKey("fgThrowSettleCheckHwpSettlementId", "false"))) {
                 throw new Exception("Abnormal HWPSettlementId parameter modification");
             }
         }

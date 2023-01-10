@@ -7,4 +7,8 @@ public class LongHelper {
         }
         return Long.parseLong(longStr);
     }
+
+    public static boolean isEffectData(Long data){
+        return data != null && data.compareTo(0L) > 0;
+    }
 }

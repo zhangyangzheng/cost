@@ -42,7 +42,7 @@ public class OrderAuditFgMqDao extends AbstractDao<OrderAuditFgMqTiDBGen> {
             String.format(
                     "SELECT * FROM ORDER_AUDIT_FG_MQ WHERE id IN"
                             + "(SELECT id FROM ORDER_AUDIT_FG_MQ WHERE jobStatus = 'W' ORDER BY datachange_createtime)"
-                            + "AND sliceIndex IN (%s) AND timestampdiff(MINUTE, datachange_lasttime, CURRENT_TIMESTAMP(3)) > %d LIMIT %d",
+                            + "AND sliceIndex IN (%s) AND (execCount = 0 OR timestampdiff(MINUTE, datachange_lasttime, CURRENT_TIMESTAMP(3)) > %d) LIMIT %d",
                     sliceIndexStr, minBetween, count);
     // 需要读到最新的
     return client.query(sql, new DalHints().masterOnly());

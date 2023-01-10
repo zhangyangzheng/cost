@@ -18,11 +18,11 @@ public class FGOrderNotifyListener {
 
   @Autowired BaseOrderNotifyConsumer fgOrderNotifyConsumer;
 
-  private boolean isDuplicateMessage(Exception e){
+  private boolean isDuplicateMessage(Exception e) {
     Throwable cause = e.getCause();
     if (cause instanceof MySQLIntegrityConstraintViolationException) {
       MySQLIntegrityConstraintViolationException mySQLIntegrityConstraintViolationException =
-              (MySQLIntegrityConstraintViolationException) cause;
+          (MySQLIntegrityConstraintViolationException) cause;
       String sqlState = mySQLIntegrityConstraintViolationException.getSQLState();
       if (StringUtils.equals(sqlState, "23000")) {
         return true;
@@ -32,27 +32,31 @@ public class FGOrderNotifyListener {
   }
 
   private void processMessage(Message message) throws NeedRetryException {
-    LogHelper.logInfo("FGOrderNotifyListener", JsonUtils.beanToJson(message));
+    LogHelper.logInfo(
+        "FGOrderNotifyListener",
+        String.format(
+            "orderId:%s fgId:%s messageId:%s",
+            message.getStringProperty("orderId"),
+            message.getStringProperty("fgId"),
+            message.getMessageId()));
     try {
       fgOrderNotifyConsumer.insertInto(message);
     } catch (Exception e) {
-      String logMessage = String.format(
-              "insert into order_audit_fg_mq fail messageId : %s reason : %s",
-              message.getMessageId(), e.getMessage());
-      if(isDuplicateMessage(e)){
-        LogHelper.logWarn(
-                "FGOrderNotifyListener", logMessage);
-      }
-      else {
-        LogHelper.logError(
-                "FGOrderNotifyListener", logMessage);
+      String logMessage =
+          String.format("messageId : %s reason : %s", message.getMessageId(), e.getMessage());
+      if (isDuplicateMessage(e)) {
+        LogHelper.logWarn("FGOrderNotifyListenerInsertFail", logMessage);
+      } else {
+        LogHelper.logError("FGOrderNotifyListenerInsertFail", logMessage);
         throw new NeedRetryException(logMessage);
       }
     }
   }
 
   @QmqConsumer(prefix = "hotel.audit.auditnotifycost", consumerGroup = "100042902")
-  @CatTrace(type = CatBizTypeConstant.BIZ_QMQ_ACCEPT + ".Cost", name = "hotel.audit.auditnotifycost")
+  @CatTrace(
+      type = CatBizTypeConstant.BIZ_QMQ_ACCEPT + ".Cost",
+      name = "hotel.audit.auditnotifycost")
   public void onMessage(Message message) throws NeedRetryException {
     processMessage(message);
   }
