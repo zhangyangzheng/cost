@@ -256,7 +256,6 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
                 || order.getCusOrderId() == null
                 || order.getOrderBasicInfo() == null
                 || order.getOrderBasicInfo().getEta() == null
-                || order.getOrderBasicInfo().getHourRoom() == null
                 || CollectionUtils.isEmpty(order.getAuditRoomInfoList())
                 || auditRoomCheckFail(order.getAuditRoomInfoList())
                 || order.getHotelBasicInfo() == null;
@@ -267,7 +266,6 @@ public class OrderInfoFGRepositoryImpl implements OrderInfoFGRepository {
             stringBuilder.append("order.cusOrderId is null\n");
             stringBuilder.append("order.orderBasicInfo is null\n");
             stringBuilder.append("order.orderBasicInfo.eta is null\n");
-            stringBuilder.append("order.orderBasicInfo.hourRoom is null\n");
             stringBuilder.append("order.auditRoomInfoList is null\n");
             stringBuilder.append("order.auditRoomInfoList.auditRoomBasicInfo is null\n");
             stringBuilder.append("order.auditRoomInfoList.auditRoomBasicInfo.realETD is null\n");
