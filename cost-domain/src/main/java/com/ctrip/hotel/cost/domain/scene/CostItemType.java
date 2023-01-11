@@ -23,7 +23,7 @@ public enum CostItemType {
     AMOUNT_FG("amount", "roomSellingPrice-promotionSellingPrice", "formula.amountFg"),
     COST_FG("cost", "roomCostPrice-promotionCostPrice", "formula.costFg"),
 
-    ADJUST_COMMISSION_FG("adjustCommission", "adjustCommission-roomSellingPrice+roomCostPrice", "formula.adjustCommissionFg"),
+    ADJUST_COMMISSION_FG("adjustAmount", "adjustCommission-amount+cost", "formula.adjustCommissionFg"),
     ZERO_COMMISSION_FEE_PRICE_FG("zeroCommissionFee", "cost*zeroCommissionFeeRatio", "formula.zeroCommissionFee"),
 
     // 以下统一
