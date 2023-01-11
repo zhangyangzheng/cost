@@ -105,10 +105,9 @@ public interface SettlementDataMapper {
             "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getOperator() == null ? new String(\"\") : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getOperator() " +
             ")")
     @Mapping(target = "commissionType", expression = "java( " +
-            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo() != null " +
-            "&& auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getAdjustCommissionType() != null " +
-            "? auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getAdjustCommissionType() : 0" +
-            ")")
+            "auditOrderInfoBO.getOrderAuditFgMqBO().getBusinessType() != null" +
+            "? auditOrderInfoBO.getOrderAuditFgMqBO().getBusinessType()" +
+            ": 0)")
     @Mapping(target = "hotelConfirmStatus", expression = "java( " +
             "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo() != null " +
             "&& auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getHotelConfirmStatus() != null " +
