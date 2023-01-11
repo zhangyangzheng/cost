@@ -293,6 +293,10 @@ public class SpringTest {
 
     auditOrderInfoBO.setFlashOrderInfo(new FlashOrderInfo());
 
+    OrderAuditFgMqBO orderAuditFgMqBO = new OrderAuditFgMqBO();
+    orderAuditFgMqBO.setBusinessType(1212);
+    auditOrderInfoBO.setOrderAuditFgMqBO(orderAuditFgMqBO);
+
     HotelBasicInfo hotelBasicInfo = new HotelBasicInfo();
     hotelBasicInfo.setOperatMode("S");
     auditOrderInfoBO.setHotelBasicInfo(hotelBasicInfo);
