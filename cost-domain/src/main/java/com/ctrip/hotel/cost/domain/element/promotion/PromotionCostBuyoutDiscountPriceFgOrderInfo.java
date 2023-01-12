@@ -29,6 +29,11 @@ public class PromotionCostBuyoutDiscountPriceFgOrderInfo extends AbstractPromoti
     private BigDecimal result;
 
     @Override
+    public Long promotionDailyInfoID() {
+        return this.getPromotionDailyInfoID();
+    }
+
+    @Override
     public Factor cost() {
         return new Factor("costDiscountAmount", this.getCostDiscountAmount());
     }
