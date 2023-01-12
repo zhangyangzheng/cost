@@ -614,7 +614,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
         Item = new DataItem();
         Item.setDataKey("AdjustAmount");
         Item.setDataValue(
-                auditOrderInfoBO.getAdjustAmount() != null
+                auditOrderInfoBO.getAdjustAmount() != null && BigDecimal.ZERO.compareTo(auditOrderInfoBO.getAdjustAmount()) != 0
                         ? auditOrderInfoBO.getAdjustAmount().toString()
                         : "0.0000");
         Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.35"));
