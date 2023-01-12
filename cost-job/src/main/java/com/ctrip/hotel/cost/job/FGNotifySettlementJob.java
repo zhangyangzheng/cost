@@ -2,6 +2,7 @@ package com.ctrip.hotel.cost.job;
 
 import com.ctrip.hotel.cost.application.handler.HandlerApi;
 import com.ctrip.hotel.cost.application.model.vo.AuditOrderFgReqDTO;
+import com.ctrip.hotel.cost.caller.BaseHandlerCaller;
 import com.ctrip.hotel.cost.helper.ConvertHelper;
 import com.ctrip.hotel.cost.model.bizenum.JobStatus;
 import com.ctrip.hotel.cost.model.bizenum.OpType;
@@ -17,6 +18,7 @@ import hotel.settlement.common.ListHelper;
 import hotel.settlement.common.LogHelper;
 import hotel.settlement.common.QConfigHelper;
 import hotel.settlement.common.json.JsonUtils;
+import hotel.settlement.common.tuples.Tuple;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.SettleCallbackInfoTiDBGen;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +34,8 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
 
   @Autowired SettleCallbackInfoRepository settleCallbackInfoRepository;
 
-  @Autowired HandlerApi handlerApi;
+  @Autowired
+  BaseHandlerCaller handlerCaller;
 
 
   protected void processDoneAllJobList(List<FgOrderAuditMqDataBo> jobList) throws Exception {
@@ -220,43 +223,22 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
       }
     }
 
-    List<AuditOrderFgReqDTO> throwSettleDtoList = ConvertHelper.fgOrderAuditMqDataBoListToAuditOrderFgReqDTOList(throwSettleList);
 
-    LogHelper.logInfo("FGNotifySettlementJobThrowSettleDtoList", JsonUtils.beanToJson(throwSettleDtoList));
+    LogHelper.logInfo("FGNotifySettlementJobThrowSettleDtoList", JsonUtils.beanToJson(throwSettleList));
 
     LogHelper.logInfo("FGNotifySettlementJobDoneAllList", JsonUtils.beanToJson(doneAllList));
 
     LogHelper.logInfo("FGNotifySettlementJobDoNothingList", JsonUtils.beanToJson(doNothingList));
 
-    List<String> successReferenceList = handlerApi.auditOrderFg(throwSettleDtoList);
-
-    Set<String> successReferenceIdSet = new HashSet<>(successReferenceList);
-
-    // 成功列表
-    List<FgOrderAuditMqDataBo> successJobList =
-        throwSettleList.stream()
-            .filter(p -> successReferenceIdSet.contains(p.getOrderAuditFgMqTiDBGen().getReferenceId()))
-            .collect(Collectors.toList());
-
-    // 失败列表
-    List<FgOrderAuditMqDataBo> failJobList =
-        throwSettleList.stream()
-            .filter(p -> !successReferenceIdSet.contains(p.getOrderAuditFgMqTiDBGen().getReferenceId()))
-            .collect(Collectors.toList());
-
-    LogHelper.logInfo("FGNotifySettlementJobSuccess", JsonUtils.beanToJson(successJobList));
-
-    if (!ListHelper.isEmpty(failJobList)) {
-      LogHelper.logWarn("FGNotifySettlementJobFail", JsonUtils.beanToJson(failJobList));
-    }
+    Tuple<List<FgOrderAuditMqDataBo>, List<FgOrderAuditMqDataBo>> successAndFailList = handlerCaller.batchCallAndGetSuccessAndFailList(throwSettleList);
 
     // 批量设置不需要处理的Job为执行成功
     processDoneAllJobList(doneAllList);
     // 批量设置 remark： 等待其他单到达后执行
     processDoNothingJobList(doNothingList);
     // 处理成功列表
-    processSuccessJobList(successJobList, identifyWJobMergeItemMap, identifyJobListMap);
+    processSuccessJobList(successAndFailList.getFirst(), identifyWJobMergeItemMap, identifyJobListMap);
     // 处理失败列表
-    processFailJobList(failJobList, identifyWJobMergeItemMap);
+    processFailJobList(successAndFailList.getSecond(), identifyWJobMergeItemMap);
   }
 }
