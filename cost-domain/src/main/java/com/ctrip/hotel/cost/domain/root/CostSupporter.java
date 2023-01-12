@@ -2,6 +2,7 @@ package com.ctrip.hotel.cost.domain.root;
 
 import com.ctrip.hotel.cost.domain.data.DataCenter;
 import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
+import com.ctrip.hotel.cost.domain.element.promotion.PromotionCostPrice;
 import com.ctrip.hotel.cost.domain.element.promotion.PromotionSellingPrice;
 import com.ctrip.hotel.cost.domain.scene.Scene;
 import com.ctrip.hotel.cost.domain.scene.SceneFactory;
@@ -12,6 +13,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -58,6 +60,12 @@ public class CostSupporter {
             e.getAuditOrderInfoBO().setPromotionDailyInfoList(
                     e.getAuditOrderInfoBO().getPromotionDailyInfoList().stream().filter(p -> promotionIDs.contains(p.getPromotionDailyInfoID())).collect(Collectors.toList())
             );
+            Map<Long, PromotionSellingPrice> promotionSellingMap = e.getPromotionSelling().getPromotionSellingPrices().stream().collect(Collectors.toMap(PromotionSellingPrice::promotionDailyInfoID, promotionSellingPrice -> promotionSellingPrice, (key1, key2) -> key2));
+            Map<Long, PromotionCostPrice> promotionCostMap = e.getPromotionCost().getPromotionCostPrices().stream().collect(Collectors.toMap(PromotionCostPrice::promotionDailyInfoID, promotionCostPrice -> promotionCostPrice, (k1, k2) -> k2));
+            e.getAuditOrderInfoBO().getPromotionDailyInfoList().forEach(promotionDailyInfo -> {
+                promotionDailyInfo.setAmount(promotionSellingMap.get(promotionDailyInfo.getPromotionDailyInfoID()).result());
+                promotionDailyInfo.setCostDiscountAmount(promotionCostMap.get(promotionDailyInfo.getPromotionDailyInfoID()).result());
+            });
 
             e.getAuditOrderInfoBO().setAdjustAmount(e.getAdjustCommission() == null ? null : e.getAdjustCommission().total());
             e.getAuditOrderInfoBO().setPriceAmount(e.getPriceAmountFg() == null ? null : e.getPriceAmountFg().total());

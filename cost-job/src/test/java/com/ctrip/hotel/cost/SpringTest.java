@@ -2,6 +2,7 @@ package com.ctrip.hotel.cost;
 
 import com.alibaba.fastjson.JSON;
 import com.ctrip.hotel.cost.application.handler.HandlerApi;
+import com.ctrip.hotel.cost.caller.BaseHandlerCaller;
 import com.ctrip.hotel.cost.common.ThreadLocalCostHolder;
 import com.ctrip.hotel.cost.domain.data.model.*;
 import com.ctrip.hotel.cost.client.AuditClient;
@@ -67,6 +68,9 @@ public class SpringTest {
 
   @Autowired
   SettlementDataMapper settlementDataMapper;
+
+  @Autowired
+  BaseHandlerCaller handlerCaller;
 
   @Test
   public void auditOrderFgCollectPrice() {

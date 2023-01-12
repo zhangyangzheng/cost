@@ -29,6 +29,11 @@ public class TripPromotionCostPriceFgOrderInfo extends AbstractPromotionFg imple
     private BigDecimal result;
 
     @Override
+    public Long promotionDailyInfoID() {
+        return this.getPromotionDailyInfoID();
+    }
+
+    @Override
     public Factor cost() {
         return new Factor("costDiscountAmount", this.getCostDiscountAmount());
     }

@@ -106,7 +106,8 @@ public class FgThrowStrategy extends ThrowStrategy {
     // 为删除单 没有已经成功抛出的创建单修改单 就设置全部成功
     if (jobStatusStatistics.tDeleteCount > 0
         || (OpType.Delete.getValue().equals(leaderJob.getOrderAuditFgMqTiDBGen().getOpType())
-            && jobStatusStatistics.getTCreateAndUpdateCount() == 0)) {
+            && jobStatusStatistics.getTCreateAndUpdateCount() == 0
+            && !LongHelper.isEffectData(leaderJob.getSettleCallbackInfoTiDBGen().getSettlementId()))) {
       return ProcessJobMethod.DoneAll;
     }
     // 为修改单 且创建单还没执行

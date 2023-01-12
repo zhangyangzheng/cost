@@ -35,8 +35,6 @@ public class QmqHelper {
   }
 
   private void sendMessageSync(String subject, Message message) throws Exception {
-    ThreadLocalCostHolder.allLinkTracingLog(
-        subject + ": " + JsonUtils.beanToJson(message), LogLevel.INFO);
 
     Thread mainThread = Thread.currentThread();
 
@@ -47,13 +45,15 @@ public class QmqHelper {
           @Override
           public void onSuccess(Message message) {
             sem.release();
-            LogHelper.logInfo("subject:" + subject, JsonUtils.beanToJson(message));
+            ThreadLocalCostHolder.allLinkTracingLog(
+                      subject + ": " + JsonUtils.beanToJson(message), LogLevel.INFO);
           }
 
           @Override
           public void onFailed(Message message) {
             mainThread.interrupt();
-            LogHelper.logError("subject:" + subject, JsonUtils.beanToJson(message));
+              ThreadLocalCostHolder.allLinkTracingLog(
+                      subject + ": " + JsonUtils.beanToJson(message), LogLevel.ERROR);
           }
         });
     try {
