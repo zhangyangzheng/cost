@@ -1,20 +1,19 @@
 package com.ctrip.hotel.cost.job;
 
-import com.ctrip.hotel.cost.application.handler.HandlerApi;
-import com.ctrip.hotel.cost.application.model.vo.AuditOrderFgReqDTO;
 import com.ctrip.hotel.cost.caller.BaseHandlerCaller;
 import com.ctrip.hotel.cost.helper.ConvertHelper;
 import com.ctrip.hotel.cost.model.bizenum.JobStatus;
 import com.ctrip.hotel.cost.model.bizenum.OpType;
-import com.ctrip.hotel.cost.model.bizenum.ProcessJobMethod;
 import com.ctrip.hotel.cost.model.bo.FgOrderAuditMqDataBo;
-import com.ctrip.hotel.cost.model.inner.Identify;
 import com.ctrip.hotel.cost.model.inner.WJobMergeItem;
+import com.ctrip.hotel.cost.model.inner.Identify;
 import com.ctrip.hotel.cost.repository.OrderAuditFgMqRepository;
 import com.ctrip.hotel.cost.repository.SettleCallbackInfoRepository;
 import com.ctrip.hotel.cost.common.util.I18NMessageUtil;
+import com.ctrip.hotel.cost.strategy.BaseThrowStrategy;
+import com.ctrip.hotel.cost.strategy.BaseThrowStrategyContext;
 import com.ctrip.hotel.cost.strategy.FgThrowStrategy;
-import hotel.settlement.common.ListHelper;
+import com.ctrip.hotel.cost.strategy.FgThrowStrategyContext;
 import hotel.settlement.common.LogHelper;
 import hotel.settlement.common.QConfigHelper;
 import hotel.settlement.common.json.JsonUtils;
@@ -193,12 +192,6 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
 
   @Override
   public void execute(List<Integer> sliceIndexList) throws Exception {
-    // 抛结算列表
-    List<FgOrderAuditMqDataBo> throwSettleList = new ArrayList<>();
-    // 批量设置成功执行状态列表
-    List<FgOrderAuditMqDataBo> doneAllList = new ArrayList<>();
-    // 等待列表
-    List<FgOrderAuditMqDataBo> doNothingList = new ArrayList<>();
     // 获取待执行的单子标识
     Set<Identify> identifySet = getPendingIdentify(sliceIndexList);
 
@@ -206,22 +199,21 @@ public class FGNotifySettlementJob extends BaseNotifySettlementJob<OrderAuditFgM
 
     Map<Identify, List<FgOrderAuditMqDataBo>> identifyJobListMap = new HashMap<>();
 
+    BaseThrowStrategyContext<FgOrderAuditMqDataBo, WJobMergeItem> fgThrowStrategyContext = new FgThrowStrategyContext();
+
     for (Identify identify : identifySet) {
       List<FgOrderAuditMqDataBo> identityJobList = getJobList(identify);
-      FgThrowStrategy fgThrowStrategy = new FgThrowStrategy(identityJobList);
-      WJobMergeItem wJobMergeItem = fgThrowStrategy.getWJobMergeItem();
+      WJobMergeItem wJobMergeItem = fgThrowStrategyContext.processAndGetMergeItem(identityJobList);
       identifyWJobMergeItemMap.put(identify, wJobMergeItem);
       identifyJobListMap.put(identify, identityJobList);
-      // 获取处理方式
-      ProcessJobMethod processMethod = fgThrowStrategy.getProcessMethod();
-      if (processMethod.equals(ProcessJobMethod.ThrowSettle)) {
-        throwSettleList.add(wJobMergeItem.leader);
-      } else if (processMethod.equals(ProcessJobMethod.DoneAll)) {
-        doneAllList.addAll(identityJobList);
-      } else if (processMethod.equals(ProcessJobMethod.DoNothing)) {
-        doNothingList.addAll(identityJobList);
-      }
     }
+
+
+    List<FgOrderAuditMqDataBo> throwSettleList = fgThrowStrategyContext.getThrowSettleList();
+
+    List<FgOrderAuditMqDataBo> doneAllList = fgThrowStrategyContext.getDoneAllList();
+
+    List<FgOrderAuditMqDataBo> doNothingList = fgThrowStrategyContext.getDoNothingList();
 
 
     LogHelper.logInfo("FGNotifySettlementJobThrowSettleDtoList", JsonUtils.beanToJson(throwSettleList));
