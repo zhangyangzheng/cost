@@ -1,7 +1,6 @@
 package com.ctrip.hotel.cost.model.inner;
 
 import com.ctrip.hotel.cost.model.bo.FgOrderAuditMqDataBo;
-import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
 
 import java.util.List;
 

@@ -5,6 +5,7 @@ import com.ctrip.hotel.cost.domain.data.model.PromotionDailyInfo;
 import com.ctrip.hotel.cost.domain.settlement.CancelOrderUsedBo;
 import com.ctrip.soa.hotel.settlement.api.SettleDataRequest;
 import com.ctrip.soa.hotel.settlement.api.SettlementPromotionDetail;
+import hotel.settlement.common.DateHelper;
 import hotel.settlement.common.helpers.DefaultValueHelper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -45,7 +46,6 @@ public interface SettlementDataMapper {
      */
     @Mapping(target = "quantity", defaultValue = "0")// 需要计算
     @Mapping(target = "bidFlag", expression = "java( auditOrderInfoBO.getBidPrice() != null ? new String(\"T\") : null )")
-    @Mapping(target = "settlementid", source = "auditOrderInfoBO.settlementCallBackInfo.settlementId")
     @Mapping(target = "clientOrderId", source = "cusOrderId", defaultValue = "")
     @Mapping(target = "orderDate", source = "auditOrderInfoBO.orderBasicInfo.orderDate")
     @Mapping(target = "vendorChannelId", source = "auditOrderInfoBO.orderBasicInfo.vendorChannelID", defaultValue = "")
@@ -55,7 +55,26 @@ public interface SettlementDataMapper {
     @Mapping(target = "insuranceFlag", expression = "java( DefaultValueHelper.getValue(auditOrderInfoBO.getOrderBasicInfo().getInsuranceSupportType()) )")
     @Mapping(target = "rmbExchangeRate", expression = "java( DefaultValueHelper.getValue(auditOrderInfoBO.getOrderBasicInfo().getExchange()) )")
     @Mapping(target = "uid", source = "auditOrderInfoBO.orderBasicInfo.uid", defaultValue = "")
-    // @Mapping(target = "remarks", defaultValue = "")
+    @Mapping(target = "remarks", defaultValue = "")
+
+    @Mapping(target = "eta", expression = "java( " +
+            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getEta() " +
+            ")")
+    @Mapping(target = "etd", expression = "java( " +
+            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getEtd() " +
+            ")")
+    @Mapping(target = "realETD", expression = "java( " +
+            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getRealETD() " +
+            ")")
+    @Mapping(target = "modifyOperateDateTime", expression = "java( " +
+            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getOperateTime()" +
+            ")")
+    @Mapping(target = "adjustAmount", expression = "java( " +
+            "auditOrderInfoBO.getAdjustAmount() != null && !BigDecimal.ZERO.equals(auditOrderInfoBO.getAdjustAmount())  ? auditOrderInfoBO.getAdjustAmount() : new BigDecimal(\"0.0000\") " +
+            ")")
+    @Mapping(target = "settlementid", expression = "java( auditOrderInfoBO.getSettlementCallBackInfo().getSettlementId() != null " +
+            "&& auditOrderInfoBO.getSettlementCallBackInfo().getSettlementId() != 0 " +
+            "? auditOrderInfoBO.getSettlementCallBackInfo().getSettlementId() : null)")
     @Mapping(target = "fgId", expression = "java( " +
             "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid() " +
             ")")
@@ -84,7 +103,7 @@ public interface SettlementDataMapper {
             "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getRoom() == null ? new String(\"\") : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getRoomNameEN() " +
             ")")
     @Mapping(target = "hotelInfo", expression = "java( " +
-            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getHotelInfo() == null ? new String(\"\") : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getRoomName() " +
+            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getHotelInfo() == null ? new String(\"\") : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getHotelInfo() " +
             ")")
     @Mapping(target = "newFgId", expression = "java( " +
             "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getNewFGID() == null ? new String(\"\") : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getNewFGID().toString() " +
@@ -158,7 +177,10 @@ public interface SettlementDataMapper {
     @Mapping(target = "zeroCommissionDeductRate", expression = "java( " +
             "auditOrderInfoBO.getTechFeeInfo() != null " +
             "&& auditOrderInfoBO.getTechFeeInfo().getZeroCommissionFeeRatio() != null " +
-            "? DefaultValueHelper.getValue(auditOrderInfoBO.getTechFeeInfo().getZeroCommissionFeeRatio()) : BigDecimal.ZERO)")
+            "? DefaultValueHelper.getValue(auditOrderInfoBO.getTechFeeInfo().getZeroCommissionFeeRatio()) : null)")
+    @Mapping(target = "tripPromotionAmount", expression = "java( " +
+            "BigDecimal.ZERO.equals(auditOrderInfoBO.getTripPromotionAmount()) ? null : auditOrderInfoBO.getTripPromotionAmount())")
+
     @Mapping(target = "orderchannel", expression = "java( Hotelorderchannel.hfg )")
     @Mapping(target = "sourceId", expression = "java( new String(\"6\") )")
     @Mapping(target = "splitOrder", expression = "java( new String(\"T\") )")
