@@ -289,6 +289,7 @@ public class SpringTest {
     orderBasicInfo.setCurrency("USD");
     orderBasicInfo.setVendorChannelID(1);
     auditOrderInfoBO.setOrderBasicInfo(orderBasicInfo);
+    auditOrderInfoBO.setSettlementCallBackInfo(new SettlementCallBackInfo());
     auditOrderInfoBO.setAuditRoomInfoList(Arrays.asList(auditRoomInfo));
 
     OutTimeDeductInfo outTimeDeductInfo = new OutTimeDeductInfo();
@@ -304,6 +305,7 @@ public class SpringTest {
     HotelBasicInfo hotelBasicInfo = new HotelBasicInfo();
     hotelBasicInfo.setOperatMode("S");
     auditOrderInfoBO.setHotelBasicInfo(hotelBasicInfo);
+    auditOrderInfoBO.setTripPromotionAmount(new BigDecimal("0.00"));
 
     // SettleDataRequest settleDataRequest = settlementDataMapper.newOrderToSettlementApplyList(auditOrderInfoBO);
 
