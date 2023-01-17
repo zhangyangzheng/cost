@@ -55,7 +55,7 @@ public interface SettlementDataMapper {
     @Mapping(target = "insuranceFlag", expression = "java( DefaultValueHelper.getValue(auditOrderInfoBO.getOrderBasicInfo().getInsuranceSupportType()) )")
     @Mapping(target = "rmbExchangeRate", expression = "java( DefaultValueHelper.getValue(auditOrderInfoBO.getOrderBasicInfo().getExchange()) )")
     @Mapping(target = "uid", source = "auditOrderInfoBO.orderBasicInfo.uid", defaultValue = "")
-    // @Mapping(target = "remarks", defaultValue = "")
+    @Mapping(target = "remarks", defaultValue = "")
 
     @Mapping(target = "eta", expression = "java( " +
             "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getEta() " +
