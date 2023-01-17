@@ -393,12 +393,12 @@ public class SettlementRepositoryImpl implements SettlementRepository {
             Item.setDataValue(
                     auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getActualCost() == null
                             ? ""
-                            : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getActualCost().setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+                            : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getActualCost().toString());
         } else {
             Item.setDataValue(
                     auditOrderInfoBO.getCostAmount() == null
                             ? ""
-                            : auditOrderInfoBO.getCostAmount().setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+                            : auditOrderInfoBO.getCostAmount().toString());
         }
         Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.8"));
         requestData.getDataItems().add(Item);
