@@ -11,4 +11,8 @@ public class LongHelper {
     public static boolean isEffectData(Long data){
         return data != null && data.compareTo(0L) > 0;
     }
+
+    public static boolean isNotEffectData(Long data){
+        return !isEffectData(data);
+    }
 }
