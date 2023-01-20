@@ -10,6 +10,7 @@ import com.ctrip.hotel.cost.model.inner.JobStatusStatistics;
 import com.ctrip.hotel.cost.model.inner.WJobMergeItem;
 import hotel.settlement.common.ListHelper;
 import hotel.settlement.common.LogHelper;
+import hotel.settlement.common.beans.BeanHelper;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
 import org.apache.commons.lang3.StringUtils;
 
@@ -36,24 +37,38 @@ public class FgThrowStrategy extends BaseThrowStrategy<WJobMergeItem> {
   // 收集订单下各单执行情况
   private JobStatusStatistics getJobStatusStatistics(List<FgOrderAuditMqDataBo> jobList) {
     JobStatusStatistics jobStatusStatistics = new JobStatusStatistics();
-    List<OrderAuditFgMqTiDBGen> orderAuditFgMqTiDBGenList =
-        ConvertHelper.fgOrderAuditMqDataBoListToOrderAuditFgMqTiDBGenList(jobList);
-    if (!ListHelper.isEmpty(orderAuditFgMqTiDBGenList)) {
+    if (!ListHelper.isEmpty(jobList)) {
+      boolean isSettled =
+          jobList.stream()
+              .map(
+                  job ->
+                      LongHelper.isEffectData(job.getSettleCallbackInfoTiDBGen().getSettlementId())
+                          || LongHelper.isEffectData(
+                              job.getSettleCallbackInfoTiDBGen().getHwpSettlementId()))
+              .reduce(false, (a, b) -> a || b);
+      jobStatusStatistics.isSettled = isSettled;
+      List<OrderAuditFgMqTiDBGen> orderAuditFgMqTiDBGenList =
+          ConvertHelper.fgOrderAuditMqDataBoListToOrderAuditFgMqTiDBGenList(jobList);
       for (OrderAuditFgMqTiDBGen orderAuditFgMqTiDBGen : orderAuditFgMqTiDBGenList) {
         if (StringUtils.equals("T", orderAuditFgMqTiDBGen.getIsThrow())) {
           JobStatus jobStatus = JobStatus.getJobStatus(orderAuditFgMqTiDBGen.getJobStatus());
           String opType = orderAuditFgMqTiDBGen.getOpType();
           if (JobStatus.Pending.equals(jobStatus) && OpType.Create.getValue().equals(opType)) {
             jobStatusStatistics.wCreateCount++;
-          } else if (JobStatus.Pending.equals(jobStatus) && OpType.Update.getValue().equals(opType)) {
+          } else if (JobStatus.Pending.equals(jobStatus)
+              && OpType.Update.getValue().equals(opType)) {
             jobStatusStatistics.wUpdateCount++;
-          } else if (JobStatus.Pending.equals(jobStatus) && OpType.Delete.getValue().equals(opType)) {
+          } else if (JobStatus.Pending.equals(jobStatus)
+              && OpType.Delete.getValue().equals(opType)) {
             jobStatusStatistics.wDeleteCount++;
-          } else if (JobStatus.Success.equals(jobStatus) && OpType.Create.getValue().equals(opType)) {
+          } else if (JobStatus.Success.equals(jobStatus)
+              && OpType.Create.getValue().equals(opType)) {
             jobStatusStatistics.tCreateCount++;
-          } else if (JobStatus.Success.equals(jobStatus) && OpType.Update.getValue().equals(opType)) {
+          } else if (JobStatus.Success.equals(jobStatus)
+              && OpType.Update.getValue().equals(opType)) {
             jobStatusStatistics.tUpdateCount++;
-          } else if (JobStatus.Success.equals(jobStatus) && OpType.Delete.getValue().equals(opType)) {
+          } else if (JobStatus.Success.equals(jobStatus)
+              && OpType.Delete.getValue().equals(opType)) {
             jobStatusStatistics.tDeleteCount++;
           } else if (JobStatus.Fail.equals(jobStatus) && OpType.Create.getValue().equals(opType)) {
             jobStatusStatistics.fCreateCount++;
@@ -90,7 +105,7 @@ public class FgThrowStrategy extends BaseThrowStrategy<WJobMergeItem> {
     wJobMergeItem = new WJobMergeItem(mergedJob, wJobList);
   }
 
-  private void initProcessJobMethod(List<FgOrderAuditMqDataBo> jobList){
+  private void initProcessJobMethod(List<FgOrderAuditMqDataBo> jobList) {
     JobStatusStatistics jobStatusStatistics = getJobStatusStatistics(jobList);
     FgOrderAuditMqDataBo leaderJob = wJobMergeItem.leader;
     // 已经有成功执行的删除单 不管啥单子 都设置全部完成
@@ -99,23 +114,17 @@ public class FgThrowStrategy extends BaseThrowStrategy<WJobMergeItem> {
     if (jobStatusStatistics.tDeleteCount > 0
         || (OpType.Delete.getValue().equals(leaderJob.getOrderAuditFgMqTiDBGen().getOpType())
             && jobStatusStatistics.getTCreateAndUpdateCount() == 0
-            && LongHelper.isNotEffectData(
-                leaderJob.getSettleCallbackInfoTiDBGen().getSettlementId())
-            && LongHelper.isNotEffectData(
-                leaderJob.getSettleCallbackInfoTiDBGen().getHwpSettlementId()))) {
+            && !jobStatusStatistics.isSettled)) {
       processJobMethod = ProcessJobMethod.DoneAll;
     }
     // 为修改单 且创建单还没执行
     else if (OpType.Update.getValue().equals(leaderJob.getOrderAuditFgMqTiDBGen().getOpType())
-            && jobStatusStatistics.tCreateCount == 0
-            && LongHelper.isNotEffectData(
-            leaderJob.getSettleCallbackInfoTiDBGen().getSettlementId())
-            && LongHelper.isNotEffectData(
-            leaderJob.getSettleCallbackInfoTiDBGen().getHwpSettlementId())) {
+        && jobStatusStatistics.tCreateCount == 0
+        && !jobStatusStatistics.isSettled) {
       processJobMethod = ProcessJobMethod.DoNothing;
     }
     // 其他情况抛结算
-    else{
+    else {
       processJobMethod = ProcessJobMethod.ThrowSettle;
     }
   }

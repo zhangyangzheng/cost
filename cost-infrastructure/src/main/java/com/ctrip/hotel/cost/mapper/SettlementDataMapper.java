@@ -17,13 +17,14 @@ import soa.ctrip.com.hotel.vendor.settlement.v1.cancelorder.CancelorderRequestty
 import soa.ctrip.com.hotel.vendor.settlement.v1.settlementdata.SettlementPayData;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author yangzhengzhang
  * @description
  * @date 2022-11-18 14:56
  */
-@Mapper(componentModel = "spring", imports = {DefaultValueHelper.class})
+@Mapper(componentModel = "spring", imports = {DefaultValueHelper.class, Optional.class})
 public interface SettlementDataMapper {
     SettlementDataMapper INSTANCE = Mappers.getMapper(SettlementDataMapper.class);
 
@@ -137,12 +138,15 @@ public interface SettlementDataMapper {
             "&& auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getSettlementBatchID() != null " +
             "? auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getSettlementBatchID().intValue() : 0" +
             ")")
-    @Mapping(target = "currency", expression =
-            "java((auditOrderInfoBO.getOrderBasicInfo().getVendorChannelID() != null " +
-                    "&& auditOrderInfoBO.getOrderBasicInfo().getVendorChannelID() > 0 " +
-                    "&& auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo() != null" +
-                    "&& auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getPayCurrency() != null) ? " +
-                    "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getPayCurrency() : auditOrderInfoBO.getOrderBasicInfo().getCurrency())")
+    @Mapping(
+            target = "currency",
+            expression =
+                    "java((auditOrderInfoBO.getOrderBasicInfo().getVendorChannelID() != null "
+                            + "&& auditOrderInfoBO.getOrderBasicInfo().getVendorChannelID() > 0 "
+                            + "&& auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo() != null"
+                            + "&& Optional.ofNullable(auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getActualAmount()).orElse(new BigDecimal(\"0\"))"
+                            + ".compareTo(Optional.ofNullable(auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getActualCost()).orElse(new BigDecimal(\"0\"))) > 0) ? "
+                            + "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getPayCurrency() : auditOrderInfoBO.getOrderBasicInfo().getCurrency())")
     @Mapping(target = "hotelID", source = "auditOrderInfoBO.hotelBasicInfo.hotel", defaultValue = "0")
     @Mapping(target = "companyId", source = "auditOrderInfoBO.hotelBasicInfo.hotel", defaultValue = "")
     @Mapping(target = "isRapidSettlement", expression = "java( auditOrderInfoBO.getHotelBasicInfo().getOperatMode() == null || !auditOrderInfoBO.getHotelBasicInfo().getOperatMode().equals(\"S\") ? new String(\"F\") : new String(\"T\") )")
@@ -200,48 +204,60 @@ public interface SettlementDataMapper {
     })
     Orderpromotion createPromotion(PromotionDailyInfo promotionDailyInfo);
 
-    /**
-     * 新订单-->结算
-     * @param auditOrderInfoBO
-     * @return
-     */
-//    @Mapping(target = "quantity", defaultValue = "0")// 需要计算
-    @Mapping(target = "id", expression = "java( Integer.valueOf(0) )")
-    @Mapping(target = "merchantId", expression = "java( Integer.valueOf(6) )")
-//    @Mapping(target = "settlementItemName", expression = "java( SettlementItemName.FGHotel.getShowName() )")
-    @Mapping(target = "settlementPriceType", expression = "java( new String(\"P\") )")
-    @Mapping(target = "collectionType", expression = "java( new String(\"P\") )") // pushHWP 为 C
-    @Mapping(target = "sourceId", expression = "java( new String(\"6\") )")
-//    @Mapping(target = "channelType", expression = "java( ChannelType.FGID.name() )")
+  /**
+   * 新订单-->结算
+   *
+   * @param auditOrderInfoBO
+   * @return
+   */
+  //    @Mapping(target = "quantity", defaultValue = "0")// 需要计算
+  @Mapping(target = "id", expression = "java( Integer.valueOf(0) )")
+  @Mapping(target = "merchantId", expression = "java( Integer.valueOf(6) )")
+  //    @Mapping(target = "settlementItemName", expression = "java(
+  // SettlementItemName.FGHotel.getShowName() )")
+  @Mapping(target = "settlementPriceType", expression = "java( new String(\"P\") )")
+  @Mapping(target = "collectionType", expression = "java( new String(\"P\") )") // pushHWP 为 C
+  @Mapping(target = "sourceId", expression = "java( new String(\"6\") )")
+  //    @Mapping(target = "channelType", expression = "java( ChannelType.FGID.name() )")
 
   @Mapping(
       target = "settlementId",
       source = "auditOrderInfoBO.settlementCallBackInfo.settlementId") // todo 修改单传这个，取消单不传
   @Mapping(target = "orderId", source = "orderId", defaultValue = "")
   @Mapping(
-      target = "currency", expression =
-          "java((auditOrderInfoBO.getOrderBasicInfo().getVendorChannelID() != null " +
-                  "&& auditOrderInfoBO.getOrderBasicInfo().getVendorChannelID() > 0 " +
-                  "&& auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo() != null" +
-                  "&& auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getPayCurrency() != null) ? " +
-                  "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getPayCurrency() : auditOrderInfoBO.getOrderBasicInfo().getCurrency())")
+      target = "currency",
+      expression =
+          "java((auditOrderInfoBO.getOrderBasicInfo().getVendorChannelID() != null "
+              + "&& auditOrderInfoBO.getOrderBasicInfo().getVendorChannelID() > 0 "
+              + "&& auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo() != null"
+              + "&& Optional.ofNullable(auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getActualAmount()).orElse(new BigDecimal(\"0\"))"
+              + ".compareTo(Optional.ofNullable(auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getActualCost()).orElse(new BigDecimal(\"0\"))) > 0) ? "
+              + "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getPayCurrency() : auditOrderInfoBO.getOrderBasicInfo().getCurrency())")
   @Mapping(target = "orderDate", source = "auditOrderInfoBO.orderBasicInfo.orderDate")
   @Mapping(
       target = "companyID",
       source = "auditOrderInfoBO.hotelBasicInfo.hotel",
       defaultValue = "")
 
-//    @Mapping(target = "roomName", expression = "java( " +
-//            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getRoomName() == null ? new String(\"\") : auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getRoomName() " +
-//            ")")
-    @Mapping(target = "outSettlementNo", expression = "java( " +
-            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid() > 0 ? " +
-            "new String(\"FG-\").concat(auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString()) : " +
-            "new String(\"FM-\").concat(auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString()) " +
-            ")")
-
-    @Mapping(target = "settlementPromotionDetailLists", source = "promotionDailyInfoList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-    SettleDataRequest newOrderToSettlementApplyList(AuditOrderInfoBO auditOrderInfoBO);
+  //    @Mapping(target = "roomName", expression = "java( " +
+  //
+  // "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getRoomName() == null ?
+  // new String(\"\") :
+  // auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getRoomName() " +
+  //            ")")
+  @Mapping(
+      target = "outSettlementNo",
+      expression =
+          "java( "
+              + "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid() > 0 ? "
+              + "new String(\"FG-\").concat(auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString()) : "
+              + "new String(\"FM-\").concat(auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getFgid().toString()) "
+              + ")")
+  @Mapping(
+      target = "settlementPromotionDetailLists",
+      source = "promotionDailyInfoList",
+      nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
+  SettleDataRequest newOrderToSettlementApplyList(AuditOrderInfoBO auditOrderInfoBO);
 
     @Mappings({
             @Mapping(target = "beginDate", source = "promotionDailyInfo.effectDate"),
