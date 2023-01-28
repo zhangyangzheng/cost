@@ -62,7 +62,7 @@ public interface SettlementDataMapper {
             "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getEta() " +
             ")")
     @Mapping(target = "etd", expression = "java( " +
-            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getEtd() " +
+            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getRealETD() " +
             ")")
     @Mapping(target = "realETD", expression = "java( " +
             "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getRealETD() " +
