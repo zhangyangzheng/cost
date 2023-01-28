@@ -673,14 +673,14 @@ public class SettlementRepositoryImpl implements SettlementRepository {
         Item.setDataValue(
                 auditOrderInfoBO.getPriceAmount() == null
                         ? "0"
-                        : auditOrderInfoBO.getPriceAmount().toString());
+                        : auditOrderInfoBO.getRoomAmount().toString());
         Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.42"));
         requestData.getDataItems().add(Item);
 
         Item = new DataItem();
         Item.setDataKey("RoomCost");
         Item.setDataValue(
-                auditOrderInfoBO.getCostAmount() == null ? "0" : auditOrderInfoBO.getCostAmount().toString());
+                auditOrderInfoBO.getCostAmount() == null ? "0" : auditOrderInfoBO.getRoomCost().toString());
         Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.43"));
         requestData.getDataItems().add(Item);
 
