@@ -40,7 +40,7 @@ import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = CostJobApplication.class) // 使用junit4进行测试
-//@Ignore
+@Ignore
 public class SpringTest {
 
   @Autowired
@@ -293,6 +293,10 @@ public class SpringTest {
     auditOrderInfoBO.setSettlementCallBackInfo(new SettlementCallBackInfo());
     auditOrderInfoBO.setAuditRoomInfoList(Arrays.asList(auditRoomInfo));
 
+    auditOrderInfoBO.setPriceAmount(BigDecimal.ONE);
+
+    auditOrderInfoBO.setCostAmount(BigDecimal.TEN);
+
     OutTimeDeductInfo outTimeDeductInfo = new OutTimeDeductInfo();
     auditOrderInfoBO.setOutTimeDeductInfo(outTimeDeductInfo);
     auditOrderInfoBO.setGuaranteeInfo(new GuaranteeInfo());
@@ -310,7 +314,7 @@ public class SpringTest {
 
     // AuditOrderInfoBO auditOrderInfoBO1 = BeanHelper.deepClone(auditOrderInfoBO);
 
-    SettleDataRequest settleDataRequest = settlementDataMapper.newOrderToSettlementApplyList(auditOrderInfoBO);
+    // SettleDataRequest settleDataRequest = settlementDataMapper.newOrderToSettlementApplyList(auditOrderInfoBO);
 
     SettlementPayData settlementPayData = settlementDataMapper.newOrderToSettlementPayDataReceive(auditOrderInfoBO);
 

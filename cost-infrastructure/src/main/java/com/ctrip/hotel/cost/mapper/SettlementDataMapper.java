@@ -149,6 +149,8 @@ public interface SettlementDataMapper {
                             + "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomOtherInfo().getPayCurrency() : auditOrderInfoBO.getOrderBasicInfo().getCurrency())")
     @Mapping(target = "hotelID", source = "auditOrderInfoBO.hotelBasicInfo.hotel", defaultValue = "0")
     @Mapping(target = "companyId", source = "auditOrderInfoBO.hotelBasicInfo.hotel", defaultValue = "")
+    @Mapping(target = "roomAmount", source = "auditOrderInfoBO.priceAmount", defaultValue = "")
+    @Mapping(target = "roomCost", source = "auditOrderInfoBO.costAmount", defaultValue = "")
     @Mapping(target = "isRapidSettlement", expression = "java( auditOrderInfoBO.getHotelBasicInfo().getOperatMode() == null || !auditOrderInfoBO.getHotelBasicInfo().getOperatMode().equals(\"S\") ? new String(\"F\") : new String(\"T\") )")
     @Mapping(target = "guarantee", expression = "java( " +
             "auditOrderInfoBO.getGuaranteeInfo() != null " +
