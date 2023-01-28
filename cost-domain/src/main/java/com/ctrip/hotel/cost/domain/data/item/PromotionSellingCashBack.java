@@ -22,7 +22,7 @@ public class PromotionSellingCashBack implements Item<PromotionSellingPrice> {
     private BigDecimal total;
 
     public PromotionSellingCashBack(List<PromotionSellingPrice> promotionSellingPrices) {
-        this.promotionSellingPrices = promotionSellingPrices.stream().filter(e -> !e.days().getValue().equals(BigDecimal.ZERO)).collect(Collectors.toList());
+        this.promotionSellingPrices = promotionSellingPrices;
     }
 
     @Override

@@ -80,7 +80,7 @@ public class SpringTest {
       ThreadLocalCostHolder.setThreadLocalCostContext("auditOrderFg");
 
       List<Long> ids = new ArrayList<>();
-      ids.add(597574185L);
+      ids.add(597584300L);
       List<AuditOrderInfoBO> orders = handlerApi.auditOrderFgCollectPrice(ids);
       System.out.println(orders.size());
     } catch (Exception e) {
