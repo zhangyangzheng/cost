@@ -18,6 +18,7 @@ import com.ctrip.hotel.cost.domain.element.room.fg.RoomSellingPriceFgOrderInfo;
 import com.ctrip.hotel.cost.domain.element.techfee.ZeroCommissionFeePriceOrderInfo;
 import com.ctrip.hotel.cost.domain.scene.CostItemType;
 import lombok.Data;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ import java.util.Map;
  * @date 2022-10-31 19:37
  */
 @Data
-public class  DataCenter {
+public class DataCenter {
 
     private Long dataId;
     private AuditOrderInfoBO auditOrderInfoBO;// [fg audit order]审核的数据体
@@ -75,6 +76,7 @@ public class  DataCenter {
 
     /**
      * 数据初始化后，开始单项计费
+     *
      * @throws Exception
      */
     public void compute(List<CostItemType> itemTypes) throws Exception {
@@ -91,6 +93,9 @@ public class  DataCenter {
 
     // set 计费项初始化
     public void setBidPriceFgOrderInfos(List<BidPriceFgOrderInfo> bidPriceFgOrderInfos) throws Exception {
+        if (CollectionUtils.isEmpty(bidPriceFgOrderInfos)) {
+            return; // bid没有则代表是非直通车。直通车一定有bid
+        }
         Bid b = new Bid(new ArrayList<>(bidPriceFgOrderInfos));
         this.setBid(b);
         itemCollector.add(b);
@@ -113,31 +118,37 @@ public class  DataCenter {
         this.setPromotionSelling(pS);
         itemCollector.add(pS);
     }
+
     public void setTripPromotionSellingPriceFgOrderInfos(List<TripPromotionSellingPriceFgOrderInfo> promotions) throws Exception {
         TripPromotionSelling pS = new TripPromotionSelling(new ArrayList<>(promotions));
         this.setTripPromotionSelling(pS);
         itemCollector.add(pS);
     }
+
     public void setPromotionSellingCashBackPriceFgOrderInfos(List<PromotionSellingCashBackPriceFgOrderInfo> promotions) throws Exception {
         PromotionSellingCashBack pS = new PromotionSellingCashBack(new ArrayList<>(promotions));
         this.setPromotionSellingCashBack(pS);
         itemCollector.add(pS);
     }
+
     public void setPromotionCostPriceFgOrderInfos(List<PromotionCostPriceFgOrderInfo> promotionCostPriceFgOrderInfos) throws Exception {
         PromotionCost pC = new PromotionCost(new ArrayList<>(promotionCostPriceFgOrderInfos));
         this.setPromotionCost(pC);
         itemCollector.add(pC);
     }
+
     public void setTripPromotionCostPriceFgOrderInfos(List<TripPromotionCostPriceFgOrderInfo> promotions) throws Exception {
         TripPromotionCost tPC = new TripPromotionCost(new ArrayList<>(promotions));
         this.setTripPromotionCost(tPC);
         itemCollector.add(tPC);
     }
+
     public void setBuyoutDiscountPromotionCostPriceFgOrderInfos(List<PromotionCostBuyoutDiscountPriceFgOrderInfo> promotions) throws Exception {
         PromotionCostBuyoutDiscount pC = new PromotionCostBuyoutDiscount(new ArrayList<>(promotions));
         this.setPromotionCostBuyoutDiscount(pC);
         itemCollector.add(pC);
     }
+
     public void setPromotionCostCashBackPriceFgOrderInfos(List<PromotionCostCashBackPriceFgOrderInfo> promotions) throws Exception {
         PromotionCostCashBack pC = new PromotionCostCashBack(new ArrayList<>(promotions));
         this.setPromotionCostCashBack(pC);
@@ -166,6 +177,7 @@ public class  DataCenter {
         this.setAdjustCommission(aC);
         itemCollector.add(aC);
     }
+
     public void setZeroCommissionFeePriceOrderInfo(ZeroCommissionFeePriceOrderInfo zeroCommissionFeePriceOrderInfo) {
         if (zeroCommissionFeePriceOrderInfo != null) {
             zeroCommissionFeePriceOrderInfo.setSupplier(this::getCostCollector);
