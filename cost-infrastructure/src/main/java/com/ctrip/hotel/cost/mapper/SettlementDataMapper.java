@@ -1,5 +1,6 @@
 package com.ctrip.hotel.cost.mapper;
 
+import com.ctrip.hotel.cost.common.BigDecimalHelper;
 import com.ctrip.hotel.cost.domain.data.model.AuditOrderInfoBO;
 import com.ctrip.hotel.cost.domain.data.model.PromotionDailyInfo;
 import com.ctrip.hotel.cost.domain.settlement.CancelOrderUsedBo;
@@ -24,7 +25,7 @@ import java.util.Optional;
  * @description
  * @date 2022-11-18 14:56
  */
-@Mapper(componentModel = "spring", imports = {DefaultValueHelper.class, Optional.class})
+@Mapper(componentModel = "spring", imports = {DefaultValueHelper.class, Optional.class, BigDecimalHelper.class})
 public interface SettlementDataMapper {
     SettlementDataMapper INSTANCE = Mappers.getMapper(SettlementDataMapper.class);
 
@@ -46,7 +47,7 @@ public interface SettlementDataMapper {
      * List被赋予ArrayList，Map被赋予HashMap，数组就是空数组，String是“”，基本类型或包装类是0或false，对象是空的构造方法。
      */
     @Mapping(target = "quantity", defaultValue = "0")// 需要计算
-    @Mapping(target = "bidFlag", expression = "java( auditOrderInfoBO.getBidPrice() != null ? new String(\"T\") : null )")
+    @Mapping(target = "bidFlag", expression = "java( BigDecimalHelper.getNullIfZero(auditOrderInfoBO.getBidPrice()) != null ? new String(\"T\") : null )")
     @Mapping(target = "clientOrderId", source = "cusOrderId", defaultValue = "")
     @Mapping(target = "orderDate", source = "auditOrderInfoBO.orderBasicInfo.orderDate")
     @Mapping(target = "vendorChannelId", source = "auditOrderInfoBO.orderBasicInfo.vendorChannelID", defaultValue = "")
@@ -62,7 +63,7 @@ public interface SettlementDataMapper {
             "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getEta() " +
             ")")
     @Mapping(target = "etd", expression = "java( " +
-            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getEtd() " +
+            "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getRealETD() " +
             ")")
     @Mapping(target = "realETD", expression = "java( " +
             "auditOrderInfoBO.getAuditRoomInfoList().get(0).getAuditRoomBasicInfo().getRealETD() " +
@@ -191,6 +192,7 @@ public interface SettlementDataMapper {
     @Mapping(target = "sourceId", expression = "java( new String(\"6\") )")
     @Mapping(target = "splitOrder", expression = "java( new String(\"T\") )")
     @Mapping(target = "settlementPriceType", expression = "java( new String(\"C\") )")
+    @Mapping(target = "bidPrice", expression = "java( BigDecimalHelper.getNullIfZero(auditOrderInfoBO.getBidPrice()) )")
     @Mapping(target = "orderpromotionlist", source = "promotionDailyInfoList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
     SettlementPayData newOrderToSettlementPayDataReceive(AuditOrderInfoBO auditOrderInfoBO);
 

@@ -40,7 +40,7 @@ import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = CostJobApplication.class) // 使用junit4进行测试
-@Ignore
+//@Ignore
 public class SpringTest {
 
   @Autowired
