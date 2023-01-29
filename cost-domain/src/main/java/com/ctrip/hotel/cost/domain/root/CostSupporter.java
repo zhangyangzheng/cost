@@ -55,8 +55,11 @@ public class CostSupporter {
         }
 
         return costContext.getDataCenters().stream().filter(DataCenter::getSuccess).map(e -> {
-            // 结算只要满足条件的“酒店承担”促销
-            List<Long> promotionIDs = e.getPromotionSelling().getPromotionSellingPrices().stream().map(PromotionSellingPrice::promotionDailyInfoID).collect(Collectors.toList());
+            // 结算只要满足条件的“酒店承担”促销（非0的数据才有效）
+            List<Long> promotionIDs = e.getPromotionSelling().getPromotionSellingPrices().stream()
+                    .filter(promotionSellingPrice -> promotionSellingPrice.result().compareTo(BigDecimal.ZERO) > 0)
+                    .map(PromotionSellingPrice::promotionDailyInfoID)
+                    .collect(Collectors.toList());
             e.getAuditOrderInfoBO().setPromotionDailyInfoList(
                     e.getAuditOrderInfoBO().getPromotionDailyInfoList().stream().filter(p -> promotionIDs.contains(p.getPromotionDailyInfoID())).collect(Collectors.toList())
             );
