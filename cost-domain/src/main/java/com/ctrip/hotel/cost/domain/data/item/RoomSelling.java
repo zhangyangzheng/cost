@@ -22,7 +22,7 @@ public class RoomSelling implements Item<RoomSellingPrice> {
     private BigDecimal total;
 
     public RoomSelling(List<RoomSellingPrice> roomSellingPrices) {
-        this.roomSellingPrices = roomSellingPrices.stream().filter(e -> !e.days().getValue().equals(BigDecimal.ZERO)).collect(Collectors.toList());
+        this.roomSellingPrices = roomSellingPrices;
     }
 
     @Override

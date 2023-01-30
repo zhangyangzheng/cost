@@ -22,7 +22,7 @@ public class RoomCost implements Item<RoomCostPrice> {
     private BigDecimal total;
 
     public RoomCost(List<RoomCostPrice> roomCostPrices) {
-        this.roomCostPrices = roomCostPrices.stream().filter(e -> !e.days().getValue().equals(BigDecimal.ZERO)).collect(Collectors.toList());
+        this.roomCostPrices = roomCostPrices;
     }
 
     @Override

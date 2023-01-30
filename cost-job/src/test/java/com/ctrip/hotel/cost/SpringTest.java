@@ -20,6 +20,7 @@ import com.ctrip.hotel.cost.common.util.I18NMessageUtil;
 import com.ctrip.hotel.cost.job.FGNotifySettlementJob;
 import com.ctrip.soa.hotel.settlement.api.CancelSettleData;
 import com.ctrip.soa.hotel.settlement.api.SettleDataRequest;
+import hotel.settlement.common.beans.BeanHelper;
 import hotel.settlement.dao.dal.htlcalculatefeetidb.entity.OrderAuditFgMqTiDBGen;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -79,7 +80,7 @@ public class SpringTest {
       ThreadLocalCostHolder.setThreadLocalCostContext("auditOrderFg");
 
       List<Long> ids = new ArrayList<>();
-      ids.add(597574185L);
+      ids.add(597584300L);
       List<AuditOrderInfoBO> orders = handlerApi.auditOrderFgCollectPrice(ids);
       System.out.println(orders.size());
     } catch (Exception e) {
@@ -292,6 +293,10 @@ public class SpringTest {
     auditOrderInfoBO.setSettlementCallBackInfo(new SettlementCallBackInfo());
     auditOrderInfoBO.setAuditRoomInfoList(Arrays.asList(auditRoomInfo));
 
+    auditOrderInfoBO.setPriceAmount(BigDecimal.ONE);
+
+    auditOrderInfoBO.setCostAmount(BigDecimal.TEN);
+
     OutTimeDeductInfo outTimeDeductInfo = new OutTimeDeductInfo();
     auditOrderInfoBO.setOutTimeDeductInfo(outTimeDeductInfo);
     auditOrderInfoBO.setGuaranteeInfo(new GuaranteeInfo());
@@ -306,6 +311,8 @@ public class SpringTest {
     hotelBasicInfo.setOperatMode("S");
     auditOrderInfoBO.setHotelBasicInfo(hotelBasicInfo);
     auditOrderInfoBO.setTripPromotionAmount(new BigDecimal("0.00"));
+
+    // AuditOrderInfoBO auditOrderInfoBO1 = BeanHelper.deepClone(auditOrderInfoBO);
 
     // SettleDataRequest settleDataRequest = settlementDataMapper.newOrderToSettlementApplyList(auditOrderInfoBO);
 

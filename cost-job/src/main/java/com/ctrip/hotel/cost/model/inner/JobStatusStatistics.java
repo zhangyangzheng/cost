@@ -1,6 +1,8 @@
 package com.ctrip.hotel.cost.model.inner;
 
 public class JobStatusStatistics {
+
+    public boolean isSettled;
     public int wCreateCount = 0;
     public int wUpdateCount = 0;
     public int wDeleteCount = 0;

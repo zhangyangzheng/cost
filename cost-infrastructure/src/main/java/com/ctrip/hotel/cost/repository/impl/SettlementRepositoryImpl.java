@@ -90,7 +90,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                             .add(
                                     new DataItem(
                                             "BuyoutDiscountAmount",
-                                            auditOrderInfoBO.getBuyoutDiscountAmount().toString(),
+                                            DefaultValueHelper.getValue(auditOrderInfoBO.getBuyoutDiscountAmount()).toString(),
                                             "BuyoutDiscountAmount"));
                 }
             } else if ("3".equalsIgnoreCase(associateMemberOrder)
@@ -908,7 +908,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
                 orderBasicInfo.getEta() == null
                         ? ""
                         : DateHelper.formatDate(
-                        new Timestamp(orderBasicInfo.getEta().getTimeInMillis()),
+                        new Timestamp(auditRoomBasicInfo.getEta().getTimeInMillis()),
                         DateHelper.SIMIPLE_DATE_FORMAT_STR));
         Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.61"));
         requestData.getDataItems().add(Item);
