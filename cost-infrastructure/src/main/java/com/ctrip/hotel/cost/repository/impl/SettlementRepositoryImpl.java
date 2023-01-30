@@ -581,7 +581,7 @@ public class SettlementRepositoryImpl implements SettlementRepository {
         Item.setDataDesc(I18NMessageUtil.getMessage("SettlementRepositoryImpl.Desc.31"));
         requestData.getDataItems().add(Item);
 
-        if (com.ctrip.hotel.cost.common.BigDecimalHelper.getNullIfZero(auditOrderInfoBO.getBidPrice()) != null) {
+        if (auditOrderInfoBO.getBidPrice() != null) {
             Item = new DataItem();
             Item.setDataKey("BidFlag");
             Item.setDataValue("T");
